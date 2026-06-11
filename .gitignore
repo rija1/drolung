@@ -1,5 +1,6 @@
 # ── Config locale / environnement ──
 wp-config.php
+.claude/
 local-xdebuginfo.php
 .htaccess
 *.log
