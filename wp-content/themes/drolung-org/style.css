@@ -1,0 +1,12 @@
+/*
+Theme Name: Drolung — drolung.org
+Template: drolung-base
+Theme URI: https://drolung.org
+Author: Drolung
+Author URI: https://drolung.org
+Description: Mother-site theme for drolung.org. Child of drolung-base. Carries the network-wide landing page, the global hero, and the cross-branch navigation. Header is inherited from the parent (centered + compact on scroll).
+Version: 0.1.0
+Text Domain: drolung-org
+*/
+
+/* Child-specific overrides go in assets/css/site.css (enqueued from functions.php). */

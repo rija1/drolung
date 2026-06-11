@@ -1,0 +1,14 @@
+/*
+Theme Name: Drolung — UK
+Template: drolung-base
+Theme URI: https://drolung.org.uk
+Author: Drolung UK
+Author URI: https://drolung.org.uk
+Description: Dedicated child theme for the Drolung UK subsite (duk.drolung.local / drolung.org.uk). Uses its own design system extracted from mockup-duk/, distinct from the French DSM/DSF "drolung-branch" theme.
+Version: 0.1.0
+Text Domain: drolung-duk
+*/
+
+/* No CSS here — the DUK design system lives in assets/css/duk.css,
+   enqueued through functions.php. This file's sole purpose is the
+   theme header above. */

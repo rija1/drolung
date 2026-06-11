@@ -1,0 +1,13 @@
+/*
+Theme Name: Drolung — Branch
+Template: drolung-base
+Theme URI: https://drolung.org
+Author: Drolung
+Author URI: https://drolung.org
+Description: Shared theme for Drolung branches (DSM, DSF, DUK, …). Child of drolung-base. Per-site branding (logo, country tag, brand name) is configured via the Customizer on each subsite. Page templates and content are common across branches.
+Version: 0.1.0
+Text Domain: drolung-branch
+*/
+
+/* No extra CSS yet — base.css already contains the DSM/DSF design system.
+   If a branch needs a tweak, add it here. */

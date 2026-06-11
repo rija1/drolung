@@ -1,0 +1,13 @@
+/*
+Theme Name: Drolung Base
+Theme URI: https://drolung.org
+Author: Drolung
+Author URI: https://drolung.org
+Description: Parent theme that powers the Drolung network — drolung.org and its branches (DSM, DSF, DUK, …). Provides shared layout primitives, the centered + compact-on-scroll header, the Projet custom post type bindings, and common ACF/helpers. Child themes layer branding and per-site content on top.
+Version: 0.1.0
+Text Domain: drolung-base
+*/
+
+/* This file is intentionally minimal.
+   All real styles live in assets/css/base.css (enqueued from functions.php)
+   so child themes can override or extend cleanly. */
