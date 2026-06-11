@@ -1,0 +1,20 @@
+# ── Config locale / environnement ──
+wp-config.php
+local-xdebuginfo.php
+.htaccess
+*.log
+
+# ── Contenu non versionné ──
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backup*/
+
+# ── Mockups statiques (déjà suivis dans le dossier Mock) ──
+/mock1/
+/mockup-dsf/
+/mockup-dsm/
+
+# ── Divers ──
+.DS_Store
+Thumbs.db
