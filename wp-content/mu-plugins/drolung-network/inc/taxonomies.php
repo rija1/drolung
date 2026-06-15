@@ -37,6 +37,21 @@ function drolung_network_register_taxonomies() {
 		'rewrite'           => false,
 	) );
 
+	register_taxonomy( 'projet_domaine', array( 'projet', 'article' ), array(
+		'labels' => array(
+			'name'          => 'Domaines',
+			'singular_name' => 'Domaine',
+			'menu_name'     => 'Domaines',
+			'all_items'     => 'Tous les domaines',
+		),
+		'public'            => true,
+		'show_ui'           => $show_ui,
+		'hierarchical'      => true,   /* cases à cocher */
+		'show_admin_column' => true,
+		'show_in_rest'      => true,
+		'rewrite'           => array( 'slug' => 'projets/domaine', 'with_front' => false ),
+	) );
+
 	register_taxonomy( 'projet_type', 'projet', array(
 		'labels' => array(
 			'name'          => 'Types de projet',
@@ -100,6 +115,10 @@ function drolung_network_seed_terms() {
 			'DSM — Drolung Solidarité Madagascar' => 'dsm',
 			'DUK — Drolung UK'                  => 'duk',
 			'Drolung International'             => 'org',
+		),
+		'projet_domaine' => array(
+			'Humanitaire'              => 'humanitaire',
+			'Soutien aux pratiquants'  => 'dharma',
 		),
 		'projet_type' => array(
 			'Eau'                  => 'eau',

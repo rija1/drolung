@@ -36,7 +36,15 @@ function drolung_canonical_tag() {
 		return;
 	}
 	$target = isset( $item['meta']['site_canonical'] ) ? $item['meta']['site_canonical'] : 'dsf';
-	$url    = drolung_item_url_on_branch( $item, $target );
+
+	/* Garde-fou : si le site canonical choisi n'affiche pas cet item
+	 * (ex. projet dharma ciblé DUK avec défaut DSF), retomber sur la
+	 * première branche cochée — jamais de canonical vers un 404. */
+	if ( ! empty( $item['branches'] ) && ! in_array( $target, $item['branches'], true ) ) {
+		$target = $item['branches'][0];
+	}
+
+	$url = drolung_item_url_on_branch( $item, $target );
 	echo '<link rel="canonical" href="' . esc_url( $url ) . "\" />\n";
 }
 
