@@ -149,7 +149,8 @@ function drolung_register_acf_fields() {
 	/* ─────────────────────────────────────────────────────────
 	 * NOTRE ACTION PAGE.
 	 * Bound to the auto-created page with slug 'notre-action'.
-	 * 3 axes are fixed-length numbered fields.
+	 * 4 axes (fixed-length numbered fields) + intro two-col + dark principles.
+	 * Updated 2026-06-16: added intro_eyebrow, axes_*, axe_4_*, principe_*.
 	 * ───────────────────────────────────────────────────────── */
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_notre_action',
@@ -162,33 +163,64 @@ function drolung_register_acf_fields() {
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'fields'          => [
+			/* ── HERO ─────────────────────────────────────── */
 			[ 'key' => 'field_action_hero_eyebrow', 'label' => 'Hero — surtitre',    'name' => 'hero_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_action_hero_title',   'label' => 'Hero — titre (HTML)','name' => 'hero_title',   'type' => 'textarea', 'rows' => 2 ],
 			[ 'key' => 'field_action_hero_sub',     'label' => 'Hero — sous-titre',  'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3 ],
 
-			[ 'key' => 'field_action_intro_title', 'label' => 'Intro — titre',  'name' => 'intro_title', 'type' => 'text' ],
-			[ 'key' => 'field_action_intro_body',  'label' => 'Intro — texte',  'name' => 'intro_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			/* ── INTRO TWO-COL ───────────────────────────── */
+			[ 'key' => 'field_action_intro_tab',     'label' => 'Intro (deux colonnes)', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_action_intro_eyebrow', 'label' => 'Intro — surtitre (ex : « Notre rôle »)', 'name' => 'intro_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_action_intro_title',   'label' => 'Intro — titre (HTML)',  'name' => 'intro_title', 'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_action_intro_body',    'label' => 'Intro — texte (colonne droite)',  'name' => 'intro_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+
+			/* ── AXES SECTION HEADER ─────────────────────── */
+			[ 'key' => 'field_action_axes_tab',     'label' => 'Axes d\'action', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_action_axes_eyebrow', 'label' => 'Axes — surtitre', 'name' => 'axes_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_action_axes_title',   'label' => 'Axes — titre (HTML)', 'name' => 'axes_title', 'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_action_axes_body',    'label' => 'Axes — chapeau', 'name' => 'axes_body', 'type' => 'textarea', 'rows' => 3 ],
 
 			/* Axe 1 */
-			[ 'key' => 'field_action_axe_1_tab',   'label' => 'Axe 1',           'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_action_axe_1_tag',   'label' => 'Axe 1 — étiquette (Éducation, Santé…)', 'name' => 'axe_1_tag',   'type' => 'text', 'instructions' => 'Le mot-clé court affiché en haut de la carte. Utilisé aussi sur la page d\'accueil.' ],
+			[ 'key' => 'field_action_axe_1_tag',   'label' => 'Axe 1 — étiquette (Éducation, Santé…)', 'name' => 'axe_1_tag',   'type' => 'text', 'instructions' => 'Le mot-clé court affiché en haut de la carte.' ],
 			[ 'key' => 'field_action_axe_1_title', 'label' => 'Axe 1 — titre',   'name' => 'axe_1_title', 'type' => 'text' ],
 			[ 'key' => 'field_action_axe_1_body',  'label' => 'Axe 1 — texte',   'name' => 'axe_1_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
 			[ 'key' => 'field_action_axe_1_image', 'label' => 'Axe 1 — image',   'name' => 'axe_1_image', 'type' => 'image', 'return_format' => 'url' ],
 
 			/* Axe 2 */
-			[ 'key' => 'field_action_axe_2_tab',   'label' => 'Axe 2',           'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_action_axe_2_tag',   'label' => 'Axe 2 — étiquette', 'name' => 'axe_2_tag',   'type' => 'text' ],
 			[ 'key' => 'field_action_axe_2_title', 'label' => 'Axe 2 — titre',   'name' => 'axe_2_title', 'type' => 'text' ],
 			[ 'key' => 'field_action_axe_2_body',  'label' => 'Axe 2 — texte',   'name' => 'axe_2_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
 			[ 'key' => 'field_action_axe_2_image', 'label' => 'Axe 2 — image',   'name' => 'axe_2_image', 'type' => 'image', 'return_format' => 'url' ],
 
 			/* Axe 3 */
-			[ 'key' => 'field_action_axe_3_tab',   'label' => 'Axe 3',           'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_action_axe_3_tag',   'label' => 'Axe 3 — étiquette', 'name' => 'axe_3_tag',   'type' => 'text' ],
 			[ 'key' => 'field_action_axe_3_title', 'label' => 'Axe 3 — titre',   'name' => 'axe_3_title', 'type' => 'text' ],
 			[ 'key' => 'field_action_axe_3_body',  'label' => 'Axe 3 — texte',   'name' => 'axe_3_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
 			[ 'key' => 'field_action_axe_3_image', 'label' => 'Axe 3 — image',   'name' => 'axe_3_image', 'type' => 'image', 'return_format' => 'url' ],
+
+			/* Axe 4 (added 2026-06-16 — Eau & Assainissement) */
+			[ 'key' => 'field_action_axe_4_tag',   'label' => 'Axe 4 — étiquette', 'name' => 'axe_4_tag',   'type' => 'text' ],
+			[ 'key' => 'field_action_axe_4_title', 'label' => 'Axe 4 — titre',   'name' => 'axe_4_title', 'type' => 'text' ],
+			[ 'key' => 'field_action_axe_4_body',  'label' => 'Axe 4 — texte',   'name' => 'axe_4_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			[ 'key' => 'field_action_axe_4_image', 'label' => 'Axe 4 — image',   'name' => 'axe_4_image', 'type' => 'image', 'return_format' => 'url' ],
+
+			/* ── DARK SECTION — PRINCIPES / ENGAGEMENTS ─── */
+			[ 'key' => 'field_action_principes_tab',     'label' => 'Section principes / engagements', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_action_principes_eyebrow', 'label' => 'Principes — surtitre', 'name' => 'principes_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_action_principes_title',   'label' => 'Principes — titre (HTML)', 'name' => 'principes_title', 'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_action_principes_body',    'label' => 'Principes — chapeau', 'name' => 'principes_body', 'type' => 'textarea', 'rows' => 3 ],
+
+			[ 'key' => 'field_action_principe_1_label', 'label' => 'Principe 1 — libellé', 'name' => 'principe_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_action_principe_1_body',  'label' => 'Principe 1 — texte',  'name' => 'principe_1_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
+
+			[ 'key' => 'field_action_principe_2_label', 'label' => 'Principe 2 — libellé', 'name' => 'principe_2_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_action_principe_2_body',  'label' => 'Principe 2 — texte',  'name' => 'principe_2_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
+
+			[ 'key' => 'field_action_principe_3_label', 'label' => 'Principe 3 — libellé', 'name' => 'principe_3_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_action_principe_3_body',  'label' => 'Principe 3 — texte',  'name' => 'principe_3_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
+
+			[ 'key' => 'field_action_principe_4_label', 'label' => 'Principe 4 — libellé', 'name' => 'principe_4_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_action_principe_4_body',  'label' => 'Principe 4 — texte',  'name' => 'principe_4_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
 		],
 	] );
 }

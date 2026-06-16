@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BASE_VERSION', '0.1.2' );
+define( 'DROLUNG_BASE_VERSION', '0.1.3' );
 define( 'DROLUNG_BASE_DIR', get_template_directory() );
 define( 'DROLUNG_BASE_URI', get_template_directory_uri() );
 
