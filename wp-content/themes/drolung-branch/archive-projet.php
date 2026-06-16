@@ -1,19 +1,14 @@
 <?php
 /**
- * archive-projet.php — listing of Projet CPT posts for the branch sites.
+ * Template for the Projet CPT archive — "Nos projets" listing page.
+ * Mirrors mockups/mockup-dsf/projets.html (canonical DSF reference).
+ * DSM uses the same template; per-site copy editable via ACF.
  *
- * Data sources:
- *  - WP core: title, excerpt/content, featured image.
- *  - Taxonomies: projet_type (eau/ecole/sante/agriculture/environnement)
- *               projet_statut (a-venir/en-cours/termine).
- *  - Post meta: `budget` and `location` are read with get_post_meta() — these
- *    will be populated once you define them as Pods fields on the Projet CPT.
- *    Missing values are silently skipped, so the template works before Pods
- *    is configured.
+ * Boucle de projets : WP_Query directe sur le CPT 'projet'.
+ * TODO: migrer vers drolung_get_projets( $branch, $args ) quand drolung-network est actif.
  *
- * The filters (statut + type) are client-side: each card carries
- * data-status="…" and data-type="…" matching the term slugs, and the JS at
- * the bottom toggles visibility on click.
+ * Filtres statut/type : HTML statique depuis le mockup, JS client-side ci-dessous.
+ * L'état initial affiche toutes les cards ; le JS les filtre à la volée.
  *
  * @package drolung-branch
  */
@@ -24,20 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 
-/* Fetch all published projets on this branch site. */
-$projets = new WP_Query( [
+// TODO: migrer vers drolung_get_projets( $branch, $args ) quand drolung-network est actif.
+$projets = new WP_Query( array(
 	'post_type'      => 'projet',
-	'post_status'    => 'publish',
 	'posts_per_page' => -1,
+	'post_status'    => 'publish',
 	'orderby'        => 'menu_order date',
-	'order'          => 'DESC',
-] );
+	'order'          => 'ASC',
+) );
 
-/* Collect the term slugs actually used on this site so the filter bar only
- * shows buttons that match real content. Falls back to the seeded full list
- * if nothing has been tagged yet. */
-$used_types   = [];
-$used_statuts = [];
+/* Collect taxonomy term slugs actually used so the filter bar stays
+ * in sync with real content. Falls back to seeded defaults if empty. */
+$used_types   = array();
+$used_statuts = array();
 if ( $projets->have_posts() ) {
 	foreach ( $projets->posts as $p ) {
 		foreach ( (array) get_the_terms( $p->ID, 'projet_type' ) as $t ) {
@@ -53,20 +47,21 @@ if ( $projets->have_posts() ) {
 	}
 }
 if ( empty( $used_types ) ) {
-	$used_types = [
+	$used_types = array(
 		'eau'           => __( 'Eau', 'drolung-branch' ),
-		'ecole'         => __( 'École', 'drolung-branch' ),
+		'education'     => __( 'Éducation', 'drolung-branch' ),
+		'environnement' => __( 'Environnement', 'drolung-branch' ),
 		'sante'         => __( 'Santé', 'drolung-branch' ),
 		'agriculture'   => __( 'Agriculture', 'drolung-branch' ),
-		'environnement' => __( 'Environnement', 'drolung-branch' ),
-	];
+	);
 }
 if ( empty( $used_statuts ) ) {
-	$used_statuts = [
-		'a-venir'  => __( 'À venir', 'drolung-branch' ),
-		'en-cours' => __( 'En cours', 'drolung-branch' ),
-		'termine'  => __( 'Terminé', 'drolung-branch' ),
-	];
+	$used_statuts = array(
+		'en-preparation' => __( 'En préparation', 'drolung-branch' ),
+		'en-evaluation'  => __( 'En évaluation', 'drolung-branch' ),
+		'en-cours'       => __( 'En cours', 'drolung-branch' ),
+		'termine'        => __( 'Terminé', 'drolung-branch' ),
+	);
 }
 ?>
 
@@ -74,53 +69,55 @@ if ( empty( $used_statuts ) ) {
 	<div class="container">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a>
 		<span>›</span>
-		<span><?php esc_html_e( 'Projets', 'drolung-branch' ); ?></span>
+		<span><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></span>
 	</div>
 </div>
 
-<section class="page-hero" style="--hero-bg: url('https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&q=80&w=1600&h=700');">
+<?php
+$hero_image_url = drolung_field(
+	'projets_hero_image',
+	'https://images.unsplash.com/photo-1570742544137-3a469196c32b?auto=format&fit=crop&q=80&w=1600&h=700'
+);
+?>
+<section class="page-hero" style="--hero-bg: url('<?php echo esc_url( $hero_image_url ); ?>');">
 	<style>.page-hero::before { background-image: var(--hero-bg); }</style>
 	<div class="page-hero__line"></div>
 	<div class="container">
-		<div class="page-hero__eyebrow"><?php esc_html_e( 'Projets', 'drolung-branch' ); ?></div>
-		<h1 class="page-hero__title"><?php
-			/* translators: %s wraps the emphasised word "projets" in <em>. */
-			printf( esc_html__( 'Nos %s', 'drolung-branch' ), '<em>' . esc_html__( 'projets', 'drolung-branch' ) . '</em>' );
-		?></h1>
-		<p class="page-hero__sub"><?php esc_html_e( "Tous les projets pilotés sur le terrain, classés par statut et par type d'intervention.", 'drolung-branch' ); ?></p>
+		<div class="page-hero__eyebrow"><?php echo esc_html( drolung_field( 'projets_hero_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
+		<h1 class="page-hero__title"><?php echo wp_kses_post( drolung_field( 'projets_hero_title', __( 'Quatre projets, <em>une même conviction</em>', 'drolung-branch' ) ) ); ?></h1>
+		<p class="page-hero__sub"><?php echo esc_html( drolung_field( 'projets_hero_sub', __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ) ); ?></p>
 	</div>
 </section>
 
 <section class="inner-section inner-section--tint">
-	<div class="container">
-		<div class="section-header fade-up" style="max-width:780px;margin:0 auto 12px;text-align:center;">
-			<div class="section-eyebrow"><?php esc_html_e( 'Notre engagement', 'drolung-branch' ); ?></div>
-			<h2 class="section-title"><?php esc_html_e( 'Voir, suivre, comprendre', 'drolung-branch' ); ?></h2>
-			<p class="section-body"><?php esc_html_e( "Chaque projet est documenté de bout en bout : ses objectifs, son budget, son état d'avancement et les actualités du terrain. Vous pouvez filtrer par statut ou par domaine d'action.", 'drolung-branch' ); ?></p>
+	<div class="projets-intro fade-up">
+		<div>
+			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'projets_intro_eyebrow', __( 'Notre soutien', 'drolung-branch' ) ) ); ?></div>
+			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'projets_intro_title', __( 'Nos projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
+			<p class="section-body" style="margin-top:16px;"><?php echo esc_html( drolung_field( 'projets_intro_body', __( 'Ces projets sont en cours de montage ou en recherche de financement. Tous sont portés sur le terrain par nos associations sœurs. Vos dons les rendent possibles, directement et sans intermédiaire.', 'drolung-branch' ) ) ); ?></p>
 		</div>
-
-		<?php if ( $projets->have_posts() ) : ?>
-		<div class="project-filters fade-up">
-			<div class="filter-group">
-				<div class="filter-group__label"><?php esc_html_e( 'Statut', 'drolung-branch' ); ?></div>
-				<div class="filter-group__btns">
-					<button class="filter-btn active" data-status="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
-					<?php foreach ( $used_statuts as $slug => $name ) : ?>
-						<button class="filter-btn" data-status="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
-					<?php endforeach; ?>
+		<div class="projets-intro__filters">
+			<div class="project-filters">
+				<div class="filter-group">
+					<div class="filter-group__label"><?php esc_html_e( 'Statut', 'drolung-branch' ); ?></div>
+					<div class="filter-group__btns">
+						<button class="filter-btn active" data-status="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
+						<?php foreach ( $used_statuts as $slug => $name ) : ?>
+							<button class="filter-btn" data-status="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<div class="filter-group">
+					<div class="filter-group__label"><?php esc_html_e( 'Type', 'drolung-branch' ); ?></div>
+					<div class="filter-group__btns">
+						<button class="filter-btn active" data-type="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
+						<?php foreach ( $used_types as $slug => $name ) : ?>
+							<button class="filter-btn" data-type="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
+						<?php endforeach; ?>
+					</div>
 				</div>
 			</div>
-			<div class="filter-group">
-				<div class="filter-group__label"><?php esc_html_e( 'Type', 'drolung-branch' ); ?></div>
-				<div class="filter-group__btns">
-					<button class="filter-btn active" data-type="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
-					<?php foreach ( $used_types as $slug => $name ) : ?>
-						<button class="filter-btn" data-type="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
-					<?php endforeach; ?>
-				</div>
-			</div>
 		</div>
-		<?php endif; ?>
 	</div>
 </section>
 
@@ -129,7 +126,7 @@ if ( empty( $used_statuts ) ) {
 
 		<?php if ( $projets->have_posts() ) : ?>
 
-			<div class="three-col">
+			<div class="four-col" id="projetsGrid">
 			<?php
 			$i = 0;
 			while ( $projets->have_posts() ) :
@@ -137,7 +134,7 @@ if ( empty( $used_statuts ) ) {
 
 				$type_terms   = get_the_terms( get_the_ID(), 'projet_type' );
 				$statut_terms = get_the_terms( get_the_ID(), 'projet_statut' );
-				$type   = ( $type_terms && ! is_wp_error( $type_terms ) ) ? $type_terms[0] : null;
+				$type   = ( $type_terms && ! is_wp_error( $type_terms ) )   ? $type_terms[0]   : null;
 				$statut = ( $statut_terms && ! is_wp_error( $statut_terms ) ) ? $statut_terms[0] : null;
 
 				$type_slug   = $type   ? $type->slug   : '';
@@ -145,22 +142,24 @@ if ( empty( $used_statuts ) ) {
 
 				$budget   = trim( (string) get_post_meta( get_the_ID(), 'budget', true ) );
 				$location = trim( (string) get_post_meta( get_the_ID(), 'location', true ) );
+				$partner  = trim( (string) get_post_meta( get_the_ID(), 'partenaire', true ) );
 
-				$delay = ( $i % 3 ) * 0.08;
+				$delay = ( $i % 4 ) * 0.08;
 				$style = $delay > 0 ? sprintf( 'transition-delay:%.2fs', $delay ) : '';
 
 				$thumb_url = get_the_post_thumbnail_url( null, 'large' );
 				?>
 
-				<a class="card project-card fade-up"
-				   href="<?php the_permalink(); ?>"
-				   data-type="<?php echo esc_attr( $type_slug ); ?>"
-				   data-status="<?php echo esc_attr( $statut_slug ); ?>"
-				   <?php echo $style ? 'style="' . esc_attr( $style ) . '"' : ''; ?>>
+				<div class="card project-card fade-up"
+				     data-type="<?php echo esc_attr( $type_slug ); ?>"
+				     data-status="<?php echo esc_attr( $statut_slug ); ?>"
+				     <?php echo $style ? 'style="' . esc_attr( $style ) . '"' : ''; ?>>
 
 					<div class="card-img" style="position:relative;height:240px;overflow:hidden;background:var(--cream);">
 						<?php if ( $thumb_url ) : ?>
-							<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+							<a href="<?php the_permalink(); ?>">
+								<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+							</a>
 						<?php endif; ?>
 
 						<?php if ( $type ) : ?>
@@ -170,14 +169,16 @@ if ( empty( $used_statuts ) ) {
 						<?php endif; ?>
 
 						<?php if ( $statut ) : ?>
-							<span class="project-status project-status--<?php echo esc_attr( $statut_slug ); ?>" style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">
+							<span class="project-status" style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:rgba(193,125,10,0.15);color:var(--saffron);border:1px solid var(--saffron);">
 								<?php echo esc_html( $statut->name ); ?>
 							</span>
 						<?php endif; ?>
 					</div>
 
 					<div class="card-body">
-						<div class="card-title"><?php the_title(); ?></div>
+						<div class="card-title">
+							<a href="<?php the_permalink(); ?>" style="color:inherit;text-decoration:none;"><?php the_title(); ?></a>
+						</div>
 						<?php if ( has_excerpt() || get_the_content() ) : ?>
 							<p class="card-desc"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 28, '…' ) ); ?></p>
 						<?php endif; ?>
@@ -188,8 +189,17 @@ if ( empty( $used_statuts ) ) {
 								<span><?php echo esc_html( $location ); ?></span>
 							</div>
 						<?php endif; ?>
+
+						<?php if ( $partner ) : ?>
+							<div class="project-meta" style="margin-top:8px;font-size:12px;color:var(--stone);font-family:var(--font-mono);">
+								<?php
+								/* translators: %s is the partner organisation name. */
+								printf( esc_html__( 'Partenaire : %s', 'drolung-branch' ), esc_html( $partner ) );
+								?>
+							</div>
+						<?php endif; ?>
 					</div>
-				</a>
+				</div>
 
 				<?php
 				$i++;

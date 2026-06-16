@@ -468,6 +468,44 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_contact_network_display','label' => 'Texte affiché du lien réseau (ex : drolung.org)',    'name' => 'contact_network_display','type' => 'text' ],
 		],
 	] );
+
+	/* ─────────────────────────────────────────────────────────
+	 * PROJETS ARCHIVE.
+	 * Shown on the post_type_archive for 'projet'.
+	 * Covers the hero and intro section (static/editorial copy).
+	 * Per-post data (title, budget, location) comes from WP core /
+	 * get_post_meta() — not from ACF fields registered here.
+	 * Portée 2026-06-16.
+	 * ───────────────────────────────────────────────────────── */
+	acf_add_local_field_group( array(
+		'key'      => 'group_drolung_projets_archive',
+		'title'    => 'Archive projets — contenu éditable',
+		'location' => array( array( array(
+			'param'    => 'post_type',
+			'operator' => '==',
+			'value'    => 'projet',
+		) ) ),
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'label_placement' => 'top',
+		'fields'          => array(
+
+			/* ── HERO ─────────────────────────────────────── */
+			array( 'key' => 'field_projets_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab', 'placement' => 'top' ),
+			array( 'key' => 'field_projets_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'projets_hero_eyebrow', 'type' => 'text' ),
+			array( 'key' => 'field_projets_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'projets_hero_title',   'type' => 'textarea', 'rows' => 2,
+			       'instructions' => 'Utilise <em>mot</em> pour mettre un mot en italique doré.' ),
+			array( 'key' => 'field_projets_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'projets_hero_sub',     'type' => 'textarea', 'rows' => 3 ),
+			array( 'key' => 'field_projets_hero_image',   'label' => 'Hero — image de fond',  'name' => 'projets_hero_image',   'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ),
+
+			/* ── INTRO ───────────────────────────────────── */
+			array( 'key' => 'field_projets_intro_tab',    'label' => 'Section intro',         'name' => '', 'type' => 'tab' ),
+			array( 'key' => 'field_projets_intro_eyebrow','label' => 'Intro — surtitre',      'name' => 'projets_intro_eyebrow', 'type' => 'text' ),
+			array( 'key' => 'field_projets_intro_title',  'label' => 'Intro — titre (HTML)',  'name' => 'projets_intro_title',   'type' => 'textarea', 'rows' => 2,
+			       'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ),
+			array( 'key' => 'field_projets_intro_body',   'label' => 'Intro — texte',         'name' => 'projets_intro_body',    'type' => 'textarea', 'rows' => 4 ),
+		),
+	) );
 }
 
 /**
