@@ -174,6 +174,7 @@ function drolung_branch_pages() {
 		[ 'slug' => 'ou-nous-intervenons','title' => 'Où nous intervenons' ],
 		[ 'slug' => 's-engager',          'title' => 'S\'engager' ],
 		[ 'slug' => 'ressources',         'title' => 'Ressources' ],
+		[ 'slug' => 'contact',            'title' => 'Contact' ],
 	];
 }
 

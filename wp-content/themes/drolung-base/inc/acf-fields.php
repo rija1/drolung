@@ -319,6 +319,39 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_ressources_cta2_url',   'label' => 'Bouton 2 — URL',                              'name' => 'ressources_cta2_url',   'type' => 'url',  'wrapper' => [ 'width' => 50 ] ],
 		],
 	] );
+
+	/* ─────────────────────────────────────────────────────────
+	 * CONTACT PAGE.
+	 * Bound to page-contact.php template.
+	 * Location: page_template == page-contact.php so it works on every
+	 * branch site (DSF, DSM) regardless of the page ID.
+	 * Portée 2026-06-16.
+	 * ───────────────────────────────────────────────────────── */
+	acf_add_local_field_group( [
+		'key'      => 'group_drolung_contact',
+		'title'    => 'Contact — contenu éditable',
+		'location' => [ [ [
+			'param'    => 'page_template',
+			'operator' => '==',
+			'value'    => 'page-contact.php',
+		] ] ],
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'label_placement' => 'top',
+		'fields'          => [
+
+			/* ── TEXTES INTRO ─────────────────────────────── */
+			[ 'key' => 'field_contact_eyebrow',        'label' => 'Surtitre (ex : « Restons en contact »)',            'name' => 'contact_eyebrow',        'type' => 'text' ],
+			[ 'key' => 'field_contact_title',          'label' => 'Titre (HTML — utilise <em>mot</em> et <br>)',        'name' => 'contact_title',          'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <br> pour le saut de ligne et <em>mot</em> pour l\'italique doré.' ],
+			[ 'key' => 'field_contact_sub',            'label' => 'Phrase de réassurance (ex : « sous 48h »)',          'name' => 'contact_sub',            'type' => 'text' ],
+
+			/* ── COORDONNÉES ──────────────────────────────── */
+			[ 'key' => 'field_contact_email',          'label' => 'Adresse e-mail de contact',                         'name' => 'contact_email',          'type' => 'email' ],
+			[ 'key' => 'field_contact_network_label',  'label' => 'Libellé lien réseau (ex : « Réseau Drolung »)',      'name' => 'contact_network_label',  'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_contact_network_url',    'label' => 'URL du site réseau (ex : https://drolung.org)',      'name' => 'contact_network_url',    'type' => 'url',  'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_contact_network_display','label' => 'Texte affiché du lien réseau (ex : drolung.org)',    'name' => 'contact_network_display','type' => 'text' ],
+		],
+	] );
 }
 
 /**
