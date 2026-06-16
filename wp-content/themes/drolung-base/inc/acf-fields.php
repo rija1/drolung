@@ -470,6 +470,103 @@ function drolung_register_acf_fields() {
 	] );
 
 	/* ─────────────────────────────────────────────────────────
+	 * SINGLE PROJET.
+	 * Shown on individual projet CPT posts.
+	 * Covers hero badges, chiffres clés, editorial sections
+	 * (récit, défi, galerie, budget, timeline, CTA).
+	 * Per-project data (title, excerpt, featured image) stays in
+	 * standard WP fields; repeatable content stored as HTML
+	 * (wysiwyg / textarea) in numbered flat keys.
+	 * TODO: migrer vers drolung-network CPT fields quand actif.
+	 * Portée 2026-06-16.
+	 * ───────────────────────────────────────────────────────── */
+	acf_add_local_field_group( [
+		'key'      => 'group_drolung_single_projet',
+		'title'    => 'Projet — contenu éditable (single)',
+		'location' => [ [ [
+			'param'    => 'post_type',
+			'operator' => '==',
+			'value'    => 'projet',
+		] ] ],
+		'menu_order'      => 5,
+		'position'        => 'normal',
+		'label_placement' => 'top',
+		'fields'          => [
+
+			/* ── HERO ─────────────────────────────────────── */
+			[ 'key' => 'field_sp_hero_tab',       'label' => 'Hero',                      'name' => '',                'type' => 'tab', 'placement' => 'top' ],
+			[ 'key' => 'field_sp_hero_image_url', 'label' => 'Image hero (URL) — remplace l\'image mise en avant si renseignée', 'name' => 'hero_image_url', 'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ],
+			[ 'key' => 'field_sp_domaine',        'label' => 'Domaine (ex : Environnement, Éducation)', 'name' => 'projet_domaine', 'type' => 'text' ],
+			[ 'key' => 'field_sp_statut',         'label' => 'Statut (ex : En préparation, En cours, Terminé)', 'name' => 'projet_statut', 'type' => 'text' ],
+			[ 'key' => 'field_sp_pays',           'label' => 'Pays / localisation',       'name' => 'projet_pays',     'type' => 'text' ],
+
+			/* ── CHIFFRES CLÉS ──────────────────────────── */
+			[ 'key' => 'field_sp_stats_tab',    'label' => 'Chiffres clés (bande sous le hero)', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_stat_1_num',   'label' => 'Stat 1 — valeur',  'name' => 'single_projet_stat_1_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_sp_stat_1_label', 'label' => 'Stat 1 — libellé', 'name' => 'single_projet_stat_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_sp_stat_2_num',   'label' => 'Stat 2 — valeur',  'name' => 'single_projet_stat_2_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_sp_stat_2_label', 'label' => 'Stat 2 — libellé', 'name' => 'single_projet_stat_2_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_sp_stat_3_num',   'label' => 'Stat 3 — valeur',  'name' => 'single_projet_stat_3_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_sp_stat_3_label', 'label' => 'Stat 3 — libellé', 'name' => 'single_projet_stat_3_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_sp_stat_4_num',   'label' => 'Stat 4 — valeur',  'name' => 'single_projet_stat_4_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_sp_stat_4_label', 'label' => 'Stat 4 — libellé', 'name' => 'single_projet_stat_4_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+
+			/* ── META PROJET (post-meta standards) ──────── */
+			[ 'key' => 'field_sp_meta_tab',         'label' => 'Meta projet',              'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_budget_eur',        'label' => 'Budget (EUR)',             'name' => 'projet_budget_eur',         'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_sp_montant_collecte',  'label' => 'Montant collecté (EUR)',   'name' => 'projet_montant_collecte_eur','type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_sp_beneficiaires',     'label' => 'Bénéficiaires',            'name' => 'projet_beneficiaires',      'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_sp_partenaires',       'label' => 'Partenaires (texte libre)','name' => 'projet_partenaires',        'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_sp_date_debut',        'label' => 'Date début (ex : 2021)',   'name' => 'projet_date_debut',         'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_sp_date_fin',          'label' => 'Date fin (ex : 2025)',     'name' => 'projet_date_fin',           'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+
+			/* ── SECTION RÉCIT ───────────────────────────── */
+			[ 'key' => 'field_sp_recit_tab',     'label' => 'Section récit / le projet',   'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_recit_eyebrow', 'label' => 'Récit — surtitre',            'name' => 'single_projet_recit_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_recit_title',   'label' => 'Récit — titre (HTML)',         'name' => 'single_projet_recit_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour l\'italique doré.' ],
+			[ 'key' => 'field_sp_recit_body',    'label' => 'Récit — corps (plusieurs §)', 'name' => 'single_projet_recit_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+
+			/* ── SECTION DÉFI ────────────────────────────── */
+			[ 'key' => 'field_sp_defi_tab',     'label' => 'Section défi (fond sombre)',   'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_defi_eyebrow', 'label' => 'Défi — surtitre',             'name' => 'single_projet_defi_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_defi_title',   'label' => 'Défi — titre (HTML)',          'name' => 'single_projet_defi_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_sp_defi_body',    'label' => 'Défi — corps (HTML)',          'name' => 'single_projet_defi_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+
+			/* ── GALERIE ─────────────────────────────────── */
+			[ 'key' => 'field_sp_galerie_tab',     'label' => 'Galerie photos',            'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_photos',          'label' => 'Photos',                    'name' => 'photos', 'type' => 'gallery', 'return_format' => 'array',
+			  'instructions' => 'Le champ gallery ACF Pro. Activé automatiquement si ACF Pro est installé.', 'conditional_logic' => 0 ],
+			[ 'key' => 'field_sp_galerie_eyebrow', 'label' => 'Galerie — surtitre',        'name' => 'single_projet_galerie_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_galerie_title',   'label' => 'Galerie — titre (HTML)',    'name' => 'single_projet_galerie_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_sp_galerie_sub',     'label' => 'Galerie — légende (chapeau)','name' => 'single_projet_galerie_sub',    'type' => 'text' ],
+
+			/* ── BUDGET ──────────────────────────────────── */
+			[ 'key' => 'field_sp_budget_tab',     'label' => 'Section budget',             'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_budget_eyebrow', 'label' => 'Budget — surtitre',          'name' => 'single_projet_budget_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_budget_title',   'label' => 'Budget — titre (HTML)',      'name' => 'single_projet_budget_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_sp_budget_intro',   'label' => 'Budget — intro',             'name' => 'single_projet_budget_intro',   'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_sp_budget_lines',   'label' => 'Budget — lignes (HTML <li>)', 'name' => 'single_projet_budget_lines',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
+			  'instructions' => 'Entrer des lignes <li> avec <span> pour le libellé et <strong> pour le montant. Ex : <li><span>Accompagnement mensuel</span><strong>365 €/mois</strong></li>' ],
+
+			/* ── TIMELINE ────────────────────────────────── */
+			[ 'key' => 'field_sp_timeline_tab',     'label' => 'Timeline / chronologie',   'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_timeline_eyebrow', 'label' => 'Timeline — surtitre',      'name' => 'single_projet_timeline_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_timeline_title',   'label' => 'Timeline — titre (HTML)',  'name' => 'single_projet_timeline_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_sp_timeline_items',   'label' => 'Timeline — items (HTML <li>)', 'name' => 'single_projet_timeline_items', 'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
+			  'instructions' => 'Entrer des <li> avec <span class="pp-tl-date">2021</span><div>Texte de l\'événement</div>.' ],
+
+			/* ── CTA DON ─────────────────────────────────── */
+			[ 'key' => 'field_sp_cta_tab',     'label' => 'CTA — Soutenir ce projet',     'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_sp_cta_eyebrow', 'label' => 'CTA — surtitre',               'name' => 'single_projet_cta_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_sp_cta_title',   'label' => 'CTA — titre (HTML)',            'name' => 'single_projet_cta_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_sp_cta_body',    'label' => 'CTA — corps (per-site: DSF/DSM différent)', 'name' => 'single_projet_cta_body', 'type' => 'textarea', 'rows' => 3,
+			  'instructions' => 'Pour DSF : "Vos dons à DSF financent directement…". Pour DSM : "Vos dons, collectés par DSF, financent…". Seeder via mu-plugin 05.' ],
+			[ 'key' => 'field_sp_cta_footer',  'label' => 'CTA — mention bas (mono, maj)', 'name' => 'single_projet_cta_footer',  'type' => 'text',
+			  'instructions' => 'Ex : PROGRAMME PORTÉ PAR EDU4MADA · LOCALISATION : ANJOZOROBE. Laisser vide pour auto-générer depuis les meta.' ],
+		],
+	] );
+
+	/* ─────────────────────────────────────────────────────────
 	 * PROJETS ARCHIVE.
 	 * Shown on the post_type_archive for 'projet'.
 	 * Covers the hero and intro section (static/editorial copy).

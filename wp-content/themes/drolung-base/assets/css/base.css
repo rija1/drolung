@@ -1500,3 +1500,170 @@
       .projets-intro { padding: 0 20px; }
       .projets-intro__filters { flex-direction: column; gap: 24px; }
     }
+
+/* ===== single-projet — portée 2026-06-16 ===== */
+
+    /* Hero: full-bleed background image with overlay */
+    .sp-hero {
+      padding: 0;
+      min-height: 388px;
+      display: flex;
+      align-items: flex-end;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .sp-hero::after { display: none; } /* neutralise le gradient par défaut de .page-hero */
+    .sp-hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,22,18,0.15) 0%, rgba(26,22,18,0.75) 100%);
+    }
+    .sp-hero__body {
+      position: relative;
+      width: 100%;
+      padding-top: 80px;
+      padding-bottom: 48px;
+    }
+
+    /* Badges domaine / statut */
+    .sp-hero__badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .sp-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+    }
+    .sp-badge--cream   { background: var(--cream);   color: var(--charcoal); }
+    .sp-badge--saffron { background: var(--saffron); color: var(--charcoal); }
+
+    /* Chiffres clés band */
+    .sp-stats-band {
+      background: var(--cream-dark);
+      border-bottom: 1px solid var(--border);
+    }
+    .sp-stats-band__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      padding-top: 34px;
+      padding-bottom: 34px;
+    }
+    .pp-num {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: 700;
+      color: var(--maroon);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .pp-numlabel {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* Galerie photos — grid masonry-like */
+    .pp-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .pp-gallery img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Budget list */
+    .pp-budget {
+      list-style: none;
+      padding: 0;
+      margin: 24px 0 0;
+      border-top: 1px solid var(--border);
+    }
+    .pp-budget li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      color: var(--charcoal);
+      line-height: 1.5;
+    }
+    .pp-budget li span { flex: 1; }
+    .pp-budget li strong {
+      white-space: nowrap;
+      font-weight: 700;
+      color: var(--maroon);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    /* Timeline */
+    .pp-timeline {
+      list-style: none;
+      padding: 0;
+      margin: 32px 0 0;
+    }
+    .pp-timeline li {
+      display: flex;
+      gap: 24px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      color: var(--charcoal);
+      line-height: 1.6;
+    }
+    .pp-tl-date {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--saffron);
+      white-space: nowrap;
+      padding-top: 3px;
+      min-width: 80px;
+    }
+    .pp-timeline li strong { color: var(--charcoal); font-weight: 700; }
+
+    /* CTA button — inside .inner-section--maroon */
+    .pp-cta-btn {
+      display: inline-block;
+      background: var(--saffron);
+      color: var(--charcoal);
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 36px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .pp-cta-btn:hover {
+      background: var(--saffron-lt);
+      color: var(--charcoal);
+    }
+
+    /* Responsive — single-projet */
+    @media (max-width: 900px) {
+      .sp-stats-band__grid { grid-template-columns: repeat(2, 1fr); }
+      .pp-gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .sp-hero { min-height: 300px; }
+      .sp-stats-band__grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .pp-gallery { grid-template-columns: 1fr; }
+      .pp-budget li { flex-direction: column; gap: 4px; }
+      .pp-timeline li { flex-direction: column; gap: 6px; }
+    }
