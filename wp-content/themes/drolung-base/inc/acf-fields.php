@@ -292,6 +292,33 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_action_principe_4_body',  'label' => 'Principe 4 — texte',  'name' => 'principe_4_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
 		],
 	] );
+
+	/* ─────────────────────────────────────────────────────────
+	 * RESSOURCES PAGE.
+	 * Bound to the auto-created page with slug 'ressources'.
+	 * Placeholder "Bientôt disponible" — contenu éditable.
+	 * Portée 2026-06-16.
+	 * ───────────────────────────────────────────────────────── */
+	acf_add_local_field_group( [
+		'key'      => 'group_drolung_ressources',
+		'title'    => 'Ressources — contenu éditable',
+		'location' => [ [ [
+			'param'    => 'page',
+			'operator' => '==',
+			'value'    => drolung_acf_page_id_by_slug( 'ressources' ),
+		] ] ],
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'fields'          => [
+			[ 'key' => 'field_ressources_eyebrow',    'label' => 'Surtitre (ex : « Bientôt disponible »)',       'name' => 'ressources_eyebrow',    'type' => 'text' ],
+			[ 'key' => 'field_ressources_title',      'label' => 'Titre (HTML — utilise <em>mot</em>)',          'name' => 'ressources_title',      'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ],
+			[ 'key' => 'field_ressources_body',       'label' => 'Texte du placeholder',                        'name' => 'ressources_body',       'type' => 'textarea', 'rows' => 4 ],
+			[ 'key' => 'field_ressources_cta1_label', 'label' => 'Bouton 1 — texte',                            'name' => 'ressources_cta1_label', 'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_ressources_cta1_url',   'label' => 'Bouton 1 — URL',                              'name' => 'ressources_cta1_url',   'type' => 'url',  'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_ressources_cta2_label', 'label' => 'Bouton 2 — texte',                            'name' => 'ressources_cta2_label', 'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_ressources_cta2_url',   'label' => 'Bouton 2 — URL',                              'name' => 'ressources_cta2_url',   'type' => 'url',  'wrapper' => [ 'width' => 50 ] ],
+		],
+	] );
 }
 
 /**
