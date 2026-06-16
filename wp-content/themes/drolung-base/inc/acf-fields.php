@@ -136,13 +136,82 @@ function drolung_register_acf_fields() {
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'fields'          => [
-			[ 'key' => 'field_apropos_hero_eyebrow', 'label' => 'Hero — surtitre', 'name' => 'hero_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_apropos_hero_title',   'label' => 'Hero — titre (HTML)', 'name' => 'hero_title', 'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_apropos_hero_sub',     'label' => 'Hero — sous-titre', 'name' => 'hero_sub', 'type' => 'textarea', 'rows' => 3 ],
 
-			[ 'key' => 'field_apropos_mission_eyebrow', 'label' => 'Mission — surtitre', 'name' => 'mission_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_apropos_mission_title',   'label' => 'Mission — titre',    'name' => 'mission_title',   'type' => 'text' ],
-			[ 'key' => 'field_apropos_mission_body',    'label' => 'Mission — texte',    'name' => 'mission_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			/* ── HERO ─────────────────────────────────────── */
+			[ 'key' => 'field_apropos_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'hero_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_apropos_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'hero_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ],
+			[ 'key' => 'field_apropos_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_apropos_hero_image',   'label' => 'Hero — image de fond',  'name' => 'hero_image',   'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ],
+
+			/* ── NOTRE HISTOIRE ──────────────────────────── */
+			[ 'key' => 'field_apropos_histoire_tab',     'label' => 'Notre histoire',         'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_histoire_eyebrow', 'label' => 'Histoire — surtitre',    'name' => 'histoire_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_apropos_histoire_title',   'label' => 'Histoire — titre (HTML)','name' => 'histoire_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_apropos_histoire_body',    'label' => 'Histoire — texte',       'name' => 'histoire_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			[ 'key' => 'field_apropos_histoire_image',   'label' => 'Histoire — image',       'name' => 'histoire_image',   'type' => 'image', 'return_format' => 'url' ],
+
+			/* ── NOS VALEURS ─────────────────────────────── */
+			[ 'key' => 'field_apropos_valeurs_tab',     'label' => 'Nos valeurs',              'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_valeurs_eyebrow', 'label' => 'Valeurs — surtitre',       'name' => 'valeurs_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_apropos_valeurs_title',   'label' => 'Valeurs — titre (HTML)',   'name' => 'valeurs_title',   'type' => 'textarea', 'rows' => 2 ],
+
+			[ 'key' => 'field_apropos_valeur_1_label', 'label' => 'Valeur 1 — libellé', 'name' => 'valeur_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 35 ] ],
+			[ 'key' => 'field_apropos_valeur_1_body',  'label' => 'Valeur 1 — texte',   'name' => 'valeur_1_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 65 ] ],
+			[ 'key' => 'field_apropos_valeur_2_label', 'label' => 'Valeur 2 — libellé', 'name' => 'valeur_2_label', 'type' => 'text', 'wrapper' => [ 'width' => 35 ] ],
+			[ 'key' => 'field_apropos_valeur_2_body',  'label' => 'Valeur 2 — texte',   'name' => 'valeur_2_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 65 ] ],
+			[ 'key' => 'field_apropos_valeur_3_label', 'label' => 'Valeur 3 — libellé', 'name' => 'valeur_3_label', 'type' => 'text', 'wrapper' => [ 'width' => 35 ] ],
+			[ 'key' => 'field_apropos_valeur_3_body',  'label' => 'Valeur 3 — texte',   'name' => 'valeur_3_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 65 ] ],
+			[ 'key' => 'field_apropos_valeur_4_label', 'label' => 'Valeur 4 — libellé', 'name' => 'valeur_4_label', 'type' => 'text', 'wrapper' => [ 'width' => 35 ] ],
+			[ 'key' => 'field_apropos_valeur_4_body',  'label' => 'Valeur 4 — texte',   'name' => 'valeur_4_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 65 ] ],
+
+			/* ── DRUPON KHEN RINPOCHE ─────────────────────── */
+			[ 'key' => 'field_apropos_rinpoche_tab',       'label' => 'Drupon Khen Rinpoche',         'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_rinpoche_photo',     'label' => 'Photo (carrée)',                'name' => 'rinpoche_photo',     'type' => 'image', 'return_format' => 'url' ],
+			[ 'key' => 'field_apropos_rinpoche_name',      'label' => 'Nom — ligne 1',                'name' => 'rinpoche_name',      'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_apropos_rinpoche_sub_name',  'label' => 'Nom — ligne 2 (en italique)',  'name' => 'rinpoche_sub_name',  'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_apropos_rinpoche_eyebrow',   'label' => 'Surtitre',                     'name' => 'rinpoche_eyebrow',   'type' => 'text' ],
+			[ 'key' => 'field_apropos_rinpoche_title',     'label' => 'Titre (HTML)',                  'name' => 'rinpoche_title',     'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_apropos_rinpoche_body',      'label' => 'Texte (deux paragraphes)',      'name' => 'rinpoche_body',      'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			[ 'key' => 'field_apropos_rinpoche_url',       'label' => 'URL du lien externe',           'name' => 'rinpoche_url',       'type' => 'url' ],
+			[ 'key' => 'field_apropos_rinpoche_link_label','label' => 'Texte du lien externe',        'name' => 'rinpoche_link_label','type' => 'text' ],
+
+			/* ── CITATION ─────────────────────────────────── */
+			[ 'key' => 'field_apropos_quote_tab',        'label' => 'Citation',                  'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_quote_text',       'label' => 'Texte de la citation',      'name' => 'quote_text',       'type' => 'textarea', 'rows' => 5 ],
+			[ 'key' => 'field_apropos_quote_author',     'label' => 'Auteur — nom (ligne 1)',    'name' => 'quote_author',     'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_apropos_quote_author_sub', 'label' => 'Auteur — rôle (ligne 2)',   'name' => 'quote_author_sub', 'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+
+			/* ── LE BUREAU ────────────────────────────────── */
+			[ 'key' => 'field_apropos_bureau_tab',   'label' => 'Le bureau',              'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_bureau_eyebrow','label' => 'Surtitre',              'name' => 'bureau_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_apropos_bureau_title', 'label' => 'Titre (HTML)',           'name' => 'bureau_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_apropos_bureau_intro', 'label' => 'Chapeau',               'name' => 'bureau_intro',   'type' => 'textarea', 'rows' => 3 ],
+
+			/* Membre 1 */
+			[ 'key' => 'field_apropos_member_1_role',  'label' => 'Membre 1 — rôle',  'name' => 'member_1_role',  'type' => 'text',    'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_1_name',  'label' => 'Membre 1 — nom',   'name' => 'member_1_name',  'type' => 'text',    'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_apropos_member_1_photo', 'label' => 'Membre 1 — photo', 'name' => 'member_1_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_1_bio',   'label' => 'Membre 1 — bio',   'name' => 'member_1_bio',   'type' => 'textarea', 'rows' => 3 ],
+
+			/* Membre 2 */
+			[ 'key' => 'field_apropos_member_2_role',  'label' => 'Membre 2 — rôle',  'name' => 'member_2_role',  'type' => 'text',    'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_2_name',  'label' => 'Membre 2 — nom',   'name' => 'member_2_name',  'type' => 'text',    'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_apropos_member_2_photo', 'label' => 'Membre 2 — photo', 'name' => 'member_2_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_2_bio',   'label' => 'Membre 2 — bio',   'name' => 'member_2_bio',   'type' => 'textarea', 'rows' => 3 ],
+
+			/* Membre 3 */
+			[ 'key' => 'field_apropos_member_3_role',  'label' => 'Membre 3 — rôle',  'name' => 'member_3_role',  'type' => 'text',    'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_3_name',  'label' => 'Membre 3 — nom',   'name' => 'member_3_name',  'type' => 'text',    'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_apropos_member_3_photo', 'label' => 'Membre 3 — photo', 'name' => 'member_3_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_3_bio',   'label' => 'Membre 3 — bio',   'name' => 'member_3_bio',   'type' => 'textarea', 'rows' => 3 ],
+
+			/* ── RÉSEAU DROLUNG ───────────────────────────── */
+			[ 'key' => 'field_apropos_reseau_tab',    'label' => 'Le réseau Drolung',     'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_apropos_reseau_eyebrow','label' => 'Surtitre',              'name' => 'reseau_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_apropos_reseau_title',  'label' => 'Titre (HTML)',           'name' => 'reseau_title',   'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_apropos_reseau_body',   'label' => 'Texte',                 'name' => 'reseau_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
+			[ 'key' => 'field_apropos_reseau_image',  'label' => 'Image',                 'name' => 'reseau_image',   'type' => 'image', 'return_format' => 'url' ],
 		],
 	] );
 
