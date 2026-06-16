@@ -1263,3 +1263,139 @@
     .member-role { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--maroon); font-weight: 600; }
     .member-name { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; }
     .member-bio { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin: 0; }
+
+/* === front-page — portée 2026-06-16 === */
+
+    /* Scroll progress bar */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--maroon), var(--saffron));
+      z-index: 9999;
+      pointer-events: none;
+      border-radius: 0 2px 2px 0;
+      transition: width 80ms linear;
+    }
+
+    /* Chiffres clés section */
+    .chiffres-section { background: var(--charcoal); padding: 80px 0; position: relative; }
+    .chiffres-inner { max-width: var(--container); margin: 0 auto; padding: 0 32px; }
+    .chiffres-header { text-align: center; margin-bottom: 56px; }
+    .chiffres-header .section-title { color: var(--white); margin-bottom: 0; }
+    .chiffres-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+    .chiffre-card {
+      background: rgba(255,255,255,0.06);
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .chiffre-card__num {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--saffron-lt);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .chiffre-card__label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+    }
+    .chiffres-cta {
+      text-align: center;
+      font-style: italic;
+      font-family: var(--font-serif);
+      color: rgba(255,255,255,0.55);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Programmes — 4-column variant */
+    .prog-grid--four { grid-template-columns: repeat(4, 1fr); }
+    .prog-card__domain {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--maroon);
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    /* Newsletter section */
+    .newsletter-section { background: var(--maroon); padding: 72px 0; }
+    .newsletter-inner {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+    }
+    .newsletter-text { flex: 1; }
+    .newsletter-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .newsletter-body { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.6; }
+    .newsletter-form {
+      display: flex;
+      gap: 0;
+      flex-shrink: 0;
+      width: 420px;
+    }
+    .newsletter-form input {
+      flex: 1;
+      padding: 14px 18px;
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      outline: none;
+      border-radius: 3px 0 0 3px;
+    }
+    .newsletter-form input::placeholder { color: rgba(255,255,255,0.45); }
+    .newsletter-form button {
+      padding: 14px 24px;
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 0 3px 3px 0;
+      transition: background var(--transition);
+    }
+    .newsletter-form button:hover { background: var(--saffron-lt); }
+
+    /* Responsive — chiffres + newsletter + prog-grid--four */
+    @media (max-width: 1100px) {
+      .chiffres-grid { grid-template-columns: repeat(2, 1fr); }
+      .prog-grid--four { grid-template-columns: repeat(2, 1fr); }
+      .newsletter-inner { flex-direction: column; align-items: flex-start; }
+      .newsletter-form { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .chiffres-grid { grid-template-columns: 1fr; }
+      .prog-grid--four { grid-template-columns: 1fr; }
+    }

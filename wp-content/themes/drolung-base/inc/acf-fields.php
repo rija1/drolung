@@ -113,11 +113,64 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_front_test_author_role', 'label' => 'Rôle / lieu',    'name' => 'test_author_role', 'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
 			[ 'key' => 'field_front_test_author_photo','label' => 'Photo (carrée)', 'name' => 'test_author_photo','type' => 'image', 'return_format' => 'url' ],
 
+			/* ── CHIFFRES CLÉS ──────────────────────────── */
+			[ 'key' => 'field_front_chiffres_tab',     'label' => 'Chiffres clés', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_front_chiffres_eyebrow', 'label' => 'Chiffres — surtitre',    'name' => 'chiffres_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_front_chiffres_title',   'label' => 'Chiffres — titre',       'name' => 'chiffres_title',   'type' => 'text' ],
+			[ 'key' => 'field_front_chiffres_cta',     'label' => 'Chiffres — phrase de conclusion', 'name' => 'chiffres_cta', 'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_front_chiffre_1_num',    'label' => 'Chiffre 1 — valeur',    'name' => 'chiffre_1_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_1_label',  'label' => 'Chiffre 1 — libellé',  'name' => 'chiffre_1_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_chiffre_2_num',    'label' => 'Chiffre 2 — valeur',    'name' => 'chiffre_2_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_2_label',  'label' => 'Chiffre 2 — libellé',  'name' => 'chiffre_2_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_chiffre_3_num',    'label' => 'Chiffre 3 — valeur',    'name' => 'chiffre_3_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_3_label',  'label' => 'Chiffre 3 — libellé',  'name' => 'chiffre_3_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_chiffre_4_num',    'label' => 'Chiffre 4 — valeur',    'name' => 'chiffre_4_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_4_label',  'label' => 'Chiffre 4 — libellé',  'name' => 'chiffre_4_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_chiffre_5_num',    'label' => 'Chiffre 5 — valeur',    'name' => 'chiffre_5_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_5_label',  'label' => 'Chiffre 5 — libellé',  'name' => 'chiffre_5_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_chiffre_6_num',    'label' => 'Chiffre 6 — valeur',    'name' => 'chiffre_6_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_chiffre_6_label',  'label' => 'Chiffre 6 — libellé',  'name' => 'chiffre_6_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+
+			/* ── NOS PROJETS (régions) ───────────────────── */
+			[ 'key' => 'field_front_projets_tab',    'label' => 'Nos projets (préview)', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_front_region_1_name',  'label' => 'Projet 1 — nom',    'name' => 'region_1_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_region_1_count', 'label' => 'Projet 1 — détail', 'name' => 'region_1_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_region_2_name',  'label' => 'Projet 2 — nom',    'name' => 'region_2_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_region_2_count', 'label' => 'Projet 2 — détail', 'name' => 'region_2_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_region_3_name',  'label' => 'Projet 3 — nom',    'name' => 'region_3_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_region_3_count', 'label' => 'Projet 3 — détail', 'name' => 'region_3_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_region_4_name',  'label' => 'Projet 4 — nom',    'name' => 'region_4_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_region_4_count', 'label' => 'Projet 4 — détail', 'name' => 'region_4_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
+
+			/* ── NOS ENGAGEMENTS ─────────────────────────── */
+			[ 'key' => 'field_front_engagements_tab',    'label' => 'Nos engagements', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_front_engagement_1_label', 'label' => 'Engagement 1 — titre', 'name' => 'engagement_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_engagement_1_body',  'label' => 'Engagement 1 — texte', 'name' => 'engagement_1_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_engagement_2_label', 'label' => 'Engagement 2 — titre', 'name' => 'engagement_2_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_engagement_2_body',  'label' => 'Engagement 2 — texte', 'name' => 'engagement_2_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_engagement_3_label', 'label' => 'Engagement 3 — titre', 'name' => 'engagement_3_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_engagement_3_body',  'label' => 'Engagement 3 — texte', 'name' => 'engagement_3_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_front_engagement_4_label', 'label' => 'Engagement 4 — titre', 'name' => 'engagement_4_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_front_engagement_4_body',  'label' => 'Engagement 4 — texte', 'name' => 'engagement_4_body',  'type' => 'textarea', 'rows' => 2, 'wrapper' => [ 'width' => 60 ] ],
+
+			/* ── NEWSLETTER ──────────────────────────────── */
+			[ 'key' => 'field_front_newsletter_tab',   'label' => 'Newsletter', 'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_front_newsletter_title', 'label' => 'Newsletter — titre', 'name' => 'newsletter_title', 'type' => 'text' ],
+			[ 'key' => 'field_front_newsletter_body',  'label' => 'Newsletter — texte', 'name' => 'newsletter_body',  'type' => 'text' ],
+
 			/* ── DONATE ──────────────────────────────────── */
 			[ 'key' => 'field_front_donate_tab',     'label' => 'Faire un don', 'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_front_donate_eyebrow', 'label' => 'Surtitre', 'name' => 'donate_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_front_donate_title',   'label' => 'Titre (HTML)', 'name' => 'donate_title', 'type' => 'textarea', 'rows' => 2, 'new_lines' => '' ],
 			[ 'key' => 'field_front_donate_body',    'label' => 'Texte',    'name' => 'donate_body', 'type' => 'textarea', 'rows' => 3, 'new_lines' => 'wpautop' ],
+
+			/* Exemples de dons */
+			[ 'key' => 'field_front_don_ex_1_montant', 'label' => 'Exemple don 1 — montant', 'name' => 'don_exemple_1_montant', 'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_don_ex_1_desc',    'label' => 'Exemple don 1 — description', 'name' => 'don_exemple_1_desc', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_don_ex_2_montant', 'label' => 'Exemple don 2 — montant', 'name' => 'don_exemple_2_montant', 'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_don_ex_2_desc',    'label' => 'Exemple don 2 — description', 'name' => 'don_exemple_2_desc', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
+			[ 'key' => 'field_front_don_ex_3_montant', 'label' => 'Exemple don 3 — montant', 'name' => 'don_exemple_3_montant', 'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_front_don_ex_3_desc',    'label' => 'Exemple don 3 — description', 'name' => 'don_exemple_3_desc', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
 		],
 	] );
 
