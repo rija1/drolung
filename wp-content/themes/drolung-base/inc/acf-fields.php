@@ -321,6 +321,69 @@ function drolung_register_acf_fields() {
 	] );
 
 	/* ─────────────────────────────────────────────────────────
+	 * S'ENGAGER PAGE.
+	 * Bound by slug (same pattern as a-propos, notre-action).
+	 * Uses a URL-condition so the group shows on both DSF and DSM:
+	 *   slug == s-engager  (matches any site that has this page).
+	 * Portée 2026-06-16.
+	 * ───────────────────────────────────────────────────────── */
+	acf_add_local_field_group( [
+		'key'      => 'group_drolung_engager',
+		'title'    => 'S\'engager — contenu éditable',
+		'location' => [ [ [
+			'param'    => 'page',
+			'operator' => '==',
+			'value'    => drolung_acf_page_id_by_slug( 's-engager' ),
+		] ] ],
+		'menu_order'      => 0,
+		'position'        => 'normal',
+		'label_placement' => 'top',
+		'fields'          => [
+
+			/* ── HERO ─────────────────────────────────────── */
+			[ 'key' => 'field_engager_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_engager_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'engager_hero_eyebrow', 'type' => 'text' ],
+			[ 'key' => 'field_engager_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'engager_hero_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ],
+			[ 'key' => 'field_engager_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'engager_hero_sub',     'type' => 'textarea', 'rows' => 3 ],
+
+			/* ── SECTION DON ──────────────────────────────── */
+			[ 'key' => 'field_engager_don_tab',           'label' => 'Section don',             'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_engager_don_eyebrow',       'label' => 'Don — surtitre',           'name' => 'engager_don_eyebrow',       'type' => 'text' ],
+			[ 'key' => 'field_engager_don_title',         'label' => 'Don — titre (HTML)',       'name' => 'engager_don_title',         'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_engager_don_intro',         'label' => 'Don — phrase intro',       'name' => 'engager_don_intro',         'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_engager_don_body',          'label' => 'Don — corps (HTML — liste exemples + info box)',  'name' => 'engager_don_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
+			                                                'instructions' => 'Pour DSF : liste des coûts + boîte "Paiement en ligne bientôt disponible". Pour DSM : boîte de renvoi vers DSF.' ],
+			[ 'key' => 'field_engager_don_cta_label',     'label' => 'Don — texte du bouton',   'name' => 'engager_don_cta_label',     'type' => 'text' ],
+			[ 'key' => 'field_engager_don_image',         'label' => 'Don — image',              'name' => 'engager_don_image',         'type' => 'image', 'return_format' => 'url' ],
+			[ 'key' => 'field_engager_don_image_alt',     'label' => 'Don — alt image',          'name' => 'engager_don_image_alt',     'type' => 'text' ],
+
+			/* ── SECTION PARTAGE ──────────────────────────── */
+			[ 'key' => 'field_engager_partage_tab',       'label' => 'Section partage',          'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_engager_partage_eyebrow',   'label' => 'Partage — surtitre',       'name' => 'engager_partage_eyebrow',   'type' => 'text' ],
+			[ 'key' => 'field_engager_partage_title',     'label' => 'Partage — titre (HTML)',   'name' => 'engager_partage_title',     'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_engager_partage_body',      'label' => 'Partage — texte',          'name' => 'engager_partage_body',      'type' => 'textarea', 'rows' => 4 ],
+			[ 'key' => 'field_engager_facebook_url',      'label' => 'Lien Facebook',            'name' => 'engager_facebook_url',      'type' => 'url' ],
+			[ 'key' => 'field_engager_linkedin_url',      'label' => 'Lien LinkedIn',            'name' => 'engager_linkedin_url',      'type' => 'url' ],
+			[ 'key' => 'field_engager_instagram_url',     'label' => 'Lien Instagram',           'name' => 'engager_instagram_url',     'type' => 'url' ],
+			[ 'key' => 'field_engager_partage_image',     'label' => 'Partage — image',          'name' => 'engager_partage_image',     'type' => 'image', 'return_format' => 'url' ],
+			[ 'key' => 'field_engager_partage_image_alt', 'label' => 'Partage — alt image',      'name' => 'engager_partage_image_alt', 'type' => 'text' ],
+
+			/* ── SECTION PARTENARIAT ──────────────────────── */
+			[ 'key' => 'field_engager_partenariat_tab',       'label' => 'Section partenariat',        'name' => '', 'type' => 'tab' ],
+			[ 'key' => 'field_engager_partenariat_eyebrow',   'label' => 'Partenariat — surtitre',     'name' => 'engager_partenariat_eyebrow',   'type' => 'text' ],
+			[ 'key' => 'field_engager_partenariat_title',     'label' => 'Partenariat — titre (HTML)', 'name' => 'engager_partenariat_title',     'type' => 'textarea', 'rows' => 2 ],
+			[ 'key' => 'field_engager_partenariat_body',      'label' => 'Partenariat — texte',        'name' => 'engager_partenariat_body',      'type' => 'textarea', 'rows' => 4 ],
+			[ 'key' => 'field_engager_partenariat_cta_label', 'label' => 'Partenariat — texte bouton', 'name' => 'engager_partenariat_cta_label', 'type' => 'text' ],
+
+			/* Mécénat cards */
+			[ 'key' => 'field_engager_mecenat_1_title', 'label' => 'Carte mécénat 1 — titre', 'name' => 'engager_mecenat_1_title', 'type' => 'text',     'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_engager_mecenat_1_body',  'label' => 'Carte mécénat 1 — texte', 'name' => 'engager_mecenat_1_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
+			[ 'key' => 'field_engager_mecenat_2_title', 'label' => 'Carte mécénat 2 — titre', 'name' => 'engager_mecenat_2_title', 'type' => 'text',     'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_engager_mecenat_2_body',  'label' => 'Carte mécénat 2 — texte', 'name' => 'engager_mecenat_2_body',  'type' => 'textarea', 'rows' => 3, 'wrapper' => [ 'width' => 60 ] ],
+		],
+	] );
+
+	/* ─────────────────────────────────────────────────────────
 	 * CONTACT PAGE.
 	 * Bound to page-contact.php template.
 	 * Location: page_template == page-contact.php so it works on every
