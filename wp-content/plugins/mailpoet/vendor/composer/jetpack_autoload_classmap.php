@@ -9516,6 +9516,10 @@ return array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/EmailEditor/Integrations/MailPoet/Patterns/Library/AbandonedCartPattern.php'
  ),
+ 'MailPoet\\EmailEditor\\Integrations\\MailPoet\\Patterns\\Library\\AbandonedCartReminderPattern' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/EmailEditor/Integrations/MailPoet/Patterns/Library/AbandonedCartReminderPattern.php'
+ ),
  'MailPoet\\EmailEditor\\Integrations\\MailPoet\\Patterns\\Library\\AbandonedCartWithDiscountPattern' => array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/EmailEditor/Integrations/MailPoet/Patterns/Library/AbandonedCartWithDiscountPattern.php'
@@ -10656,6 +10660,18 @@ return array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/Newsletter/Editor/Transformer.php'
  ),
+ 'MailPoet\\Newsletter\\Embed\\NewsletterEmbedService' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/Newsletter/Embed/NewsletterEmbedService.php'
+ ),
+ 'MailPoet\\Newsletter\\Embed\\RestApi\\Endpoints\\NewsletterEmbedEndpoint' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/Newsletter/Embed/RestApi/Endpoints/NewsletterEmbedEndpoint.php'
+ ),
+ 'MailPoet\\Newsletter\\Embed\\RestApi\\Endpoints\\NewsletterEmbedSelectorEndpoint' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/Newsletter/Embed/RestApi/Endpoints/NewsletterEmbedSelectorEndpoint.php'
+ ),
  'MailPoet\\Newsletter\\Links\\Links' => array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/Newsletter/Links/Links.php'
@@ -10975,6 +10991,10 @@ return array(
  'MailPoet\\PostEditorBlocks\\MarketingOptinBlock' => array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/PostEditorBlocks/MarketingOptinBlock.php'
+ ),
+ 'MailPoet\\PostEditorBlocks\\NewsletterBlock' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/PostEditorBlocks/NewsletterBlock.php'
  ),
  'MailPoet\\PostEditorBlocks\\PostEditorBlock' => array(
  'version' => 'dev-trunk',
@@ -12195,6 +12215,10 @@ return array(
  'MailPoet\\WooCommerce\\MultichannelMarketing\\MPMarketingChannelDataController' => array(
  'version' => 'dev-trunk',
  'path' => $baseDir . '/lib/WooCommerce/MultichannelMarketing/MPMarketingChannelDataController.php'
+ ),
+ 'MailPoet\\WooCommerce\\NonPersistablePreviewData' => array(
+ 'version' => 'dev-trunk',
+ 'path' => $baseDir . '/lib/WooCommerce/NonPersistablePreviewData.php'
  ),
  'MailPoet\\WooCommerce\\RandomCouponCodeGenerator' => array(
  'version' => 'dev-trunk',
