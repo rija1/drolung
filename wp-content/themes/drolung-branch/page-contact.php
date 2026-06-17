@@ -2,13 +2,11 @@
 /**
  * Template for the "Contact" page.
  * Mirrors mockups/mockup-dsf/contact.html and mockups/mockup-dsm/contact.html.
- * Both DSF and DSM share this template; per-site content (email, objet options)
- * is editable via the ACF group group_drolung_contact on each site.
  *
- * Form handling: the mockup uses a plain HTML <form action="#">
- * which has no server-side handler. Replace with Contact Form 7 shortcode
- * once the plugin is installed. Until then the shortcode comment is kept.
- * TODO: install Contact Form 7 and replace the comment block below.
+ * Formulaire : Contact Form 7. Le formulaire est seedé sur chaque subsite par
+ * mu-plugins/06-drolung-cf7.php (gate drolung_cf7_form_dsf_v1 / _dsm_v1).
+ * Il est référencé par slug (post_name = 'contact') — pas par ID — pour être
+ * portable entre subsites.
  *
  * @package drolung-branch
  */
@@ -70,63 +68,20 @@ get_header();
 				</div><!-- /.coords -->
 			</div><!-- /.col-left -->
 
-			<!-- Colonne droite : formulaire -->
+			<!-- Colonne droite : formulaire CF7 -->
 			<div class="card fade-up" style="transition-delay:0.15s;padding:40px">
 				<?php
-				/*
-				 * TODO: Contact Form 7 — installer le plugin et remplacer ce bloc
-				 * par le shortcode du formulaire créé dans WP-admin.
-				 * Exemple : echo do_shortcode( '[contact-form-7 id="XXX" title="Contact"]' );
-				 *
-				 * En attendant, formulaire HTML statique non fonctionnel.
-				 */
+				$cf7_form = get_page_by_path( 'contact', OBJECT, 'wpcf7_contact_form' );
+				if ( $cf7_form && function_exists( 'wpcf7' ) ) {
+					echo do_shortcode( '[contact-form-7 id="' . absint( $cf7_form->ID ) . '"]' );
+				} else {
+					// CF7 pas encore activé / formulaire pas encore seedé.
+					// Visiter /wp-admin/ sur ce subsite pour déclencher le seed.
+					echo '<p style="color:var(--stone);font-size:14px">'
+						. esc_html__( 'Formulaire en cours de configuration. Revenez dans quelques instants.', 'drolung-branch' )
+						. '</p>';
+				}
 				?>
-				<!-- TODO: remplacer par shortcode CF7 une fois le plugin installé -->
-				<form action="#" method="post" novalidate style="display:flex;flex-direction:column;gap:20px">
-					<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-						<div>
-							<label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:6px" for="ct-prenom"><?php esc_html_e( 'Prénom', 'drolung-branch' ); ?></label>
-							<input id="ct-prenom" type="text" name="prenom" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s;box-sizing:border-box" placeholder="">
-						</div>
-						<div>
-							<label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:6px" for="ct-nom"><?php esc_html_e( 'Nom', 'drolung-branch' ); ?></label>
-							<input id="ct-nom" type="text" name="nom" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s;box-sizing:border-box" placeholder="">
-						</div>
-					</div>
-					<div>
-						<label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:6px" for="ct-email"><?php esc_html_e( 'Votre adresse e-mail', 'drolung-branch' ); ?></label>
-						<input id="ct-email" type="email" name="email" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s;box-sizing:border-box" placeholder="">
-					</div>
-					<div>
-						<label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:6px" for="ct-objet"><?php esc_html_e( 'Objet', 'drolung-branch' ); ?></label>
-						<?php
-						/*
-						 * Les options du menu déroulant diffèrent entre DSF et DSM.
-						 * DSF : don, partenariat/mécénat, presse, bénévolat, autre.
-						 * DSM : partenariat local, collaboration terrain, presse, autre.
-						 * Éditable via ACF (contact_objet_options — texte JSON ou textarea séparée par sauts de ligne).
-						 * Fallback : options génériques communes aux deux sites.
-						 */
-						$default_options = [
-							'partenariat' => __( 'Partenariat / mécénat', 'drolung-branch' ),
-							'presse'      => __( 'Presse / média', 'drolung-branch' ),
-							'benevole'    => __( 'Bénévolat / collaboration', 'drolung-branch' ),
-							'autre'       => __( 'Autre', 'drolung-branch' ),
-						];
-						?>
-						<select id="ct-objet" name="objet" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px;outline:none;background:#fff;box-sizing:border-box">
-							<?php foreach ( $default_options as $val => $label ) : ?>
-								<option value="<?php echo esc_attr( $val ); ?>"><?php echo esc_html( $label ); ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-					<div>
-						<label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--stone);margin-bottom:6px" for="ct-message"><?php esc_html_e( 'Message', 'drolung-branch' ); ?></label>
-						<textarea id="ct-message" name="message" rows="5" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-family:inherit;font-size:14px;outline:none;resize:vertical;box-sizing:border-box"></textarea>
-					</div>
-					<button type="submit" class="btn-page btn-page--primary" style="align-self:flex-start"><?php esc_html_e( 'Envoyer', 'drolung-branch' ); ?></button>
-					<p style="font-size:12px;color:var(--stone);margin:0"></p>
-				</form>
 			</div><!-- /.card -->
 
 		</div><!-- /.grid -->
