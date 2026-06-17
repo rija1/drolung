@@ -57,16 +57,16 @@ function drolung_cf7_seed_forms() {
 	if ( (int) $blog_id === (int) $dsf_id ) {
 		drolung_cf7_create_form(
 			'drolung_cf7_form_dsf_v1',
-			'contact@dsf.drolung.org',
+			'contact@solidarite.drolung.fr',
 			drolung_cf7_form_body( 'dsf' ),
-			drolung_cf7_mail_config( 'DSF', 'contact@dsf.drolung.org' )
+			drolung_cf7_mail_config( 'DSF', 'contact@solidarite.drolung.fr' )
 		);
 	} elseif ( (int) $blog_id === (int) $dsm_id ) {
 		drolung_cf7_create_form(
 			'drolung_cf7_form_dsm_v1',
-			'contact@dsm.drolung.org',
+			'contact@solidarite.drolung.mg',
 			drolung_cf7_form_body( 'dsm' ),
-			drolung_cf7_mail_config( 'DSM', 'contact@dsm.drolung.org' )
+			drolung_cf7_mail_config( 'DSM', 'contact@solidarite.drolung.mg' )
 		);
 	}
 }
