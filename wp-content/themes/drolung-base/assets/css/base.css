@@ -1725,3 +1725,179 @@
     @media (max-width: 600px) {
       .wpcf7 .ct-form-row--two { grid-template-columns: 1fr; }
     }
+
+/* ===================================================================
+   RESPONSIVE — 2026-06-17
+   Global breakpoints: 900px (tablet), 600px (mobile), 480px (small)
+   Does NOT touch branch-nav.css (hamburger already handled there).
+   =================================================================== */
+
+/* ── 900px — tablet ── */
+@media (max-width: 900px) {
+
+  /* Conteneur : resserrer légèrement le padding latéral */
+  .container { padding: 0 24px; }
+
+  /* Grilles de contenu génériques */
+  .two-col {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  /* Annuler le rtl trick pour --reverse : sur mobile l'ordre visuel
+     doit rester naturel (texte avant image en flux). */
+  .two-col--reverse {
+    direction: ltr;
+  }
+  .three-col { grid-template-columns: repeat(2, 1fr); }
+
+  /* Intro section — two-col interne */
+  .intro-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  /* Cacher l'accent décoratif hors-grille sur mobile */
+  .intro-accent { display: none; }
+
+  /* Programmes — 3-col → 2-col */
+  .prog-grid { grid-template-columns: repeat(2, 1fr); }
+  .programmes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  /* Featured story — two-col interne */
+  .story-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  /* Map section — two-col interne → 1-col */
+  .map-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  /* Sur mobile, la grille de photos map passe en une photo pleine */
+  .map-visual { grid-template-columns: 1fr; }
+  .map-photo:first-child { grid-column: auto; aspect-ratio: 16/8; }
+
+  /* Donate section — two-col interne → 1-col */
+  .donate-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .donate-widget { padding: 28px; }
+
+  /* Footer — 4-col → 2-col */
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  /* Stat band (inner-page) — 4-col → 2-col */
+  .stat-band { grid-template-columns: repeat(2, 1fr); }
+  /* Supprimer la bordure droite de la dernière colonne des 2 premières */
+  .stat-item:nth-child(2) { border-right: none; }
+  /* Ajouter un séparateur horizontal entre les deux rangées */
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+}
+
+/* ── 600px — mobile ── */
+@media (max-width: 600px) {
+
+  /* Conteneur */
+  .container { padding: 0 20px; }
+
+  /* Espacement des sections */
+  .inner-section { padding: 48px 0; }
+  .section-header { margin-bottom: 32px; }
+
+  /* Hero pleine page — réduire la hauteur sur petit écran */
+  .hero {
+    min-height: 520px;
+    max-height: 700px;
+  }
+  .hero-content { padding: 0 20px 56px; }
+  .hero-sub { font-size: 16px; }
+  /* Indicateur de scroll superflu sur mobile */
+  .hero-scroll { display: none; }
+
+  /* Page hero intérieure */
+  .page-hero { padding: 64px 0 40px; }
+  .page-hero__sub { font-size: 16px; }
+
+  /* Grilles */
+  .three-col { grid-template-columns: 1fr; }
+
+  /* Programmes — 2-col → 1-col */
+  .prog-grid { grid-template-columns: 1fr; }
+
+  /* Grille de news — 3-col → 1-col */
+  .news-grid { grid-template-columns: 1fr; }
+  /* Sur mobile, le premier article n'a plus besoin d'aspect-ratio étiré */
+  .news-card:first-child .news-card__img { aspect-ratio: 16/9; }
+  .news-card:first-child .news-card__title { font-size: 1.15rem; }
+
+  /* Testimonial — juste du padding horizontal réduit */
+  .testimonial-inner { padding: 0 20px; }
+  .testimonial-text { font-size: clamp(1.15rem, 4vw, 1.5rem); }
+
+  /* Footer — 2-col → 1-col */
+  .footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Stat band — 2-col → 1-col */
+  .stat-band { grid-template-columns: 1fr; }
+  .stat-item { border-right: none; }
+  .stat-item:nth-child(3),
+  .stat-item:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.08); }
+  /* Réduire le padding par élément */
+  .stat-item { padding: 28px 20px; }
+
+  /* Breadcrumb — autoriser retour à la ligne */
+  .page-breadcrumb .container { flex-wrap: wrap; }
+
+  /* Top bar — masquer la tagline pour gagner de la place */
+  .top-bar__tagline { display: none; }
+
+  /* Newsletter — déjà géré à 1100px mais le form déborde sur 480px */
+  .newsletter-form { width: 100%; }
+}
+
+/* ── 480px — petits mobiles ── */
+@media (max-width: 480px) {
+
+  /* Boutons hero — pleine largeur, empilés */
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Footer brand — réduire la taille de police du nom */
+  .footer-brand__name { font-size: 16px; }
+
+  /* Breadcrumb — wrapping déjà activé à 600px, ici on réduit le gap */
+  .page-breadcrumb .container { gap: 6px; }
+
+  /* Donate widget — réduire le padding */
+  .donate-widget { padding: 20px 16px; }
+
+  /* Member row — portrait → portrait compact */
+  .member-row {
+    grid-template-columns: 64px 1fr;
+    gap: 16px;
+  }
+  .member-avatar { width: 64px; height: 64px; }
+}

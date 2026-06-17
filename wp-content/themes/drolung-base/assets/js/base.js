@@ -5,6 +5,9 @@
  * 2. Clone the primary nav into the compact bar so the active state and link
  *    list stay in sync without duplicating markup in PHP.
  * 3. Fade-up reveal animation via IntersectionObserver.
+ * 4. Hamburger toggle for the branch header (drolung-branch theme).
+ *    Targets .nav-hamburger + .nav-links, adds/removes .open.
+ *    CSS for open state lives in branch-nav.css.
  */
 
 (function () {
@@ -44,6 +47,42 @@
 		} else {
 			/* Fallback: just reveal everything immediately. */
 			fades.forEach(function (el) { el.classList.add('visible'); });
+		}
+
+		/* ---- 4. Hamburger nav toggle (branch header) ---- */
+		var hamburger = document.querySelector('.nav-hamburger');
+		var navLinks  = document.querySelector('.nav-links');
+
+		if (hamburger && navLinks) {
+			/* Open / close on button click */
+			hamburger.addEventListener('click', function () {
+				var isOpen = hamburger.classList.toggle('open');
+				navLinks.classList.toggle('open', isOpen);
+				hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			});
+
+			/* Close when clicking outside the nav */
+			document.addEventListener('click', function (e) {
+				if (
+					navLinks.classList.contains('open') &&
+					!navLinks.contains(e.target) &&
+					!hamburger.contains(e.target)
+				) {
+					hamburger.classList.remove('open');
+					navLinks.classList.remove('open');
+					hamburger.setAttribute('aria-expanded', 'false');
+				}
+			});
+
+			/* Close on Escape key */
+			document.addEventListener('keydown', function (e) {
+				if ((e.key === 'Escape' || e.keyCode === 27) && navLinks.classList.contains('open')) {
+					hamburger.classList.remove('open');
+					navLinks.classList.remove('open');
+					hamburger.setAttribute('aria-expanded', 'false');
+					hamburger.focus();
+				}
+			});
 		}
 	});
 })();
