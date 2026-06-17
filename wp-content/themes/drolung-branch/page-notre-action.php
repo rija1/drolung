@@ -39,7 +39,7 @@ get_header();
 <!-- Intro — Notre rôle / Notre approche (two-col, editable per site via ACF) -->
 <section class="inner-section inner-section--tint">
   <div class="container">
-    <div class="fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;max-width:960px;">
+    <div class="grid-2-equal fade-up">
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'intro_eyebrow', __( 'Notre approche', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title" style="margin-bottom:0"><?php echo wp_kses_post( drolung_field( 'intro_title', __( 'Le terrain <em>d\'abord</em>', 'drolung-branch' ) ) ); ?></h2>
@@ -119,7 +119,7 @@ get_header();
       <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'principes_title', __( 'Quatre <em>engagements</em>', 'drolung-branch' ) ) ); ?></h2>
       <p class="section-body"><?php echo esc_html( drolung_field( 'principes_body', __( 'Quatre engagements qui structurent notre relation avec nos donateurs et avec notre association sœur.', 'drolung-branch' ) ) ); ?></p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:36px;max-width:1100px;margin:0 auto;">
+    <div class="grid-4-cards">
       <?php
       $principe_defaults = [
           1 => [

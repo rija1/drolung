@@ -66,7 +66,7 @@ get_header();
       <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'valeurs_eyebrow', __( 'Nos valeurs', 'drolung-branch' ) ) ); ?></div>
       <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'valeurs_title', __( 'Quatre <em>repères</em>', 'drolung-branch' ) ) ); ?></h2>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:36px;max-width:1100px;margin:0 auto;">
+    <div class="grid-4-cards">
       <?php
       $valeur_defaults = [
           1 => [
@@ -107,7 +107,7 @@ get_header();
 <!-- Drupon Khen Rinpoche — maroon feature section -->
 <section class="inner-section inner-section--maroon">
   <div class="container">
-    <div style="display:grid;grid-template-columns:240px 1fr;gap:64px;align-items:center;max-width:900px;margin:0 auto;" class="fade-up">
+    <div class="rinpoche-layout fade-up">
       <div style="text-align:center;">
         <div style="width:140px;height:140px;border-radius:50%;overflow:hidden;margin:0 auto 20px;border:2px solid rgba(255,255,255,0.25);">
           <img src="<?php echo esc_url( drolung_field( 'rinpoche_photo', get_template_directory_uri() . '/assets/images/dkr.jpg' ) ); ?>" alt="<?php esc_attr_e( 'Drupon Khen Rinpoche Karma Lhabu', 'drolung-branch' ); ?>" style="width:100%;height:100%;object-fit:cover;object-position:center top;">

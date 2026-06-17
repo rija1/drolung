@@ -20,7 +20,7 @@ get_header();
 
 <section class="inner-section">
 	<div class="container">
-		<div style="display:grid;grid-template-columns:1fr 520px;gap:72px;align-items:start;max-width:1000px;margin:0 auto;">
+		<div class="contact-layout">
 
 			<!-- Colonne gauche : coordonnées -->
 			<div class="fade-up">

@@ -276,7 +276,7 @@ $home_axe_defaults = [
 <!-- NOS ENGAGEMENTS (4 pillars) -->
 <section class="testimonial-section">
 	<div class="testimonial-inner fade-up">
-		<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px;max-width:1000px;margin:0 auto;text-align:center;">
+		<div class="engagements-grid">
 			<?php
 			$engagements_defaults = [
 				1 => [
