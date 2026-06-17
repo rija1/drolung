@@ -120,6 +120,8 @@ function drolung_branch_menu_items() {
 		[ 'type' => 'cpt_archive',   'object' => 'projet',             'title' => 'Projets' ],
 		[ 'type' => 'page',          'slug'  => 's-engager',           'title' => "S'engager" ],
 		[ 'type' => 'page',          'slug'  => 'a-propos',            'title' => 'À propos' ],
+		[ 'type' => 'page',          'slug'  => 'ressources',          'title' => 'Ressources' ],
+		[ 'type' => 'page',          'slug'  => 'contact',             'title' => 'Contact' ],
 	];
 }
 

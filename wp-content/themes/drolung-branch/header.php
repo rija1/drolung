@@ -79,12 +79,22 @@
 					echo '<a href="' . esc_url( $donate_url ) . '" class="nav-donate">' . esc_html( $donate_label ) . '</a>';
 				} else {
 					?>
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="active">Accueil</a>
-					<a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>">À propos</a>
-					<a href="<?php echo esc_url( home_url( '/notre-action/' ) ); ?>">Notre action</a>
-					<a href="<?php echo esc_url( home_url( '/ou-nous-intervenons/' ) ); ?>">Où nous intervenons</a>
-					<a href="<?php echo esc_url( home_url( '/ressources/' ) ); ?>">Ressources</a>
-					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact</a>
+					<?php
+					$_current_url = untrailingslashit( home_url( add_query_arg( [] ) ) );
+					$_fb_links    = [
+						__( 'Accueil', 'drolung-branch' )              => home_url( '/' ),
+						__( 'À propos', 'drolung-branch' )             => home_url( '/a-propos/' ),
+						__( 'Notre action', 'drolung-branch' )         => home_url( '/notre-action/' ),
+						__( 'Où nous intervenons', 'drolung-branch' )  => home_url( '/ou-nous-intervenons/' ),
+						__( 'Ressources', 'drolung-branch' )           => home_url( '/ressources/' ),
+						__( 'Contact', 'drolung-branch' )              => home_url( '/contact/' ),
+					];
+					foreach ( $_fb_links as $_label => $_url ) {
+						$_active = untrailingslashit( $_url ) === $_current_url;
+						echo '<a href="' . esc_url( $_url ) . '"' . ( $_active ? ' class="active" aria-current="page"' : '' ) . '>' . esc_html( $_label ) . '</a>';
+					}
+					unset( $_current_url, $_fb_links, $_label, $_url, $_active );
+					?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="nav-donate"><?php echo esc_html( $donate_label ); ?></a>
 					<?php
 				}

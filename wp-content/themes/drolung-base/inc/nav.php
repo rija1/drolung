@@ -50,9 +50,10 @@ function drolung_nav_fallback( $args ) {
 		__( 'Projets', 'drolung-base' )    => home_url( '/projets/' ),
 		__( 'Contact', 'drolung-base' )    => home_url( '/contact/' ),
 	];
-	echo '<a class="active" aria-current="page" href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Accueil', 'drolung-base' ) . '</a>';
+	$current = untrailingslashit( home_url( add_query_arg( [] ) ) );
 	foreach ( $candidates as $label => $url ) {
-		if ( $label === __( 'Accueil', 'drolung-base' ) ) continue;
-		echo '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>';
+		$is_active = untrailingslashit( $url ) === $current;
+		$attrs     = $is_active ? ' class="active" aria-current="page"' : '';
+		echo '<a href="' . esc_url( $url ) . '"' . $attrs . '>' . esc_html( $label ) . '</a>';
 	}
 }
