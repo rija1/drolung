@@ -197,7 +197,50 @@ function drolung_seed_pages( $pages ) {
 	}
 }
 
-/* ---------- 4. Show admin notice once after the work runs ---------- */
+/* ---------- 4. Seed brand name / tag theme_mods per site ----------
+ * Writes drolung_brand_name and drolung_brand_tag as theme_mods so the
+ * Customizer is the sole source of truth for header branding. Only seeds
+ * sites where the theme_mod has never been set (won't overwrite admin edits).
+ * Gate: drolung_brand_seeded_v1 (network option). Re-run: delete that option.
+ * --------------------------------------------------------------------- */
+add_action( 'admin_init', 'drolung_seed_brand_mods' );
+function drolung_seed_brand_mods() {
+	if ( ! is_multisite() || ! is_super_admin() ) {
+		return;
+	}
+	if ( get_site_option( 'drolung_brand_seeded_v1' ) ) {
+		return;
+	}
+
+	$root  = DOMAIN_CURRENT_SITE;
+	$names = function_exists( 'drolung_brand_name_defaults' ) ? drolung_brand_name_defaults() : [];
+	$tags  = function_exists( 'drolung_brand_tag_defaults' )  ? drolung_brand_tag_defaults()  : [];
+
+	$sites = [
+		[ 'domain' => $root,           'prefix' => 'drolung' ],
+		[ 'domain' => 'dsm.' . $root,  'prefix' => 'dsm' ],
+		[ 'domain' => 'dsf.' . $root,  'prefix' => 'dsf' ],
+		[ 'domain' => 'duk.' . $root,  'prefix' => 'duk' ],
+	];
+
+	foreach ( $sites as $s ) {
+		$blog_id = get_blog_id_from_url( $s['domain'], '/' );
+		if ( ! $blog_id ) {
+			continue;
+		}
+		switch_to_blog( $blog_id );
+		// Only seed if theme_mod has never been saved (false = key absent from DB).
+		if ( false === get_theme_mod( 'drolung_brand_name' ) ) {
+			set_theme_mod( 'drolung_brand_name', $names[ $s['prefix'] ] ?? 'DROLUNG' );
+			set_theme_mod( 'drolung_brand_tag',  $tags[ $s['prefix'] ]  ?? '' );
+		}
+		restore_current_blog();
+	}
+
+	update_site_option( 'drolung_brand_seeded_v1', current_time( 'mysql' ) );
+}
+
+/* ---------- 5. Show admin notice once after the work runs ---------- */
 add_action( 'admin_notices', function() {
 	$log = get_transient( 'drolung_themes_just_assigned' );
 	if ( ! $log ) {

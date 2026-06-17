@@ -57,30 +57,22 @@ function drolung_site_prefix() {
 
 /**
  * The big wordmark shown in the header.
- * Pulled from hard-coded defaults; Customizer can still override if needed.
+ * Source of truth: Customizer (drolung_brand_name theme_mod), seeded by
+ * drolung_seed_brand_mods() in mu-plugins/02-drolung-themes-pages.php.
+ * Returns 'DROLUNG' only as an absolute last resort (pre-seed state).
  */
 function drolung_get_brand_name() {
-	$custom = get_theme_mod( 'drolung_brand_name' );
-	if ( $custom ) {
-		return $custom;
-	}
-	$defaults = drolung_brand_name_defaults();
-	$prefix   = drolung_site_prefix();
-	return isset( $defaults[ $prefix ] ) ? $defaults[ $prefix ] : 'DROLUNG';
+	return get_theme_mod( 'drolung_brand_name', 'DROLUNG' );
 }
 
 /**
  * The small sub-tag under the wordmark (e.g. "FRANCE", "MADAGASCAR").
- * Pulled from hard-coded defaults; Customizer can still override if needed.
+ * Source of truth: Customizer (drolung_brand_tag theme_mod), seeded by
+ * drolung_seed_brand_mods() in mu-plugins/02-drolung-themes-pages.php.
  */
 function drolung_get_brand_tag() {
-	$custom = get_theme_mod( 'drolung_brand_tag' );
-	if ( $custom ) {
-		return strtoupper( $custom );
-	}
-	$defaults = drolung_brand_tag_defaults();
-	$prefix   = drolung_site_prefix();
-	return isset( $defaults[ $prefix ] ) ? $defaults[ $prefix ] : '';
+	$tag = get_theme_mod( 'drolung_brand_tag', '' );
+	return $tag ? strtoupper( $tag ) : '';
 }
 
 /**
@@ -115,7 +107,7 @@ function drolung_customize_branding( $wp_customize ) {
 	] );
 	$wp_customize->add_control( 'drolung_brand_name', [
 		'label'       => __( 'Wordmark (line 1)', 'drolung-base' ),
-		'description' => __( 'Override the hard-coded wordmark for this site. Leave empty to use the default.', 'drolung-base' ),
+		'description' => __( 'Texte affiché dans l\'en-tête (ex : DROLUNG SOLIDARITE). Laissez vide pour masquer.', 'drolung-base' ),
 		'section'     => 'drolung_branding',
 		'type'        => 'text',
 	] );
@@ -127,7 +119,7 @@ function drolung_customize_branding( $wp_customize ) {
 	] );
 	$wp_customize->add_control( 'drolung_brand_tag', [
 		'label'       => __( 'Sub-tag (line 2)', 'drolung-base' ),
-		'description' => __( 'Small uppercase line under the wordmark — e.g. MADAGASCAR, FRANCE, GLOBAL NETWORK.', 'drolung-base' ),
+		'description' => __( 'Ligne secondaire sous le wordmark (ex : FRANCE, MADAGASCAR). Laissez vide pour masquer.', 'drolung-base' ),
 		'section'     => 'drolung_branding',
 		'type'        => 'text',
 	] );
