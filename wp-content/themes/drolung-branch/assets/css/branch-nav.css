@@ -45,8 +45,12 @@
 }
 .top-bar__links { display: flex; gap: 20px; }
 .lang-sel { display: flex; gap: 12px; }
-.lang-sel a { opacity: 0.6; }
-.lang-sel a.active { opacity: 1; color: var(--saffron-lt); }
+.lang-sel a,
+.lang-sel span { opacity: 0.6; cursor: default; }
+.lang-sel a { cursor: pointer; }
+.lang-sel a.active,
+.lang-sel span.active { opacity: 1; color: var(--saffron-lt); }
+.lang-sel span.unavailable { opacity: 0.3; text-decoration: line-through; }
 
 /* ── SINGLE STICKY NAV ── */
 .site-nav {

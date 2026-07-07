@@ -4,11 +4,10 @@
  * Mirrors mockups/mockup-dsf/projets.html (canonical DSF reference).
  * DSM uses the same template; per-site copy editable via ACF.
  *
- * Boucle de projets : WP_Query directe sur le CPT 'projet'.
- * TODO: migrer vers drolung_get_projets( $branch, $args ) quand drolung-network est actif.
+ * Projets chargés depuis le site central via drolung_get_projets()
+ * (switch_to_blog interne, doc §6). La boucle reçoit des tableaux plats.
  *
- * Filtres statut/type : HTML statique depuis le mockup, JS client-side ci-dessous.
- * L'état initial affiche toutes les cards ; le JS les filtre à la volée.
+ * Filtres statut/type : HTML statique, JS client-side ci-dessous.
  *
  * @package drolung-branch
  */
@@ -19,31 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 
-// TODO: migrer vers drolung_get_projets( $branch, $args ) quand drolung-network est actif.
-$projets = new WP_Query( array(
-	'post_type'      => 'projet',
-	'posts_per_page' => -1,
-	'post_status'    => 'publish',
-	'orderby'        => 'menu_order date',
-	'order'          => 'ASC',
-) );
+$items = function_exists( 'drolung_get_projets' ) ? drolung_get_projets() : array();
 
-/* Collect taxonomy term slugs actually used so the filter bar stays
- * in sync with real content. Falls back to seeded defaults if empty. */
+/* Collect types and statuts actually used, for the filter bar. */
 $used_types   = array();
 $used_statuts = array();
-if ( $projets->have_posts() ) {
-	foreach ( $projets->posts as $p ) {
-		foreach ( (array) get_the_terms( $p->ID, 'projet_type' ) as $t ) {
-			if ( $t && ! is_wp_error( $t ) ) {
-				$used_types[ $t->slug ] = $t->name;
-			}
-		}
-		foreach ( (array) get_the_terms( $p->ID, 'projet_statut' ) as $t ) {
-			if ( $t && ! is_wp_error( $t ) ) {
-				$used_statuts[ $t->slug ] = $t->name;
-			}
-		}
+foreach ( $items as $item ) {
+	foreach ( $item['types'] as $slug => $name ) {
+		$used_types[ $slug ] = $name;
+	}
+	foreach ( $item['statut'] as $slug => $name ) {
+		$used_statuts[ $slug ] = $name;
 	}
 }
 if ( empty( $used_types ) ) {
@@ -124,30 +109,30 @@ $hero_image_url = drolung_field(
 <section class="inner-section">
 	<div class="container">
 
-		<?php if ( $projets->have_posts() ) : ?>
+		<?php if ( ! empty( $items ) ) : ?>
 
 			<div class="four-col" id="projetsGrid">
 			<?php
 			$i = 0;
-			while ( $projets->have_posts() ) :
-				$projets->the_post();
+			foreach ( $items as $item ) :
 
-				$type_terms   = get_the_terms( get_the_ID(), 'projet_type' );
-				$statut_terms = get_the_terms( get_the_ID(), 'projet_statut' );
-				$type   = ( $type_terms && ! is_wp_error( $type_terms ) )   ? $type_terms[0]   : null;
-				$statut = ( $statut_terms && ! is_wp_error( $statut_terms ) ) ? $statut_terms[0] : null;
+				$type_slugs   = array_keys( $item['types'] );
+				$statut_slugs = array_keys( $item['statut'] );
+				$type_slug    = $type_slugs[0] ?? '';
+				$type_name    = $item['types'][ $type_slug ] ?? '';
+				$statut_slug  = $statut_slugs[0] ?? '';
+				$statut_name  = $item['statut'][ $statut_slug ] ?? '';
 
-				$type_slug   = $type   ? $type->slug   : '';
-				$statut_slug = $statut ? $statut->slug : '';
-
-				$budget   = trim( (string) get_post_meta( get_the_ID(), 'budget', true ) );
-				$location = trim( (string) get_post_meta( get_the_ID(), 'location', true ) );
-				$partner  = trim( (string) get_post_meta( get_the_ID(), 'partenaire', true ) );
+				$thumb_url   = isset( $item['thumbnail']['large'] ) ? $item['thumbnail']['large'] : '';
+				$budget      = $item['meta']['budget'];
+				$commune     = $item['meta']['localisation']['commune'];
+				$region      = $item['meta']['localisation']['region'];
+				$location    = $commune . ( $region ? ', ' . $region : '' );
+				$partenaire  = $item['meta']['partenaire'];
+				$permalink   = home_url( '/projets/' . $item['slug'] . '/' );
 
 				$delay = ( $i % 4 ) * 0.08;
 				$style = $delay > 0 ? sprintf( 'transition-delay:%.2fs', $delay ) : '';
-
-				$thumb_url = get_the_post_thumbnail_url( null, 'large' );
 				?>
 
 				<div class="card project-card fade-up"
@@ -157,30 +142,30 @@ $hero_image_url = drolung_field(
 
 					<div class="card-img" style="position:relative;height:240px;overflow:hidden;background:var(--cream);">
 						<?php if ( $thumb_url ) : ?>
-							<a href="<?php the_permalink(); ?>">
-								<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+							<a href="<?php echo esc_url( $permalink ); ?>">
+								<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
 							</a>
 						<?php endif; ?>
 
-						<?php if ( $type ) : ?>
+						<?php if ( $type_name ) : ?>
 							<span class="card-tag project-type" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.95);color:var(--maroon);padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
-								<?php echo esc_html( $type->name ); ?>
+								<?php echo esc_html( $type_name ); ?>
 							</span>
 						<?php endif; ?>
 
-						<?php if ( $statut ) : ?>
+						<?php if ( $statut_name ) : ?>
 							<span class="project-status" style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:rgba(193,125,10,0.15);color:var(--saffron);border:1px solid var(--saffron);">
-								<?php echo esc_html( $statut->name ); ?>
+								<?php echo esc_html( $statut_name ); ?>
 							</span>
 						<?php endif; ?>
 					</div>
 
 					<div class="card-body">
 						<div class="card-title">
-							<a href="<?php the_permalink(); ?>" style="color:inherit;text-decoration:none;"><?php the_title(); ?></a>
+							<a href="<?php echo esc_url( $permalink ); ?>" style="color:inherit;text-decoration:none;"><?php echo esc_html( $item['title'] ); ?></a>
 						</div>
-						<?php if ( has_excerpt() || get_the_content() ) : ?>
-							<p class="card-desc"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 28, '…' ) ); ?></p>
+						<?php if ( $item['excerpt'] ) : ?>
+							<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 28, '…' ) ); ?></p>
 						<?php endif; ?>
 
 						<?php if ( $budget || $location ) : ?>
@@ -190,11 +175,11 @@ $hero_image_url = drolung_field(
 							</div>
 						<?php endif; ?>
 
-						<?php if ( $partner ) : ?>
+						<?php if ( $partenaire ) : ?>
 							<div class="project-meta" style="margin-top:8px;font-size:12px;color:var(--stone);font-family:var(--font-mono);">
 								<?php
 								/* translators: %s is the partner organisation name. */
-								printf( esc_html__( 'Partenaire : %s', 'drolung-branch' ), esc_html( $partner ) );
+								printf( esc_html__( 'Partenaire : %s', 'drolung-branch' ), esc_html( $partenaire ) );
 								?>
 							</div>
 						<?php endif; ?>
@@ -203,8 +188,7 @@ $hero_image_url = drolung_field(
 
 				<?php
 				$i++;
-			endwhile;
-			wp_reset_postdata();
+			endforeach;
 			?>
 			</div>
 
@@ -212,7 +196,7 @@ $hero_image_url = drolung_field(
 				<?php esc_html_e( 'Aucun projet ne correspond à ces filtres.', 'drolung-branch' ); ?>
 			</div>
 
-		<?php else : /* No projet posts at all yet. */ ?>
+		<?php else : /* No projet posts yet. */ ?>
 
 			<div class="projects-coming-soon fade-up" style="max-width:640px;margin:40px auto;text-align:center;padding:60px 30px;border:1px solid var(--border);background:var(--cream);">
 				<div class="section-eyebrow" style="margin-bottom:14px;"><?php esc_html_e( 'Bientôt', 'drolung-branch' ); ?></div>
@@ -234,7 +218,7 @@ $hero_image_url = drolung_field(
 	</div>
 </section>
 
-<?php if ( $projets->have_posts() ) : ?>
+<?php if ( ! empty( $items ) ) : ?>
 <script>
 /* Projet filters — client-side, matches taxonomy slugs in data-* attrs. */
 (function () {

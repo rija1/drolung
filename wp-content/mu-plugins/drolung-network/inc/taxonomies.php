@@ -130,11 +130,13 @@ function drolung_network_seed_terms() {
 			'Sécurité alimentaire' => 'securite-alimentaire',
 		),
 		'projet_statut' => array(
-			'À venir'             => 'a-venir',
+			'En préparation'      => 'en-preparation',
+			'En évaluation'       => 'en-evaluation',
 			'En recherche de fonds' => 'recherche-de-fonds',
 			'Financé'             => 'finance',
 			'En cours'            => 'en-cours',
 			'Terminé'             => 'termine',
+			'À venir'             => 'a-venir',
 			'Suspendu'            => 'suspendu',
 		),
 	);

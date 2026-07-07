@@ -59,3 +59,48 @@ function drolung_branch_dequeue_parent_js() {
 add_filter( 'drolung_donate_url', function () {
 	return home_url( '/s-engager/' );
 } );
+
+/**
+ * Language switcher — uses Polylang when configured, otherwise shows nothing.
+ *
+ * pll_the_languages( raw=1 ) returns one entry per configured language with:
+ *   'slug', 'url', 'current_lang' (bool), 'no_translation' (bool).
+ * When there is only one language configured (no translated content yet) this
+ * returns a single-item array, so the switcher shows only the active language
+ * with no dead links.
+ */
+add_filter( 'drolung_topbar_langs', 'drolung_branch_pll_lang_switcher', 5 );
+function drolung_branch_pll_lang_switcher( $langs ) {
+	if ( ! function_exists( 'pll_the_languages' ) ) {
+		return $langs;
+	}
+
+	$pll_list = pll_the_languages( array(
+		'raw'              => 1,
+		'hide_current'     => 0,
+		'display_names_as' => 'slug',
+	) );
+
+	if ( empty( $pll_list ) ) {
+		return $langs;
+	}
+
+	$out = array();
+	foreach ( $pll_list as $lang ) {
+		/* Skip entries that have no translation and are not the current page language. */
+		if ( ! empty( $lang['no_translation'] ) && empty( $lang['current_lang'] ) ) {
+			$out[] = array(
+				'code'   => strtoupper( $lang['slug'] ),
+				'url'    => '',   // no target — rendered as plain text in the header
+				'active' => false,
+			);
+		} else {
+			$out[] = array(
+				'code'   => strtoupper( $lang['slug'] ),
+				'url'    => esc_url( $lang['url'] ),
+				'active' => ! empty( $lang['current_lang'] ),
+			);
+		}
+	}
+	return $out;
+}

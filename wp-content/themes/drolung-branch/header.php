@@ -42,7 +42,11 @@
 			<div class="top-bar__links">
 				<div class="lang-sel">
 					<?php foreach ( $topbar_langs as $lang ) : ?>
-						<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active"' : ''; ?>><?php echo esc_html( $lang['code'] ); ?></a>
+						<?php if ( ! empty( $lang['url'] ) ) : ?>
+							<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active"' : ''; ?>><?php echo esc_html( $lang['code'] ); ?></a>
+						<?php else : ?>
+							<span<?php echo $lang['active'] ? ' class="active"' : ' class="unavailable"'; ?>><?php echo esc_html( $lang['code'] ); ?></span>
+						<?php endif; ?>
 					<?php endforeach; ?>
 				</div>
 			</div>

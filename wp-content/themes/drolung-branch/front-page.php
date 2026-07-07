@@ -167,15 +167,15 @@ $home_axe_defaults = [
 	],
 	3 => [
 		'num'    => '03',
-		'domain' => __( 'Environnement', 'drolung-branch' ),
-		'title'  => __( 'Vivre de son sol, durablement', 'drolung-branch' ),
-		'desc'   => __( 'Soutenir l\'agriculture vivrière, les coopératives et artisans malgaches, préserver les écosystèmes dont dépendent les familles.', 'drolung-branch' ),
-	],
-	4 => [
-		'num'    => '04',
 		'domain' => __( 'Eau & Assainissement', 'drolung-branch' ),
 		'title'  => __( 'L\'eau, avant tout', 'drolung-branch' ),
 		'desc'   => __( 'Financer l\'accès à l\'eau potable et aux infrastructures sanitaires là où elles manquent le plus. Parce que sans eau, rien d\'autre n\'est possible.', 'drolung-branch' ),
+	],
+	4 => [
+		'num'    => '04',
+		'domain' => __( 'Environnement', 'drolung-branch' ),
+		'title'  => __( 'Vivre de son sol, durablement', 'drolung-branch' ),
+		'desc'   => __( 'Encourager l\'agriculture vivrière, soutenir les coopératives et les artisans, préserver les écosystèmes dont dépendent les familles. Parce que prospérer chez soi vaut mieux que de devoir partir.', 'drolung-branch' ),
 	],
 ];
 ?>
@@ -222,7 +222,7 @@ $home_axe_defaults = [
 		<div class="map-text fade-up">
 			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'map_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
 			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'map_title', __( 'Quatre projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
-			<p class="section-body"><?php echo esc_html( drolung_field( 'map_body', __( 'Adduction d\'eau gravitaire à Ambohitrolomahitsy, relance de l\'École des Femmes d\'Anjozorobe, reprise de la forêt comestible d\'Anjozorobe, reconstruction d\'une école sinistrée à Tamatave — des projets concrets, ancrés dans les besoins réels des communautés malgaches.', 'drolung-branch' ) ) ); ?></p>
+			<p class="section-body"><?php echo esc_html( wp_strip_all_tags( drolung_field( 'map_body', __( 'Adduction d\'eau gravitaire à Ambohitrolomahitsy, relance de l\'École des Femmes d\'Anjozorobe, reprise de la forêt comestible d\'Anjozorobe, reconstruction d\'une école sinistrée à Tamatave — des projets concrets, ancrés dans les besoins réels des communautés malgaches.', 'drolung-branch' ) ) ) ); ?></p>
 
 			<div class="regions-list" style="margin-top:36px">
 				<div class="region-item">
@@ -280,12 +280,12 @@ $home_axe_defaults = [
 			<?php
 			$engagements_defaults = [
 				1 => [
-					'label' => drolung_field( 'engagement_1_label', __( '100 % vers le terrain', 'drolung-branch' ) ),
-					'body'  => drolung_field( 'engagement_1_body',  __( 'L\'intégralité des fonds collectés est destinée aux projets DSM. Aucun frais de structure.', 'drolung-branch' ) ),
+					'label' => drolung_field( 'engagement_1_label', __( 'L\'essentiel vers le terrain', 'drolung-branch' ) ),
+					'body'  => drolung_field( 'engagement_1_body',  __( 'La quasi-totalité des dons collectés va aux projets à Madagascar. Les frais incompressibles (banque, obligations associatives) représentent environ 100 € par mois — soit moins de 3 % à l\'échelle annuelle.', 'drolung-branch' ) ),
 				],
 				2 => [
-					'label' => drolung_field( 'engagement_2_label', __( 'Équipe bénévole', 'drolung-branch' ) ),
-					'body'  => drolung_field( 'engagement_2_body',  __( 'Bureau et contributeurs réguliers travaillent sans rémunération.', 'drolung-branch' ) ),
+					'label' => drolung_field( 'engagement_2_label', __( 'Un bureau bénévole', 'drolung-branch' ) ),
+					'body'  => drolung_field( 'engagement_2_body',  __( 'Le bureau de DSF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ) ),
 				],
 				3 => [
 					'label' => drolung_field( 'engagement_3_label', __( 'Transparence intégrale', 'drolung-branch' ) ),
@@ -300,7 +300,7 @@ $home_axe_defaults = [
 				?>
 				<div>
 					<div style="font-family:var(--font-serif);font-style:italic;font-size:1.3rem;color:var(--saffron-lt);margin-bottom:10px"><?php echo esc_html( $eng['label'] ); ?></div>
-					<p style="font-size:13.5px;color:rgba(255,255,255,0.6);line-height:1.6;margin:0"><?php echo esc_html( $eng['body'] ); ?></p>
+					<p style="font-size:13.5px;color:var(--text-muted);line-height:1.6;margin:0"><?php echo esc_html( $eng['body'] ); ?></p>
 				</div>
 			<?php endforeach; ?>
 		</div>
@@ -332,7 +332,7 @@ $home_axe_defaults = [
 		<div class="donate-text fade-up">
 			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'donate_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
 			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'donate_title', __( 'Votre don <em>agit directement</em>', 'drolung-branch' ) ) ); ?></h2>
-			<div class="section-body" style="margin-bottom:32px"><?php echo wp_kses_post( drolung_field( 'donate_body', '<p>' . __( 'Chaque euro reçu est affecté directement à un projet concret. Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>' ) ); ?></div>
+			<div class="section-body" style="margin-bottom:32px"><?php echo wp_kses_post( drolung_field( 'donate_body', '<p>' . __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>' ) ); ?></div>
 
 			<!-- Exemples de coûts (statiques — éditables via ACF) -->
 			<div style="display:flex;flex-direction:column;gap:16px;margin-bottom:40px">

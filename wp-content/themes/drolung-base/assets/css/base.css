@@ -761,6 +761,7 @@
     .map-text .section-eyebrow { color: var(--saffron-lt); }
     .map-text .section-eyebrow::before { background: var(--saffron-lt); }
     .map-text .section-title { color: var(--white); }
+    .map-text .section-title em { color: var(--saffron-lt); }
     .map-text .section-body { color: rgba(255,255,255,0.6); max-width: 100%; }
     .regions-list {
       display: grid;
@@ -1250,8 +1251,8 @@
     .quote-block { max-width: 780px; margin: 0 auto; padding: 0 40px; text-align: center; }
     .quote-mark { font-family: var(--font-serif); font-size: 5.5rem; color: var(--saffron); line-height: 0.4; display: block; margin-bottom: 36px; opacity: 0.7; }
     .quote-text { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.1rem, 1.8vw, 1.4rem); color: rgba(255,255,255,0.9); line-height: 1.8; margin: 0 0 36px; }
-    .quote-attr { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-lt); }
-    .quote-attr em { display: block; font-style: normal; color: rgba(255,255,255,0.45); margin-top: 5px; font-size: 10px; letter-spacing: 0.12em; }
+    .quote-attr { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-lt); }
+    .quote-attr em { display: block; font-style: normal; color: rgba(255,255,255,0.45); margin-top: 5px; font-size: 13px; letter-spacing: 0.12em; }
     .member-list { max-width: 780px; }
     .member-row { display: grid; grid-template-columns: 88px 1fr; gap: 28px; align-items: start; padding: 32px 0; border-bottom: 1px solid var(--border); }
     .member-row:first-child { border-top: 1px solid var(--border); }

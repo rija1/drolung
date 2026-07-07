@@ -152,7 +152,6 @@ get_header();
               'name'   => 'Petra Hoelscher',
               'bio'    => __( 'Docteure et experte en développement international, vingt années d\'expérience professionnelle, notamment à l\'UNICEF et dans la recherche académique. Ordonnée nonne dans la tradition bouddhiste tibétaine en 2018, elle vit aujourd\'hui au Népal.', 'drolung-branch' ),
               'photo'  => '',
-              'alt'    => 'Petra Hoelscher',
               'delay'  => 0,
           ],
           2 => [
@@ -160,7 +159,6 @@ get_header();
               'name'   => 'Rija Ratinahirana',
               'bio'    => __( 'Franco-malgache, titulaire d\'un master en informatique. Sa pratique du bouddhisme tibétain et ses origines malgaches ont forgé sa conviction qu\'un développement juste vient de l\'intérieur des communautés.', 'drolung-branch' ),
               'photo'  => '',
-              'alt'    => 'Rija Ratinahirana',
               'delay'  => 0.05,
           ],
           3 => [
@@ -168,13 +166,15 @@ get_header();
               'name'   => 'Barbara Stuetz',
               'bio'    => __( 'Diplômée en Architecture du Paysage, post-master en systèmes alimentaires mondiaux. A travaillé en Belgique, Écosse et Autriche sur des questions d\'agriculture durable. Pratiquante bouddhiste depuis 2015.', 'drolung-branch' ),
               'photo'  => '',
-              'alt'    => 'Barbara Stuetz',
               'delay'  => 0.10,
           ],
+          4 => [ 'role' => '', 'name' => '', 'bio' => '', 'photo' => '', 'delay' => 0.15 ],
+          5 => [ 'role' => '', 'name' => '', 'bio' => '', 'photo' => '', 'delay' => 0.20 ],
       ];
       foreach ( $member_defaults as $i => $m ) :
           $role  = drolung_field( "member_{$i}_role",  $m['role'] );
           $name  = drolung_field( "member_{$i}_name",  $m['name'] );
+          if ( ! $name ) { continue; }
           $bio   = drolung_field( "member_{$i}_bio",   $m['bio'] );
           $photo = drolung_field( "member_{$i}_photo", $m['photo'] );
           $delay_style = $m['delay'] > 0 ? 'transition-delay:' . $m['delay'] . 's' : '';

@@ -171,6 +171,7 @@ function drolung_extract_projet( $post, $with_content = false ) {
 		'statut'            => drolung_extract_terms( $id, 'projet_statut' ),
 		'meta'              => array(
 			'code_projet'               => (string) get_post_meta( $id, 'code_projet', true ),
+			'budget'                    => (string) get_post_meta( $id, 'budget', true ),
 			'budget_eur'                => (float) get_post_meta( $id, 'budget_eur', true ),
 			'montant_collecte_eur'      => (float) get_post_meta( $id, 'montant_collecte_eur', true ),
 			'date_debut'                => (string) get_post_meta( $id, 'date_debut', true ),
@@ -182,6 +183,7 @@ function drolung_extract_projet( $post, $with_content = false ) {
 				'commune' => (string) get_post_meta( $id, 'localisation_commune', true ),
 				'gps'     => (string) get_post_meta( $id, 'localisation_gps', true ),
 			),
+			'partenaire'                => (string) get_post_meta( $id, 'partenaire', true ),
 			'dons'                      => array(
 				'assoconnect_url' => (string) get_post_meta( $id, 'dons_assoconnect_url', true ),
 				'duk_url'         => (string) get_post_meta( $id, 'dons_duk_url', true ),

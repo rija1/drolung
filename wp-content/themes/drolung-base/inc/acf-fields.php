@@ -26,15 +26,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /* ─────────────────────────────────────────────────────────────
  * Helper: get_field() wrapper with default fallback.
+ *
+ * Priority :
+ *   1. ACF get_field()       — when ACF is active (central + branches via
+ *                              09-drolung-branch-acf.php option filter).
+ *   2. get_post_meta() brute — resilience fallback if ACF is ever absent.
+ *      ACF image fields store attachment IDs → converted to URL automatically.
  * ───────────────────────────────────────────────────────────── */
 if ( ! function_exists( 'drolung_field' ) ) {
 	function drolung_field( $key, $default = '', $post_id = false ) {
-		if ( ! function_exists( 'get_field' ) ) {
+		if ( function_exists( 'get_field' ) ) {
+			$value = get_field( $key, $post_id );
+			if ( $value !== '' && $value !== null && $value !== false ) {
+				return $value;
+			}
 			return $default;
 		}
-		$value = get_field( $key, $post_id );
+
+		/* Fallback : post meta brute (quand ACF n'est pas chargé). */
+		$pid = $post_id ? (int) $post_id : get_the_ID();
+		if ( ! $pid ) {
+			return $default;
+		}
+		$value = get_post_meta( $pid, $key, true );
 		if ( $value === '' || $value === null || $value === false ) {
 			return $default;
+		}
+		/* Les champs image ACF stockent l'ID de l'attachment. Convertir en URL. */
+		if ( is_numeric( $value ) && (int) $value > 0 ) {
+			$url = wp_get_attachment_url( (int) $value );
+			return $url ?: $default;
 		}
 		return $value;
 	}
@@ -72,7 +93,7 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_front_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab', 'placement' => 'top' ],
 			[ 'key' => 'field_front_hero_eyebrow', 'label' => 'Surtitre (eyebrow)',    'name' => 'hero_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_front_hero_title',   'label' => 'Titre (HTML autorisé)', 'name' => 'hero_title',   'type' => 'textarea', 'rows' => 3, 'new_lines' => 'br', 'instructions' => 'Tu peux mettre un mot en <em>italique</em> en l\'entourant de balises &lt;em&gt;mot&lt;/em&gt;.' ],
-			[ 'key' => 'field_front_hero_sub',     'label' => 'Sous-titre',            'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => 'wpautop' ],
+			[ 'key' => 'field_front_hero_sub',     'label' => 'Sous-titre',            'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => '' ],
 			[ 'key' => 'field_front_hero_cta1_label', 'label' => 'Bouton principal — texte', 'name' => 'hero_cta1_label', 'type' => 'text' ],
 			[ 'key' => 'field_front_hero_cta1_url',   'label' => 'Bouton principal — URL',   'name' => 'hero_cta1_url',   'type' => 'url' ],
 			[ 'key' => 'field_front_hero_cta2_label', 'label' => 'Bouton secondaire — texte','name' => 'hero_cta2_label', 'type' => 'text' ],
@@ -194,7 +215,7 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_apropos_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_apropos_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'hero_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_apropos_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'hero_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ],
-			[ 'key' => 'field_apropos_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_apropos_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => '' ],
 			[ 'key' => 'field_apropos_hero_image',   'label' => 'Hero — image de fond',  'name' => 'hero_image',   'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ],
 
 			/* ── NOTRE HISTOIRE ──────────────────────────── */
@@ -259,6 +280,18 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_apropos_member_3_photo', 'label' => 'Membre 3 — photo', 'name' => 'member_3_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
 			[ 'key' => 'field_apropos_member_3_bio',   'label' => 'Membre 3 — bio',   'name' => 'member_3_bio',   'type' => 'textarea', 'rows' => 3 ],
 
+			/* Membre 4 */
+			[ 'key' => 'field_apropos_member_4_role',  'label' => 'Membre 4 — rôle',  'name' => 'member_4_role',  'type' => 'text',    'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_4_name',  'label' => 'Membre 4 — nom',   'name' => 'member_4_name',  'type' => 'text',    'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_apropos_member_4_photo', 'label' => 'Membre 4 — photo', 'name' => 'member_4_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_4_bio',   'label' => 'Membre 4 — bio',   'name' => 'member_4_bio',   'type' => 'textarea', 'rows' => 3 ],
+
+			/* Membre 5 */
+			[ 'key' => 'field_apropos_member_5_role',  'label' => 'Membre 5 — rôle',  'name' => 'member_5_role',  'type' => 'text',    'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_5_name',  'label' => 'Membre 5 — nom',   'name' => 'member_5_name',  'type' => 'text',    'wrapper' => [ 'width' => 40 ] ],
+			[ 'key' => 'field_apropos_member_5_photo', 'label' => 'Membre 5 — photo', 'name' => 'member_5_photo', 'type' => 'image', 'return_format' => 'url', 'wrapper' => [ 'width' => 30 ] ],
+			[ 'key' => 'field_apropos_member_5_bio',   'label' => 'Membre 5 — bio',   'name' => 'member_5_bio',   'type' => 'textarea', 'rows' => 3 ],
+
 			/* ── RÉSEAU DROLUNG ───────────────────────────── */
 			[ 'key' => 'field_apropos_reseau_tab',    'label' => 'Le réseau Drolung',     'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_apropos_reseau_eyebrow','label' => 'Surtitre',              'name' => 'reseau_eyebrow', 'type' => 'text' ],
@@ -288,7 +321,7 @@ function drolung_register_acf_fields() {
 			/* ── HERO ─────────────────────────────────────── */
 			[ 'key' => 'field_action_hero_eyebrow', 'label' => 'Hero — surtitre',    'name' => 'hero_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_action_hero_title',   'label' => 'Hero — titre (HTML)','name' => 'hero_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_action_hero_sub',     'label' => 'Hero — sous-titre',  'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_action_hero_sub',     'label' => 'Hero — sous-titre',  'name' => 'hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => '' ],
 
 			/* ── INTRO TWO-COL ───────────────────────────── */
 			[ 'key' => 'field_action_intro_tab',     'label' => 'Intro (deux colonnes)', 'name' => '', 'type' => 'tab' ],
@@ -397,16 +430,20 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_engager_hero_tab',     'label' => 'Hero',                  'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_engager_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'engager_hero_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_engager_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'engager_hero_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour mettre en italique doré.' ],
-			[ 'key' => 'field_engager_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'engager_hero_sub',     'type' => 'textarea', 'rows' => 3 ],
+			[ 'key' => 'field_engager_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'engager_hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => '' ],
 
 			/* ── SECTION DON ──────────────────────────────── */
 			[ 'key' => 'field_engager_don_tab',           'label' => 'Section don',             'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_engager_don_eyebrow',       'label' => 'Don — surtitre',           'name' => 'engager_don_eyebrow',       'type' => 'text' ],
 			[ 'key' => 'field_engager_don_title',         'label' => 'Don — titre (HTML)',       'name' => 'engager_don_title',         'type' => 'textarea', 'rows' => 2 ],
 			[ 'key' => 'field_engager_don_intro',         'label' => 'Don — phrase intro',       'name' => 'engager_don_intro',         'type' => 'textarea', 'rows' => 3 ],
-			[ 'key' => 'field_engager_don_body',          'label' => 'Don — corps (HTML — liste exemples + info box)',  'name' => 'engager_don_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
-			                                                'instructions' => 'Pour DSF : liste des coûts + boîte "Paiement en ligne bientôt disponible". Pour DSM : boîte de renvoi vers DSF.' ],
-			[ 'key' => 'field_engager_don_cta_label',     'label' => 'Don — texte du bouton',   'name' => 'engager_don_cta_label',     'type' => 'text' ],
+			[ 'key' => 'field_engager_don_body',          'label' => 'Don — corps (HTML — liste exemples)',  'name' => 'engager_don_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
+			                                                'instructions' => 'Pour DSF : liste des coûts projets (le formulaire AssoConnect est inséré automatiquement dessous). Pour DSM : boîte de renvoi vers DSF.' ],
+			[ 'key' => 'field_engager_assoconnect_id',    'label' => 'Don — AssoConnect collect ID',  'name' => 'engager_assoconnect_id',  'type' => 'text',
+			                                                'instructions' => 'ID du formulaire de collecte AssoConnect (data-collect-id). Vide = pas de formulaire intégré (bouton CTA à la place). Pré-rempli automatiquement pour DSF.' ],
+			[ 'key' => 'field_engager_don_cta_label',     'label' => 'Don — texte du bouton (si pas de formulaire)',  'name' => 'engager_don_cta_label',  'type' => 'text' ],
+			[ 'key' => 'field_engager_don_cta_url',       'label' => 'Don — URL du bouton (si pas de formulaire)',    'name' => 'engager_don_cta_url',    'type' => 'url',
+			                                                'instructions' => 'Laisser vide pour utiliser /contact/ par défaut.' ],
 			[ 'key' => 'field_engager_don_image',         'label' => 'Don — image',              'name' => 'engager_don_image',         'type' => 'image', 'return_format' => 'url' ],
 			[ 'key' => 'field_engager_don_image_alt',     'label' => 'Don — alt image',          'name' => 'engager_don_image_alt',     'type' => 'text' ],
 
@@ -592,7 +629,7 @@ function drolung_register_acf_fields() {
 			array( 'key' => 'field_projets_hero_eyebrow', 'label' => 'Hero — surtitre',       'name' => 'projets_hero_eyebrow', 'type' => 'text' ),
 			array( 'key' => 'field_projets_hero_title',   'label' => 'Hero — titre (HTML)',   'name' => 'projets_hero_title',   'type' => 'textarea', 'rows' => 2,
 			       'instructions' => 'Utilise <em>mot</em> pour mettre un mot en italique doré.' ),
-			array( 'key' => 'field_projets_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'projets_hero_sub',     'type' => 'textarea', 'rows' => 3 ),
+			array( 'key' => 'field_projets_hero_sub',     'label' => 'Hero — sous-titre',     'name' => 'projets_hero_sub',     'type' => 'textarea', 'rows' => 3, 'new_lines' => '' ),
 			array( 'key' => 'field_projets_hero_image',   'label' => 'Hero — image de fond',  'name' => 'projets_hero_image',   'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ),
 
 			/* ── INTRO ───────────────────────────────────── */

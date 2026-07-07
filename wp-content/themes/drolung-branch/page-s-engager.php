@@ -44,29 +44,67 @@ get_header();
   </div>
 </section>
 
-<!-- Section 1 — Faire un don (two-col) -->
+<?php
+/* AssoConnect collect ID — ACF field override, or default to DSF hardcoded ID. */
+$asc_collect_id = drolung_field( 'engager_assoconnect_id', '' );
+if ( ! $asc_collect_id && function_exists( 'drolung_current_branch' ) && drolung_current_branch() === 'dsf' ) {
+	$asc_collect_id = '01KVYT98B8F32ER528VJ6CFMPG';
+}
+if ( $asc_collect_id ) {
+	wp_enqueue_script(
+		'assoconnect-iframe',
+		'https://drolung-solidarite-france.assoconnect.com/public/build/js/iframe.js',
+		array(), null, true /* footer */
+	);
+}
+?>
+
+<!-- Section 1 — Faire un don -->
 <section class="inner-section">
   <div class="container">
-    <div class="two-col fade-up">
+
+    <?php if ( $asc_collect_id ) : ?>
+
+    <!-- AssoConnect actif : intro + image en two-col, formulaire pleine largeur dessous -->
+    <div class="two-col fade-up" style="align-items:flex-start">
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_don_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_don_title', __( 'Votre don agit <em>directement</em>', 'drolung-branch' ) ) ); ?></h2>
-        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_don_intro', __( 'Chaque euro collecté par DSF va intégralement aux projets portés par Drolung Solidarité Madagascar. Aucun frais de structure prélevé sur les dons.', 'drolung-branch' ) ) ); ?></p>
+        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_don_intro', __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois).', 'drolung-branch' ) ) ); ?></p>
         <?php echo wp_kses_post( drolung_field( 'engager_don_body', '<ul style="margin:24px 0;list-style:none;display:flex;flex-direction:column;gap:14px">
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '11–14 800 €', 'drolung-branch' ) . '</strong> — ' . __( 'le coût d\'un captage de source gravitaire desservant 1 300 personnes en eau potable à Ambohitrolomahitsy', 'drolung-branch' ) . '</span></li>
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 830 €', 'drolung-branch' ) . '</strong> — ' . __( 'le budget d\'une année complète de l\'École des Femmes à Anjozorobe (12 sessions, 50 à 100 femmes)', 'drolung-branch' ) . '</span></li>
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
-        </ul>
-        <div style="background:var(--cream);border:1px solid var(--border);border-radius:2px;padding:20px 24px;margin-top:24px">
-          <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin:0">
-            <strong style="color:var(--charcoal);">' . __( 'Paiement en ligne bientôt disponible.', 'drolung-branch' ) . '</strong><br>
-            ' . __( 'Notre système de paiement en ligne sera disponible prochainement. Pour contribuer dès maintenant, contactez-nous.', 'drolung-branch' ) . '
-          </p>
-        </div>' ) ); ?>
-        <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
+        </ul>' ) ); ?>
+      </div>
+      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy" style="max-height:360px;object-fit:cover">
+    </div>
+
+    <!-- Formulaire AssoConnect centré, largeur limitée, séparé visuellement -->
+    <div class="asc-don-embed fade-up" style="max-width:600px;margin:48px auto 0;">
+      <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
+    </div>
+
+    <?php else : ?>
+
+    <!-- Pas de formulaire AssoConnect : layout two-col classique avec bouton CTA -->
+    <div class="two-col fade-up">
+      <div>
+        <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_don_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
+        <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_don_title', __( 'Votre don agit <em>directement</em>', 'drolung-branch' ) ) ); ?></h2>
+        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_don_intro', __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois).', 'drolung-branch' ) ) ); ?></p>
+        <?php echo wp_kses_post( drolung_field( 'engager_don_body', '<ul style="margin:24px 0;list-style:none;display:flex;flex-direction:column;gap:14px">
+          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '11–14 800 €', 'drolung-branch' ) . '</strong> — ' . __( 'le coût d\'un captage de source gravitaire desservant 1 300 personnes en eau potable à Ambohitrolomahitsy', 'drolung-branch' ) . '</span></li>
+          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 830 €', 'drolung-branch' ) . '</strong> — ' . __( 'le budget d\'une année complète de l\'École des Femmes à Anjozorobe (12 sessions, 50 à 100 femmes)', 'drolung-branch' ) . '</span></li>
+          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
+        </ul>' ) ); ?>
+        <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', home_url( '/contact/' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
       </div>
       <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
     </div>
+
+    <?php endif; ?>
+
   </div>
 </section>
 
