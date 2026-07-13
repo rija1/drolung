@@ -121,7 +121,7 @@ if ( $projet_date_debut || $projet_date_fin ) {
 		<div class="container">
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a>
 			<span>›</span>
-			<a href="<?php echo esc_url( home_url( '/projets/' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a>
+			<a href="<?php echo esc_url( function_exists( 'drolung_lang_url' ) ? drolung_lang_url( 'projets' ) : home_url( '/projets/' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a>
 			<span>›</span>
 			<span><?php echo esc_html( $post_title ); ?></span>
 		</div>

@@ -142,7 +142,7 @@ $hero_image_url = drolung_get_network_option(
 					? wp_list_pluck( $item['partenaires'], 'nom' )
 					: array_filter( array( $item['meta']['partenaire'] ) );
 
-				$permalink   = home_url( '/projets/' . $item['slug'] . '/' );
+				$permalink   = function_exists( 'drolung_item_permalink' ) ? drolung_item_permalink( $item ) : home_url( '/projets/' . $item['slug'] . '/' );
 
 				$delay = ( $i % 4 ) * 0.08;
 				$style = $delay > 0 ? sprintf( 'transition-delay:%.2fs', $delay ) : '';

@@ -79,11 +79,10 @@ if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung
         </ul>' ) ); ?>
         <?php if ( $asc_donate_url ) :
           $asc_btn_label = function_exists( 'pll__' ) ? pll__( 'Faire un don via AssoConnect' ) : __( 'Faire un don via AssoConnect', 'drolung-branch' );
-          echo '<!-- DEBUG pll_exists=' . ( function_exists( 'pll__' ) ? '1' : '0' ) . ' cur_lang=' . ( function_exists( 'pll_current_language' ) ? pll_current_language() : 'n/a' ) . ' label=' . esc_html( $asc_btn_label ) . ' -->';
           ?>
           <a href="<?php echo esc_url( $asc_donate_url ); ?>" class="btn-page btn-page--primary" style="margin-top:28px;font-style:normal;font-family:var(--font-body);" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $asc_btn_label ); ?></a>
         <?php else : ?>
-          <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', home_url( '/contact/' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
+          <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', drolung_lang_url( 'contact' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
         <?php endif; ?>
       </div>
       <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
@@ -119,7 +118,7 @@ if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_partenariat_eyebrow', __( 'Partenariat', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_partenariat_title', __( 'Vous êtes une entreprise <em>ou une fondation ?</em>', 'drolung-branch' ) ) ); ?></h2>
         <p class="section-body" style="color:rgba(255,255,255,0.7)"><?php echo esc_html( drolung_field( 'engager_partenariat_body', __( 'Nous sommes ouverts à des partenariats de mécénat, de compétences ou de financement de projet. Toute collaboration est traitée avec transparence et fait l\'objet d\'un rapport dédié.', 'drolung-branch' ) ) ); ?></p>
-        <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="btn-page btn-page--saffron" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_partenariat_cta_label', __( 'Nous contacter', 'drolung-branch' ) ) ); ?></a>
+        <a href="<?php echo esc_url( drolung_lang_url( 'contact' ) ); ?>" class="btn-page btn-page--saffron" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_partenariat_cta_label', __( 'Nous contacter', 'drolung-branch' ) ) ); ?></a>
       </div>
       <div class="fade-up" style="transition-delay:0.15s;display:flex;flex-direction:column;gap:20px;justify-content:center">
         <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:2px;padding:28px;">

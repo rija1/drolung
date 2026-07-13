@@ -22,5 +22,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-wp_redirect( esc_url( home_url( '/projets/' ) ), 301 );
+wp_redirect( esc_url( function_exists( 'drolung_lang_url' ) ? drolung_lang_url( 'projets' ) : home_url( '/projets/' ) ), 301 );
 exit;

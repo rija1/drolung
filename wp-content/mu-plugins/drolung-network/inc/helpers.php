@@ -348,6 +348,14 @@ function drolung_get_partenaires( $projet_central_id ) {
 
 /**
  * URL d'un item (projet/article) sur un site de branche donné.
+ *
+ * Préfixe la langue de l'item (`/en/`, `/zh/`…) quand elle diffère de la
+ * langue par défaut de CE site — sans ça, un lien construit sur une page
+ * non-française pointe vers une URL sans préfixe, que Polylang détecte au
+ * clic comme française par défaut : le visiteur atterrit sur la mauvaise
+ * langue malgré la carte/le lien affiché dans la bonne (bug rapporté
+ * 2026-07-14, cf. journal §15). Chaque branche a son propre réglage
+ * Polylang, d'où le switch_to_blog pour lire le bon `pll_default_language()`.
  */
 function drolung_item_url_on_branch( $item, $branch ) {
 	$blog_id = drolung_branch_blog_id( $branch );
@@ -355,7 +363,36 @@ function drolung_item_url_on_branch( $item, $branch ) {
 		return $item['permalink_central'];
 	}
 	$base = 'projet' === $item['type'] ? 'projets' : 'articles';
-	return get_home_url( $blog_id, '/' . $base . '/' . $item['slug'] . '/' );
+
+	switch_to_blog( $blog_id );
+	$url = get_home_url( $blog_id, '/' . drolung_item_lang_prefix( $item ) . $base . '/' . $item['slug'] . '/' );
+	restore_current_blog();
+
+	return $url;
+}
+
+/**
+ * URL d'un item (projet/article) sur le site COURANT — pour une branche qui
+ * liste ses propres projets (archive, home). Même correctif de préfixe que
+ * `drolung_item_url_on_branch()` ci-dessus, sans le changement de site
+ * (inutile ici : on est déjà sur la bonne branche).
+ */
+function drolung_item_permalink( $item ) {
+	$base = 'article' === $item['type'] ? 'articles' : 'projets';
+	return home_url( '/' . drolung_item_lang_prefix( $item ) . $base . '/' . $item['slug'] . '/' );
+}
+
+/**
+ * Préfixe de langue ('' ou 'en/', 'zh/'…) pour un item, sur le site
+ * actuellement actif (switch_to_blog l'a déjà positionné si besoin par
+ * l'appelant). Pas de préfixe pour la langue par défaut du site — c'est le
+ * schéma d'URL que les règles de réécriture de la branche attendent
+ * (même logique que `drolung_network_translation_url()`, router.php).
+ */
+function drolung_item_lang_prefix( $item ) {
+	$default_lang = function_exists( 'pll_default_language' ) ? pll_default_language() : '';
+	$item_lang    = isset( $item['lang'] ) ? $item['lang'] : '';
+	return ( $item_lang && $item_lang !== $default_lang ) ? trailingslashit( $item_lang ) : '';
 }
 
 /**

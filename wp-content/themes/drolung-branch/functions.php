@@ -20,6 +20,76 @@ define( 'DROLUNG_BRANCH_VERSION', '0.2.0' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
+ * URL correcte, dans la langue courante, d'une page interne identifiée par
+ * son slug FRANÇAIS (celui du post original — toujours le même quelle que
+ * soit la langue affichée, contrairement au slug qui change par langue :
+ * "s-engager" → "get-involved" en anglais, etc.).
+ *
+ * `home_url( '/' . $slug . '/' )` ne suffit pas : il ne préfixe jamais la
+ * langue (`/en/`, `/zh/`) ni ne connaît le bon slug traduit — un lien ainsi
+ * construit sur une page anglaise pointe vers une URL sans préfixe, que
+ * Polylang détecte au clic comme française par défaut (bug rapporté
+ * 2026-07-14 : navigation entière renvoyant vers le FR depuis les pages
+ * EN/ZH, cf. journal technique §15). `pll_get_post()` est l'API Polylang
+ * documentée pour résoudre l'ID traduit dans la langue courante ; on lit
+ * ensuite son vrai permalien via `get_permalink()`, qui gère lui-même le
+ * bon slug ET le bon préfixe — pas besoin de connaître le slug par langue.
+ *
+ * @param string $fr_slug     Slug de la page en français (ex. 'a-propos').
+ * @param string $default_url Repli si la page n'existe pas sur ce site.
+ */
+function drolung_lang_url( $fr_slug, $default_url = '' ) {
+	/*
+	 * Pas de cache statique ici : sous PHP-FPM, les variables `static`
+	 * survivent aux requêtes tant que le worker reste vivant — un premier
+	 * appel calculé pour le français resterait alors collé en mémoire et
+	 * serait servi à tort sur une requête anglaise suivante traitée par le
+	 * même worker (bug rencontré et corrigé pendant cette même session :
+	 * les liens "Voir tous les projets" / breadcrumb restaient parfois en
+	 * français malgré la page courante en anglais). Le lookup est bon
+	 * marché (une requête indexée sur le slug) — pas besoin d'optimiser.
+	 */
+	$fr_slug = trim( $fr_slug, '/' );
+
+	/*
+	 * Archives de CPT réseau (ex. 'projets') : jamais de vraie "page" à
+	 * chercher, juste un préfixe de langue courante à ajouter. Traitées
+	 * en premier, avant get_page_by_path() — un vieux post 'page' orphelin
+	 * portant par coïncidence le même slug (ID 5, "Projets", legacy
+	 * d'avant le CPT) a autrement été trouvé à sa place et a fait
+	 * ressortir son URL française non traduite, peu importe la langue
+	 * courante (bug trouvé et corrigé le 2026-07-14).
+	 */
+	$archive_slugs = array( 'projets', 'articles' );
+	if ( in_array( $fr_slug, $archive_slugs, true ) ) {
+		$prefix = '';
+		if ( function_exists( 'pll_current_language' ) && function_exists( 'pll_default_language' ) ) {
+			$cur = pll_current_language();
+			$def = pll_default_language();
+			if ( $cur && $cur !== $def ) {
+				$prefix = trailingslashit( $cur );
+			}
+		}
+		return $default_url ?: home_url( '/' . $prefix . $fr_slug . '/' );
+	}
+
+	$page = get_page_by_path( $fr_slug );
+	if ( ! $page ) {
+		return $default_url ?: home_url( '/' . $fr_slug . '/' );
+	}
+
+	$post_id = $page->ID;
+	if ( function_exists( 'pll_get_post' ) ) {
+		$translated_id = pll_get_post( $post_id );
+		if ( $translated_id ) {
+			$post_id = $translated_id;
+		}
+	}
+
+	return get_permalink( $post_id );
+}
+
+/**
  * Enqueue branch-nav.css (header overrides) after base.css,
  * and branch-nav.js (hamburger) in place of base.js.
  */
@@ -57,7 +127,7 @@ function drolung_branch_dequeue_parent_js() {
  * Donate link — points to the s'engager page on this subsite.
  */
 add_filter( 'drolung_donate_url', function () {
-	return home_url( '/s-engager/' );
+	return drolung_lang_url( 's-engager' );
 } );
 
 /**
@@ -116,15 +186,11 @@ function drolung_branch_pll_lang_switcher( $langs ) {
 add_action( 'drolung_footer_content', 'drolung_branch_footer_content' );
 function drolung_branch_footer_content() {
 	$engager_id = drolung_acf_page_id_by_slug( 's-engager' );
-	$contact_id = drolung_acf_page_id_by_slug( 'contact' );
 
 	$facebook  = drolung_field( 'engager_facebook_url',  '#', $engager_id );
 	$linkedin  = drolung_field( 'engager_linkedin_url',  '#', $engager_id );
 	$instagram = drolung_field( 'engager_instagram_url', '#', $engager_id );
 
-	$contact_email        = drolung_field( 'contact_email', 'contact@drolung.org', $contact_id );
-	$contact_network_url  = drolung_field( 'contact_network_url', 'https://drolung.org', $contact_id );
-	$contact_network_name = drolung_field( 'contact_network_display', 'drolung.org', $contact_id );
 	?>
 	<div class="footer-top">
 
@@ -151,9 +217,7 @@ function drolung_branch_footer_content() {
 			<div class="footer-col__title"><?php esc_html_e( 'Navigation', 'drolung-branch' ); ?></div>
 			<ul>
 				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>"><?php esc_html_e( 'À propos', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/notre-action/' ) ); ?>"><?php esc_html_e( 'Notre action', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/ou-nous-intervenons/' ) ); ?>"><?php esc_html_e( 'Où nous intervenons', 'drolung-branch' ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'a-propos' ) ); ?>"><?php esc_html_e( 'À propos', 'drolung-branch' ); ?></a></li>
 			</ul>
 		</div>
 
@@ -161,17 +225,14 @@ function drolung_branch_footer_content() {
 			<div class="footer-col__title"><?php esc_html_e( "S'engager", 'drolung-branch' ); ?></div>
 			<ul>
 				<li><a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>"><?php esc_html_e( 'Faire un don', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/projets/' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/ressources/' ) ); ?>"><?php esc_html_e( 'Ressources', 'drolung-branch' ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a></li>
 			</ul>
 		</div>
 
 		<div class="footer-col">
 			<div class="footer-col__title"><?php esc_html_e( 'Contact', 'drolung-branch' ); ?></div>
 			<ul>
-				<li><a href="mailto:<?php echo esc_attr( $contact_email ); ?>"><?php echo esc_html( $contact_email ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Nous contacter', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( $contact_network_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $contact_network_name ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'contact' ) ); ?>"><?php esc_html_e( 'Nous contacter', 'drolung-branch' ); ?></a></li>
 			</ul>
 		</div>
 

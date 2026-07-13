@@ -75,7 +75,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 		<p class="hero-sub"><?php echo esc_html( drolung_field( 'hero_sub', __( 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.', 'drolung-branch' ) ) ); ?></p>
 		<div class="hero-actions">
 			<a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>" class="btn-hero-primary"><?php echo esc_html( drolung_field( 'hero_cta1_label', __( 'Faire un don', 'drolung-branch' ) ) ); ?></a>
-			<a href="<?php echo esc_url( drolung_field( 'hero_cta2_url', home_url( '/notre-action/' ) ) ); ?>" class="btn-hero-secondary"><?php echo esc_html( drolung_field( 'hero_cta2_label', __( 'Découvrir nos projets →', 'drolung-branch' ) ) ); ?></a>
+			<a href="<?php echo esc_url( drolung_field( 'hero_cta2_url', drolung_lang_url( 'notre-action' ) ) ); ?>" class="btn-hero-secondary"><?php echo esc_html( drolung_field( 'hero_cta2_label', __( 'Découvrir nos projets →', 'drolung-branch' ) ) ); ?></a>
 		</div>
 	</div>
 	<div class="hero-scroll">
@@ -148,7 +148,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 				<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'map_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
 				<h2 class="section-title" style="margin-bottom:0"><?php echo wp_kses_post( drolung_field( 'map_title', __( 'Quatre projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
 			</div>
-			<a href="<?php echo esc_url( home_url( '/projets/' ) ); ?>" class="btn-text"><?php esc_html_e( 'Voir tous les projets →', 'drolung-branch' ); ?></a>
+			<a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>" class="btn-text"><?php esc_html_e( 'Voir tous les projets →', 'drolung-branch' ); ?></a>
 		</div>
 
 		<?php if ( ! empty( $featured_projets ) ) : ?>
@@ -158,7 +158,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 					$statut_slug  = $statut_slugs[0] ?? '';
 					$statut_name  = $item['statut'][ $statut_slug ] ?? '';
 					$thumb_url    = isset( $item['thumbnail']['large'] ) ? $item['thumbnail']['large'] : '';
-					$permalink    = home_url( '/projets/' . $item['slug'] . '/' );
+					$permalink    = function_exists( 'drolung_item_permalink' ) ? drolung_item_permalink( $item ) : home_url( '/projets/' . $item['slug'] . '/' );
 					$delay        = ( $i % 4 ) * 0.08;
 					?>
 					<div class="card project-card fade-up"<?php echo $delay > 0 ? ' style="transition-delay:' . esc_attr( $delay ) . 's"' : ''; ?>>
@@ -212,7 +212,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 				$intro_body = drolung_field( 'intro_body', '<p>' . __( 'Drolung Solidarité réunit des bénévoles autour d\'une conviction simple : l\'aide la plus efficace est celle qui s\'enracine dans les besoins exprimés par les communautés elles-mêmes. Nous travaillons en lien direct avec les acteurs de terrain.', 'drolung-branch' ) . '</p>' );
 				echo wp_kses_post( $intro_body );
 			?></div>
-			<a href="<?php echo esc_url( home_url( '/a-propos/' ) ); ?>" class="btn-text" style="margin-top:32px">
+			<a href="<?php echo esc_url( drolung_lang_url( 'a-propos' ) ); ?>" class="btn-text" style="margin-top:32px">
 				<?php echo esc_html( drolung_field( 'intro_cta_label', __( 'Notre histoire & mission →', 'drolung-branch' ) ) ); ?>
 			</a>
 		</div>

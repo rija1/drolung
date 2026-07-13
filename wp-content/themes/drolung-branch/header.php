@@ -48,7 +48,7 @@
 			</button>
 			<div class="nav-links">
 				<?php
-				$donate_url    = apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) );
+				$donate_url    = apply_filters( 'drolung_donate_url', function_exists( 'drolung_lang_url' ) ? drolung_lang_url( 's-engager' ) : home_url( '/s-engager/' ) );
 				$donate_label_default = function_exists( 'pll__' ) ? pll__( 'Faire un don' ) : __( 'Faire un don', 'drolung-branch' );
 				$donate_label  = apply_filters( 'drolung_donate_label', $donate_label_default );
 
@@ -65,11 +65,11 @@
 					$_current_url = untrailingslashit( home_url( add_query_arg( [] ) ) );
 					$_fb_links    = [
 						__( 'Accueil', 'drolung-branch' )              => home_url( '/' ),
-						__( 'À propos', 'drolung-branch' )             => home_url( '/a-propos/' ),
-						__( 'Notre action', 'drolung-branch' )         => home_url( '/notre-action/' ),
-						__( 'Où nous intervenons', 'drolung-branch' )  => home_url( '/ou-nous-intervenons/' ),
-						__( 'Ressources', 'drolung-branch' )           => home_url( '/ressources/' ),
-						__( 'Contact', 'drolung-branch' )              => home_url( '/contact/' ),
+						__( 'À propos', 'drolung-branch' )             => drolung_lang_url( 'a-propos' ),
+						__( 'Notre action', 'drolung-branch' )         => drolung_lang_url( 'notre-action' ),
+						__( 'Où nous intervenons', 'drolung-branch' )  => drolung_lang_url( 'ou-nous-intervenons' ),
+						__( 'Ressources', 'drolung-branch' )           => drolung_lang_url( 'ressources' ),
+						__( 'Contact', 'drolung-branch' )              => drolung_lang_url( 'contact' ),
 					];
 					foreach ( $_fb_links as $_label => $_url ) {
 						$_active = untrailingslashit( $_url ) === $_current_url;
