@@ -27,8 +27,8 @@
 <header>
 	<?php
 	$topbar_langs = apply_filters( 'drolung_topbar_langs', [
-		[ 'code' => 'FR', 'url' => '#', 'active' => true  ],
-		[ 'code' => 'EN', 'url' => '#', 'active' => false ],
+		[ 'code' => 'FR', 'name' => 'Français', 'url' => '#', 'active' => true  ],
+		[ 'code' => 'EN', 'name' => 'English',  'url' => '#', 'active' => false ],
 	] );
 	?>
 
@@ -80,15 +80,35 @@
 					<?php
 				}
 
-				if ( $topbar_langs ) : ?>
-					<div class="lang-sel">
-						<?php foreach ( $topbar_langs as $lang ) : ?>
-							<?php if ( ! empty( $lang['url'] ) ) : ?>
-								<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active"' : ''; ?>><?php echo esc_html( $lang['code'] ); ?></a>
-							<?php else : ?>
-								<span<?php echo $lang['active'] ? ' class="active"' : ' class="unavailable"'; ?>><?php echo esc_html( $lang['code'] ); ?></span>
-							<?php endif; ?>
-						<?php endforeach; ?>
+				if ( $topbar_langs ) :
+					$_current_lang = current( array_filter( $topbar_langs, function ( $l ) { return ! empty( $l['active'] ); } ) );
+					$_current_code = $_current_lang ? $_current_lang['code'] : '';
+					?>
+					<div class="lang-switch">
+						<button type="button" class="lang-switch__btn" aria-haspopup="true" aria-expanded="false">
+							<svg class="lang-switch__globe" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="9"/>
+								<path d="M3 12h18"/>
+								<path d="M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9s1.3-6.4 3.8-9Z"/>
+							</svg>
+							<span class="lang-switch__code"><?php echo esc_html( $_current_code ); ?></span>
+							<svg class="lang-switch__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M6 9l6 6 6-6"/>
+							</svg>
+						</button>
+						<ul class="lang-switch__menu">
+							<?php foreach ( $topbar_langs as $lang ) :
+								$_lang_label = ! empty( $lang['name'] ) ? $lang['name'] : $lang['code'];
+								?>
+								<li>
+									<?php if ( ! empty( $lang['url'] ) ) : ?>
+										<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active" aria-current="true"' : ''; ?>><?php echo esc_html( $_lang_label ); ?></a>
+									<?php else : ?>
+										<span<?php echo $lang['active'] ? ' class="active"' : ' class="unavailable"'; ?>><?php echo esc_html( $_lang_label ); ?></span>
+									<?php endif; ?>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					</div>
 				<?php endif; ?>
 

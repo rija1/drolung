@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.0' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.2' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -148,25 +148,40 @@ function drolung_branch_pll_lang_switcher( $langs ) {
 	$pll_list = pll_the_languages( array(
 		'raw'              => 1,
 		'hide_current'     => 0,
-		'display_names_as' => 'slug',
+		'display_names_as' => 'name', // native name (Français / English / 中文) for the dropdown list.
 	) );
 
 	if ( empty( $pll_list ) ) {
 		return $langs;
 	}
 
+	/*
+	 * Code court affiché dans le bouton une fois une langue sélectionnée :
+	 * FR / EN pour le latin, mais le chinois s'affiche en "中文" plutôt
+	 * qu'en "ZH" (demande explicite — plus lisible/naturel pour cette langue).
+	 * Même chose pour le nom complet du menu déroulant : Polylang renvoie
+	 * "中文 (中国)" (nom + pays) pour le chinois, on force juste "中文".
+	 */
+	$short_codes  = array( 'zh' => '中文' );
+	$display_name = array( 'zh' => '中文' );
+
 	$out = array();
 	foreach ( $pll_list as $lang ) {
+		$code = isset( $short_codes[ $lang['slug'] ] ) ? $short_codes[ $lang['slug'] ] : strtoupper( $lang['slug'] );
+		$name = isset( $display_name[ $lang['slug'] ] ) ? $display_name[ $lang['slug'] ] : $lang['name'];
+
 		/* Skip entries that have no translation and are not the current page language. */
 		if ( ! empty( $lang['no_translation'] ) && empty( $lang['current_lang'] ) ) {
 			$out[] = array(
-				'code'   => strtoupper( $lang['slug'] ),
+				'code'   => $code,
+				'name'   => $name,
 				'url'    => '',   // no target — rendered as plain text in the header
 				'active' => false,
 			);
 		} else {
 			$out[] = array(
-				'code'   => strtoupper( $lang['slug'] ),
+				'code'   => $code,
+				'name'   => $name,
 				'url'    => esc_url( $lang['url'] ),
 				'active' => ! empty( $lang['current_lang'] ),
 			);

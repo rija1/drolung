@@ -40,4 +40,25 @@
 			});
 		});
 	}
+
+	/* Language switcher dropdown */
+	var langSwitch = document.querySelector('.lang-switch');
+	var langBtn = langSwitch && langSwitch.querySelector('.lang-switch__btn');
+	if (langSwitch && langBtn) {
+		function closeLangSwitch() {
+			langSwitch.classList.remove('open');
+			langBtn.setAttribute('aria-expanded', 'false');
+		}
+		langBtn.addEventListener('click', function (e) {
+			e.stopPropagation();
+			var open = langSwitch.classList.toggle('open');
+			langBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+		});
+		document.addEventListener('click', function (e) {
+			if (!langSwitch.contains(e.target)) { closeLangSwitch(); }
+		});
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') { closeLangSwitch(); langBtn.focus(); }
+		});
+	}
 })();
