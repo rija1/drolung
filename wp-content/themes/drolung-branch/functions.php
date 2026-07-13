@@ -216,3 +216,19 @@ function drolung_register_projets_archive_strings() {
 		}
 	}
 }
+
+/**
+ * Enregistre le libellé du bouton de don AssoConnect (page S'engager) comme
+ * chaîne Polylang — même raison que ci-dessus : ce libellé n'est rattaché à
+ * aucun champ ACF par page, donc pas de traduction "par page" possible.
+ *
+ * Traductions à saisir : wp-admin de CHAQUE branche → Langues → Traduction
+ * des chaînes → groupe « Drolung — Interface ».
+ */
+add_action( 'init', 'drolung_register_engager_strings' );
+function drolung_register_engager_strings() {
+	if ( ! function_exists( 'pll_register_string' ) ) {
+		return;
+	}
+	pll_register_string( 'engager_asc_btn_label', 'Faire un don via AssoConnect', 'Drolung — Interface' );
+}

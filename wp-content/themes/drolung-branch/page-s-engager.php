@@ -47,17 +47,19 @@ get_header();
 </section>
 
 <?php
-/* AssoConnect collect ID — ACF field override, or default to DSF hardcoded ID. */
-$asc_collect_id = drolung_field( 'engager_assoconnect_id', '' );
-if ( ! $asc_collect_id && function_exists( 'drolung_current_branch' ) && drolung_current_branch() === 'dsf' ) {
-	$asc_collect_id = '01KVYT98B8F32ER528VJ6CFMPG';
-}
-if ( $asc_collect_id ) {
-	wp_enqueue_script(
-		'assoconnect-iframe',
-		'https://drolung-solidarite-france.assoconnect.com/public/build/js/iframe.js',
-		array(), null, true /* footer */
-	);
+/*
+ * AssoConnect — lien de redirection, PAS d'intégration en iframe.
+ *
+ * L'iframe embarquée a été abandonnée (bug confirmé côté AssoConnect :
+ * leur widget de paiement Adyen échoue même en accès direct sur leur
+ * propre domaine, hors de tout contexte d'intégration — voir journal
+ * technique §15, session 2026-07-13). Le visiteur est donc redirigé vers
+ * le formulaire AssoConnect dans un nouvel onglet plutôt que de l'afficher
+ * intégré sur cette page.
+ */
+$asc_donate_url = drolung_field( 'engager_assoconnect_url', '' );
+if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung_current_branch() === 'dsf' ) {
+	$asc_donate_url = 'https://drolung-solidarite-france.assoconnect.com/collect/description/726668-x-soutenir-dsf-drolung-solidarite-france';
 }
 ?>
 
@@ -65,91 +67,6 @@ if ( $asc_collect_id ) {
 <section class="inner-section">
   <div class="container">
 
-    <?php if ( $asc_collect_id ) : ?>
-
-    <!-- AssoConnect actif : intro + image en two-col, formulaire pleine largeur dessous -->
-    <div class="two-col fade-up" style="align-items:flex-start">
-      <div>
-        <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_don_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
-        <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_don_title', __( 'Votre don agit <em>directement</em>', 'drolung-branch' ) ) ); ?></h2>
-        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_don_intro', __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois).', 'drolung-branch' ) ) ); ?></p>
-        <?php echo wp_kses_post( drolung_field( 'engager_don_body', '<ul style="margin:24px 0;list-style:none;display:flex;flex-direction:column;gap:14px">
-          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '11–14 800 €', 'drolung-branch' ) . '</strong> — ' . __( 'le coût d\'un captage de source gravitaire desservant 1 300 personnes en eau potable à Ambohitrolomahitsy', 'drolung-branch' ) . '</span></li>
-          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 830 €', 'drolung-branch' ) . '</strong> — ' . __( 'le budget d\'une année complète de l\'École des Femmes à Anjozorobe (12 sessions, 50 à 100 femmes)', 'drolung-branch' ) . '</span></li>
-          <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
-        </ul>' ) ); ?>
-      </div>
-      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy" style="max-height:360px;object-fit:cover">
-    </div>
-
-    <!-- Formulaire AssoConnect centré, largeur limitée, séparé visuellement -->
-    <style>
-      .asc-don-embed { position: relative; min-height: 420px; }
-      .asc-loading {
-        position: absolute; inset: 0; z-index: 1;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-        background: var(--cream); border: 1px solid var(--border); border-radius: 2px;
-        transition: opacity 0.3s ease;
-      }
-      .asc-loading.is-hidden { opacity: 0; pointer-events: none; }
-      .asc-loading__spinner {
-        width: 32px; height: 32px; border-radius: 50%;
-        border: 3px solid var(--border); border-top-color: var(--saffron);
-        animation: asc-spin 0.8s linear infinite;
-      }
-      .asc-loading__text {
-        font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em;
-        text-transform: uppercase; color: var(--stone);
-      }
-      @keyframes asc-spin { to { transform: rotate(360deg); } }
-    </style>
-    <div class="asc-don-embed fade-up" style="max-width:600px;margin:48px auto 0;">
-      <div class="asc-loading">
-        <span class="asc-loading__spinner" aria-hidden="true"></span>
-        <span class="asc-loading__text"><?php esc_html_e( 'Chargement du formulaire de don…', 'drolung-branch' ); ?></span>
-      </div>
-      <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
-    </div>
-    <script>
-      (function () {
-        var loader = document.querySelector( '.asc-loading' );
-        if ( ! loader ) { return; }
-
-        var hidden = false;
-        function hideLoader() {
-          if ( hidden ) { return; }
-          hidden = true;
-          loader.classList.add( 'is-hidden' );
-        }
-
-        /* Le SDK AssoConnect (iframeSDK.js) crée l'<iframe> immédiatement,
-         * mais son contenu met plusieurs secondes à se rendre à l'intérieur
-         * (carré blanc) — l'évènement `load` de l'iframe se déclenche trop
-         * tôt (juste le document, pas le rendu). Le vrai signal « contenu
-         * prêt » est le postMessage `iframe.height` que le formulaire envoie
-         * une fois rendu (c'est ce même message que le SDK AssoConnect
-         * utilise pour ajuster la hauteur de l'iframe) — on s'y branche. */
-        window.addEventListener( 'message', function ( event ) {
-          if (
-            typeof event.origin === 'string' &&
-            event.origin.indexOf( 'assoconnect.com' ) !== -1 &&
-            event.data &&
-            event.data.action === 'iframe.height'
-          ) {
-            hideLoader();
-          }
-        } );
-
-        /* Filet de sécurité : le formulaire AssoConnect peut être lent ou
-         * échouer silencieusement (bloqueur de pub, réseau, postMessage
-         * jamais reçu) — ne pas laisser le spinner tourner indéfiniment. */
-        setTimeout( hideLoader, 15000 );
-      })();
-    </script>
-
-    <?php else : ?>
-
-    <!-- Pas de formulaire AssoConnect : layout two-col classique avec bouton CTA -->
     <div class="two-col fade-up">
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_don_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
@@ -160,12 +77,17 @@ if ( $asc_collect_id ) {
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 830 €', 'drolung-branch' ) . '</strong> — ' . __( 'le budget d\'une année complète de l\'École des Femmes à Anjozorobe (12 sessions, 50 à 100 femmes)', 'drolung-branch' ) . '</span></li>
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
         </ul>' ) ); ?>
-        <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', home_url( '/contact/' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
+        <?php if ( $asc_donate_url ) :
+          $asc_btn_label = function_exists( 'pll__' ) ? pll__( 'Faire un don via AssoConnect' ) : __( 'Faire un don via AssoConnect', 'drolung-branch' );
+          echo '<!-- DEBUG pll_exists=' . ( function_exists( 'pll__' ) ? '1' : '0' ) . ' cur_lang=' . ( function_exists( 'pll_current_language' ) ? pll_current_language() : 'n/a' ) . ' label=' . esc_html( $asc_btn_label ) . ' -->';
+          ?>
+          <a href="<?php echo esc_url( $asc_donate_url ); ?>" class="btn-page btn-page--primary" style="margin-top:28px;font-style:normal;font-family:var(--font-body);" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $asc_btn_label ); ?></a>
+        <?php else : ?>
+          <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', home_url( '/contact/' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
+        <?php endif; ?>
       </div>
       <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
     </div>
-
-    <?php endif; ?>
 
   </div>
 </section>
