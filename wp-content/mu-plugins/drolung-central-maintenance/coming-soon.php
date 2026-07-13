@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?><!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Drolung — Site à venir</title>
+<title>Drolung — Coming Soon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     color: rgba(251,247,240,0.68);
     font-weight: 400;
   }
-  p.sub.en {
+  p.sub.fr {
     margin-top: 10px;
     font-size: 13px;
     color: rgba(251,247,240,0.45);
@@ -135,9 +135,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     <div class="rule"></div>
 
-    <h1>Un nouveau site <em>arrive bientôt</em></h1>
-    <p class="sub">Le site du réseau Drolung International Foundation est en cours de construction. En attendant, retrouvez Drolung Solidarité France sur <a href="https://solidarite.drolung.fr" style="color:inherit;text-decoration:underline;">solidarite.drolung.fr</a>.</p>
-    <p class="sub en">A new site is coming soon. In the meantime, visit Drolung Solidarité France at solidarite.drolung.fr.</p>
+    <h1>A new site is <em>coming soon</em></h1>
+    <p class="sub">The Drolung International Foundation network site is under construction. In the meantime, visit Drolung Solidarité France at <a href="https://solidarite.drolung.fr" style="color:inherit;text-decoration:underline;">solidarite.drolung.fr</a>.</p>
+    <p class="sub fr">Un nouveau site arrive bientôt. En attendant, retrouvez Drolung Solidarité France sur solidarite.drolung.fr.</p>
 
     <div class="contact">contact@drolung.org</div>
   </div>

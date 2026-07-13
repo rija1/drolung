@@ -290,8 +290,9 @@
     ══════════════════════════ */
     .hero {
       position: relative;
-      height: 100vh;
-      min-height: 680px;
+      height: 100vh; /* repli pour les navigateurs sans support de dvh */
+      height: 100dvh; /* hauteur de viewport réelle (barre d'adresse mobile incluse) */
+      min-height: 480px; /* garde-fou pour éviter un hero écrasé sur fenêtre très basse, sans jamais dépasser le viewport */
       max-height: 920px;
       display: flex;
       align-items: flex-end;
@@ -1839,7 +1840,7 @@
 
   /* Hero pleine page — réduire la hauteur sur petit écran */
   .hero {
-    min-height: 520px;
+    min-height: 420px;
     max-height: 700px;
   }
   .hero-content { padding: 0 20px 56px; }
