@@ -295,7 +295,7 @@
       min-height: 480px; /* garde-fou pour éviter un hero écrasé sur fenêtre très basse, sans jamais dépasser le viewport */
       max-height: 920px;
       display: flex;
-      align-items: flex-end;
+      align-items: flex-start;
       overflow: hidden;
     }
     .hero-bg {
@@ -305,8 +305,11 @@
     }
     .hero-overlay {
       position: absolute; inset: 0;
+      /* Dégradé inversé par rapport à l'original (sombre en bas) : le
+         texte est maintenant ancré en haut, donc c'est le haut qui doit
+         être sombre pour rester lisible. */
       background: linear-gradient(
-        to top,
+        to bottom,
         rgba(26,25,22,0.92) 0%,
         rgba(26,25,22,0.55) 45%,
         rgba(26,25,22,0.15) 100%
@@ -321,7 +324,7 @@
     .hero-content {
       position: relative; z-index: 2;
       width: 100%;
-      padding: 0 32px 72px;
+      padding: 240px 32px 0;
       max-width: var(--container);
       margin: 0 auto;
     }
@@ -1843,7 +1846,7 @@
     min-height: 420px;
     max-height: 700px;
   }
-  .hero-content { padding: 0 20px 56px; }
+  .hero-content { padding: 100px 20px 0; }
   .hero-sub { font-size: 16px; }
   /* Indicateur de scroll superflu sur mobile */
   .hero-scroll { display: none; }
