@@ -66,6 +66,26 @@ if ( ! function_exists( 'drolung_field' ) ) {
  * ───────────────────────────────────────────────────────────── */
 add_action( 'acf/init', 'drolung_register_acf_fields' );
 
+/**
+ * Network-wide options page (central only) — a home for content that
+ * belongs to a shared listing/archive rather than any single post, so
+ * it doesn't need a fake "current post" to hang an ACF field group off.
+ * See group_drolung_projets_archive below for the reason this exists.
+ */
+add_action( 'acf/init', 'drolung_register_network_options_page' );
+function drolung_register_network_options_page() {
+	if ( function_exists( 'acf_add_options_page' ) && is_main_site() ) {
+		acf_add_options_page( array(
+			'page_title' => 'Réglages réseau',
+			'menu_title' => 'Réglages réseau',
+			'menu_slug'  => 'drolung-network-settings',
+			'capability' => 'manage_options',
+			'redirect'   => false,
+			'position'   => 60,
+		) );
+	}
+}
+
 function drolung_register_acf_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -73,16 +93,20 @@ function drolung_register_acf_fields() {
 
 	/* ─────────────────────────────────────────────────────────
 	 * FRONT PAGE (front-page.php on branch theme).
-	 * Location: the static front page (whatever it is on the site).
+	 * Location: the static front page — matched by ID (not
+	 * `page_type == front_page`, which only ever matches the literal
+	 * `page_on_front` option and hides the group on Polylang
+	 * translations of that page, e.g. an English "Homepage").
 	 * ───────────────────────────────────────────────────────── */
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_front',
 		'title'    => 'Page d\'accueil',
-		'location' => [ [ [
-			'param'    => 'page_type',
-			'operator' => '==',
-			'value'    => 'front_page',
-		] ] ],
+		'location' => array_map(
+			function ( $id ) {
+				return [ [ 'param' => 'page', 'operator' => '==', 'value' => $id ] ];
+			},
+			drolung_acf_front_page_ids() ?: [ (int) get_option( 'page_on_front' ) ]
+		),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'style'           => 'default',
@@ -121,11 +145,10 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_front_intro_badge_label', 'label' => 'Badge — libellé', 'name' => 'intro_badge_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
 			[ 'key' => 'field_front_intro_cta_label', 'label' => 'Lien vers À propos — texte', 'name' => 'intro_cta_label', 'type' => 'text' ],
 
-			/* ── MAP / WHERE WE WORK ─────────────────────── */
-			[ 'key' => 'field_front_map_tab',     'label' => 'Zones d\'intervention', 'name' => '', 'type' => 'tab' ],
+			/* ── NOS PROJETS (préview) ───────────────────── */
+			[ 'key' => 'field_front_map_tab',     'label' => 'Nos projets (préview)', 'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_front_map_eyebrow', 'label' => 'Surtitre', 'name' => 'map_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_front_map_title',   'label' => 'Titre (HTML)', 'name' => 'map_title', 'type' => 'textarea', 'rows' => 2, 'new_lines' => '' ],
-			[ 'key' => 'field_front_map_body',    'label' => 'Texte',    'name' => 'map_body',    'type' => 'textarea', 'rows' => 3, 'new_lines' => 'wpautop' ],
+			[ 'key' => 'field_front_map_title',   'label' => 'Titre (HTML)', 'name' => 'map_title', 'type' => 'textarea', 'rows' => 2, 'new_lines' => '', 'instructions' => 'Les 4 projets affichés sont sélectionnés individuellement sur chaque fiche projet (case « Mettre en avant sur la page d\'accueil »), pas ici.' ],
 
 			/* ── TESTIMONIAL ─────────────────────────────── */
 			[ 'key' => 'field_front_test_tab',         'label' => 'Témoignage', 'name' => '', 'type' => 'tab' ],
@@ -152,17 +175,6 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_front_chiffre_6_num',    'label' => 'Chiffre 6 — valeur',    'name' => 'chiffre_6_num',    'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
 			[ 'key' => 'field_front_chiffre_6_label',  'label' => 'Chiffre 6 — libellé',  'name' => 'chiffre_6_label',  'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
 
-			/* ── NOS PROJETS (régions) ───────────────────── */
-			[ 'key' => 'field_front_projets_tab',    'label' => 'Nos projets (préview)', 'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_front_region_1_name',  'label' => 'Projet 1 — nom',    'name' => 'region_1_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
-			[ 'key' => 'field_front_region_1_count', 'label' => 'Projet 1 — détail', 'name' => 'region_1_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
-			[ 'key' => 'field_front_region_2_name',  'label' => 'Projet 2 — nom',    'name' => 'region_2_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
-			[ 'key' => 'field_front_region_2_count', 'label' => 'Projet 2 — détail', 'name' => 'region_2_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
-			[ 'key' => 'field_front_region_3_name',  'label' => 'Projet 3 — nom',    'name' => 'region_3_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
-			[ 'key' => 'field_front_region_3_count', 'label' => 'Projet 3 — détail', 'name' => 'region_3_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
-			[ 'key' => 'field_front_region_4_name',  'label' => 'Projet 4 — nom',    'name' => 'region_4_name',  'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
-			[ 'key' => 'field_front_region_4_count', 'label' => 'Projet 4 — détail', 'name' => 'region_4_count', 'type' => 'text', 'wrapper' => [ 'width' => 60 ] ],
-
 			/* ── NOS ENGAGEMENTS ─────────────────────────── */
 			[ 'key' => 'field_front_engagements_tab',    'label' => 'Nos engagements', 'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_front_engagement_1_label', 'label' => 'Engagement 1 — titre', 'name' => 'engagement_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 40 ] ],
@@ -178,12 +190,15 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_front_newsletter_tab',   'label' => 'Newsletter', 'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_front_newsletter_title', 'label' => 'Newsletter — titre', 'name' => 'newsletter_title', 'type' => 'text' ],
 			[ 'key' => 'field_front_newsletter_body',  'label' => 'Newsletter — texte', 'name' => 'newsletter_body',  'type' => 'text' ],
+			[ 'key' => 'field_front_newsletter_placeholder', 'label' => 'Champ e-mail — texte indicatif', 'name' => 'newsletter_placeholder', 'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
+			[ 'key' => 'field_front_newsletter_cta_label',   'label' => 'Bouton — texte',                 'name' => 'newsletter_cta_label',   'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
 
 			/* ── DONATE ──────────────────────────────────── */
 			[ 'key' => 'field_front_donate_tab',     'label' => 'Faire un don', 'name' => '', 'type' => 'tab' ],
 			[ 'key' => 'field_front_donate_eyebrow', 'label' => 'Surtitre', 'name' => 'donate_eyebrow', 'type' => 'text' ],
 			[ 'key' => 'field_front_donate_title',   'label' => 'Titre (HTML)', 'name' => 'donate_title', 'type' => 'textarea', 'rows' => 2, 'new_lines' => '' ],
 			[ 'key' => 'field_front_donate_body',    'label' => 'Texte',    'name' => 'donate_body', 'type' => 'textarea', 'rows' => 3, 'new_lines' => 'wpautop' ],
+			[ 'key' => 'field_front_donate_cta_label', 'label' => 'Bouton — texte', 'name' => 'donate_cta_label', 'type' => 'text' ],
 
 			/* Exemples de dons */
 			[ 'key' => 'field_front_don_ex_1_montant', 'label' => 'Exemple don 1 — montant', 'name' => 'don_exemple_1_montant', 'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
@@ -202,11 +217,7 @@ function drolung_register_acf_fields() {
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_apropos',
 		'title'    => 'À propos — contenu éditable',
-		'location' => [ [ [
-			'param'    => 'page',
-			'operator' => '==',
-			'value'    => drolung_acf_page_id_by_slug( 'a-propos' ),
-		] ] ],
+		'location' => drolung_acf_page_location( 'a-propos' ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'fields'          => [
@@ -310,11 +321,7 @@ function drolung_register_acf_fields() {
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_notre_action',
 		'title'    => 'Notre action — contenu éditable',
-		'location' => [ [ [
-			'param'    => 'page',
-			'operator' => '==',
-			'value'    => drolung_acf_page_id_by_slug( 'notre-action' ),
-		] ] ],
+		'location' => drolung_acf_page_location( 'notre-action' ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'fields'          => [
@@ -388,11 +395,7 @@ function drolung_register_acf_fields() {
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_ressources',
 		'title'    => 'Ressources — contenu éditable',
-		'location' => [ [ [
-			'param'    => 'page',
-			'operator' => '==',
-			'value'    => drolung_acf_page_id_by_slug( 'ressources' ),
-		] ] ],
+		'location' => drolung_acf_page_location( 'ressources' ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'fields'          => [
@@ -416,11 +419,7 @@ function drolung_register_acf_fields() {
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_engager',
 		'title'    => 'S\'engager — contenu éditable',
-		'location' => [ [ [
-			'param'    => 'page',
-			'operator' => '==',
-			'value'    => drolung_acf_page_id_by_slug( 's-engager' ),
-		] ] ],
+		'location' => drolung_acf_page_location( 's-engager' ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'label_placement' => 'top',
@@ -475,19 +474,15 @@ function drolung_register_acf_fields() {
 
 	/* ─────────────────────────────────────────────────────────
 	 * CONTACT PAGE.
-	 * Bound to page-contact.php template.
-	 * Location: page_template == page-contact.php so it works on every
-	 * branch site (DSF, DSM) regardless of the page ID.
-	 * Portée 2026-06-16.
+	 * Rendered by page-contact.php (matched via WP's page-{slug}.php
+	 * template hierarchy. Resolved by slug (+ its translations) rather
+	 * than `page_template`, matching every other page-specific group.
+	 * Portée 2026-06-16, corrigé 2026-07-10, généralisé 2026-07-11.
 	 * ───────────────────────────────────────────────────────── */
 	acf_add_local_field_group( [
 		'key'      => 'group_drolung_contact',
 		'title'    => 'Contact — contenu éditable',
-		'location' => [ [ [
-			'param'    => 'page_template',
-			'operator' => '==',
-			'value'    => 'page-contact.php',
-		] ] ],
+		'location' => drolung_acf_page_location( 'contact' ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
 		'label_placement' => 'top',
@@ -496,7 +491,7 @@ function drolung_register_acf_fields() {
 			/* ── TEXTES INTRO ─────────────────────────────── */
 			[ 'key' => 'field_contact_eyebrow',        'label' => 'Surtitre (ex : « Restons en contact »)',            'name' => 'contact_eyebrow',        'type' => 'text' ],
 			[ 'key' => 'field_contact_title',          'label' => 'Titre (HTML — utilise <em>mot</em> et <br>)',        'name' => 'contact_title',          'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <br> pour le saut de ligne et <em>mot</em> pour l\'italique doré.' ],
-			[ 'key' => 'field_contact_sub',            'label' => 'Phrase de réassurance (ex : « sous 48h »)',          'name' => 'contact_sub',            'type' => 'text' ],
+			[ 'key' => 'field_contact_sub',            'label' => 'Texte',            'name' => 'contact_sub',            'type' => 'wysiwyg', 'tabs' => 'visual', 'toolbar' => 'basic', 'media_upload' => 0 ],
 
 			/* ── COORDONNÉES ──────────────────────────────── */
 			[ 'key' => 'field_contact_email',          'label' => 'Adresse e-mail de contact',                         'name' => 'contact_email',          'type' => 'email' ],
@@ -506,118 +501,44 @@ function drolung_register_acf_fields() {
 		],
 	] );
 
-	/* ─────────────────────────────────────────────────────────
-	 * SINGLE PROJET.
-	 * Shown on individual projet CPT posts.
-	 * Covers hero badges, chiffres clés, editorial sections
-	 * (récit, défi, galerie, budget, timeline, CTA).
-	 * Per-project data (title, excerpt, featured image) stays in
-	 * standard WP fields; repeatable content stored as HTML
-	 * (wysiwyg / textarea) in numbered flat keys.
-	 * TODO: migrer vers drolung-network CPT fields quand actif.
-	 * Portée 2026-06-16.
-	 * ───────────────────────────────────────────────────────── */
-	acf_add_local_field_group( [
-		'key'      => 'group_drolung_single_projet',
-		'title'    => 'Projet — contenu éditable (single)',
-		'location' => [ [ [
-			'param'    => 'post_type',
-			'operator' => '==',
-			'value'    => 'projet',
-		] ] ],
-		'menu_order'      => 5,
-		'position'        => 'normal',
-		'label_placement' => 'top',
-		'fields'          => [
-
-			/* ── HERO ─────────────────────────────────────── */
-			[ 'key' => 'field_sp_hero_tab',       'label' => 'Hero',                      'name' => '',                'type' => 'tab', 'placement' => 'top' ],
-			[ 'key' => 'field_sp_hero_image_url', 'label' => 'Image hero (URL) — remplace l\'image mise en avant si renseignée', 'name' => 'hero_image_url', 'type' => 'image', 'return_format' => 'url', 'preview_size' => 'medium' ],
-			[ 'key' => 'field_sp_domaine',        'label' => 'Domaine (ex : Environnement, Éducation)', 'name' => 'projet_domaine', 'type' => 'text' ],
-			[ 'key' => 'field_sp_statut',         'label' => 'Statut (ex : En préparation, En cours, Terminé)', 'name' => 'projet_statut', 'type' => 'text' ],
-			[ 'key' => 'field_sp_pays',           'label' => 'Pays / localisation',       'name' => 'projet_pays',     'type' => 'text' ],
-
-			/* ── CHIFFRES CLÉS ──────────────────────────── */
-			[ 'key' => 'field_sp_stats_tab',    'label' => 'Chiffres clés (bande sous le hero)', 'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_stat_1_num',   'label' => 'Stat 1 — valeur',  'name' => 'single_projet_stat_1_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-			[ 'key' => 'field_sp_stat_1_label', 'label' => 'Stat 1 — libellé', 'name' => 'single_projet_stat_1_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
-			[ 'key' => 'field_sp_stat_2_num',   'label' => 'Stat 2 — valeur',  'name' => 'single_projet_stat_2_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-			[ 'key' => 'field_sp_stat_2_label', 'label' => 'Stat 2 — libellé', 'name' => 'single_projet_stat_2_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
-			[ 'key' => 'field_sp_stat_3_num',   'label' => 'Stat 3 — valeur',  'name' => 'single_projet_stat_3_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-			[ 'key' => 'field_sp_stat_3_label', 'label' => 'Stat 3 — libellé', 'name' => 'single_projet_stat_3_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
-			[ 'key' => 'field_sp_stat_4_num',   'label' => 'Stat 4 — valeur',  'name' => 'single_projet_stat_4_num',   'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-			[ 'key' => 'field_sp_stat_4_label', 'label' => 'Stat 4 — libellé', 'name' => 'single_projet_stat_4_label', 'type' => 'text', 'wrapper' => [ 'width' => 70 ] ],
-
-			/* ── META PROJET (post-meta standards) ──────── */
-			[ 'key' => 'field_sp_meta_tab',         'label' => 'Meta projet',              'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_budget_eur',        'label' => 'Budget (EUR)',             'name' => 'projet_budget_eur',         'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
-			[ 'key' => 'field_sp_montant_collecte',  'label' => 'Montant collecté (EUR)',   'name' => 'projet_montant_collecte_eur','type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
-			[ 'key' => 'field_sp_beneficiaires',     'label' => 'Bénéficiaires',            'name' => 'projet_beneficiaires',      'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
-			[ 'key' => 'field_sp_partenaires',       'label' => 'Partenaires (texte libre)','name' => 'projet_partenaires',        'type' => 'text', 'wrapper' => [ 'width' => 50 ] ],
-			[ 'key' => 'field_sp_date_debut',        'label' => 'Date début (ex : 2021)',   'name' => 'projet_date_debut',         'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-			[ 'key' => 'field_sp_date_fin',          'label' => 'Date fin (ex : 2025)',     'name' => 'projet_date_fin',           'type' => 'text', 'wrapper' => [ 'width' => 30 ] ],
-
-			/* ── SECTION RÉCIT ───────────────────────────── */
-			[ 'key' => 'field_sp_recit_tab',     'label' => 'Section récit / le projet',   'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_recit_eyebrow', 'label' => 'Récit — surtitre',            'name' => 'single_projet_recit_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_recit_title',   'label' => 'Récit — titre (HTML)',         'name' => 'single_projet_recit_title',   'type' => 'textarea', 'rows' => 2, 'instructions' => 'Utilise <em>mot</em> pour l\'italique doré.' ],
-			[ 'key' => 'field_sp_recit_body',    'label' => 'Récit — corps (plusieurs §)', 'name' => 'single_projet_recit_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
-
-			/* ── SECTION DÉFI ────────────────────────────── */
-			[ 'key' => 'field_sp_defi_tab',     'label' => 'Section défi (fond sombre)',   'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_defi_eyebrow', 'label' => 'Défi — surtitre',             'name' => 'single_projet_defi_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_defi_title',   'label' => 'Défi — titre (HTML)',          'name' => 'single_projet_defi_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_sp_defi_body',    'label' => 'Défi — corps (HTML)',          'name' => 'single_projet_defi_body',    'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0 ],
-
-			/* ── GALERIE ─────────────────────────────────── */
-			[ 'key' => 'field_sp_galerie_tab',     'label' => 'Galerie photos',            'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_photos',          'label' => 'Photos',                    'name' => 'photos', 'type' => 'gallery', 'return_format' => 'array',
-			  'instructions' => 'Le champ gallery ACF Pro. Activé automatiquement si ACF Pro est installé.', 'conditional_logic' => 0 ],
-			[ 'key' => 'field_sp_galerie_eyebrow', 'label' => 'Galerie — surtitre',        'name' => 'single_projet_galerie_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_galerie_title',   'label' => 'Galerie — titre (HTML)',    'name' => 'single_projet_galerie_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_sp_galerie_sub',     'label' => 'Galerie — légende (chapeau)','name' => 'single_projet_galerie_sub',    'type' => 'text' ],
-
-			/* ── BUDGET ──────────────────────────────────── */
-			[ 'key' => 'field_sp_budget_tab',     'label' => 'Section budget',             'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_budget_eyebrow', 'label' => 'Budget — surtitre',          'name' => 'single_projet_budget_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_budget_title',   'label' => 'Budget — titre (HTML)',      'name' => 'single_projet_budget_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_sp_budget_intro',   'label' => 'Budget — intro',             'name' => 'single_projet_budget_intro',   'type' => 'textarea', 'rows' => 3 ],
-			[ 'key' => 'field_sp_budget_lines',   'label' => 'Budget — lignes (HTML <li>)', 'name' => 'single_projet_budget_lines',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
-			  'instructions' => 'Entrer des lignes <li> avec <span> pour le libellé et <strong> pour le montant. Ex : <li><span>Accompagnement mensuel</span><strong>365 €/mois</strong></li>' ],
-
-			/* ── TIMELINE ────────────────────────────────── */
-			[ 'key' => 'field_sp_timeline_tab',     'label' => 'Timeline / chronologie',   'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_timeline_eyebrow', 'label' => 'Timeline — surtitre',      'name' => 'single_projet_timeline_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_timeline_title',   'label' => 'Timeline — titre (HTML)',  'name' => 'single_projet_timeline_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_sp_timeline_items',   'label' => 'Timeline — items (HTML <li>)', 'name' => 'single_projet_timeline_items', 'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
-			  'instructions' => 'Entrer des <li> avec <span class="pp-tl-date">2021</span><div>Texte de l\'événement</div>.' ],
-
-			/* ── CTA DON ─────────────────────────────────── */
-			[ 'key' => 'field_sp_cta_tab',     'label' => 'CTA — Soutenir ce projet',     'name' => '', 'type' => 'tab' ],
-			[ 'key' => 'field_sp_cta_eyebrow', 'label' => 'CTA — surtitre',               'name' => 'single_projet_cta_eyebrow', 'type' => 'text' ],
-			[ 'key' => 'field_sp_cta_title',   'label' => 'CTA — titre (HTML)',            'name' => 'single_projet_cta_title',   'type' => 'textarea', 'rows' => 2 ],
-			[ 'key' => 'field_sp_cta_body',    'label' => 'CTA — corps (per-site: DSF/DSM différent)', 'name' => 'single_projet_cta_body', 'type' => 'textarea', 'rows' => 3,
-			  'instructions' => 'Pour DSF : "Vos dons à DSF financent directement…". Pour DSM : "Vos dons, collectés par DSF, financent…". Seeder via mu-plugin 05.' ],
-			[ 'key' => 'field_sp_cta_footer',  'label' => 'CTA — mention bas (mono, maj)', 'name' => 'single_projet_cta_footer',  'type' => 'text',
-			  'instructions' => 'Ex : PROGRAMME PORTÉ PAR EDU4MADA · LOCALISATION : ANJOZOROBE. Laisser vide pour auto-générer depuis les meta.' ],
-		],
-	] );
+	/*
+	 * NB: pas de groupe de champs "Single projet" ici — le groupe
+	 * `group_drolung_single_projet` qui vivait à cet endroit ne
+	 * nourrissait qu'un chemin de rendu mort (le thème central est
+	 * drolung-org, pas drolung-branch ; single-projet.php n'est jamais
+	 * chargé via le hiérarchie de templates de WP sur le site central).
+	 * Un de ses champs ("photos", en double avec field_prj_photos du
+	 * groupe réseau) écrasait même les vraies données à l'enregistrement.
+	 * Supprimé le 2026-07-10 — voir docs/tech-network.md §15. Le contenu
+	 * éditorial du single projet (récit, badges, galerie…) est piloté
+	 * depuis `drolung_item()` (drolung-network) ; tout enrichissement
+	 * futur doit passer par ce système, pas par un groupe ACF théorique.
+	 */
 
 	/* ─────────────────────────────────────────────────────────
 	 * PROJETS ARCHIVE.
-	 * Shown on the post_type_archive for 'projet'.
-	 * Covers the hero and intro section (static/editorial copy).
+	 * Shared hero + intro copy for the /projets/ archive listing page.
 	 * Per-post data (title, budget, location) comes from WP core /
 	 * get_post_meta() — not from ACF fields registered here.
 	 * Portée 2026-06-16.
+	 *
+	 * Location fixed 2026-07-11: this used to be `post_type == projet`,
+	 * which attached the group to *every individual project's* edit
+	 * screen — confusing (it looks like a per-project field, but it
+	 * controls the shared archive page) and broken on top of that: the
+	 * archive page has no single "current project" to read a post ID
+	 * from (`drolung_field()` with no explicit ID silently fell back to
+	 * the hardcoded default every time, regardless of what was set on
+	 * any project). Moved to the network options page — read via
+	 * `drolung_get_network_option()` (helpers.php), not `drolung_field()`.
 	 * ───────────────────────────────────────────────────────── */
 	acf_add_local_field_group( array(
 		'key'      => 'group_drolung_projets_archive',
 		'title'    => 'Archive projets — contenu éditable',
 		'location' => array( array( array(
-			'param'    => 'post_type',
+			'param'    => 'options_page',
 			'operator' => '==',
-			'value'    => 'projet',
+			'value'    => 'drolung-network-settings',
 		) ) ),
 		'menu_order'      => 0,
 		'position'        => 'normal',
@@ -650,4 +571,65 @@ function drolung_register_acf_fields() {
 function drolung_acf_page_id_by_slug( $slug ) {
 	$page = get_page_by_path( $slug );
 	return $page ? $page->ID : 0;
+}
+
+/**
+ * IDs of a page (found by its default-language slug) plus all of its
+ * Polylang translations — e.g. slug 'a-propos' → [fr_id, en_id, zh_id].
+ * Use this for any per-page ACF group's 'location' so the field group
+ * follows every language version of the page, not just the one whose
+ * slug happens to match. Without this, translated pages (different
+ * slug) silently lose their ACF fields — see the front-page / contact
+ * fixes this pattern replaces and generalizes (doc journal §15).
+ *
+ * @return int[] Never empty when the page exists; [0] (harmless no-op
+ *               location) when it doesn't exist yet on this site.
+ */
+function drolung_acf_translated_page_ids( $slug ) {
+	$id = drolung_acf_page_id_by_slug( $slug );
+	if ( ! $id ) {
+		return array( 0 );
+	}
+	$ids = array( $id );
+	if ( function_exists( 'pll_get_post_translations' ) ) {
+		$ids = array_merge( $ids, array_values( pll_get_post_translations( $id ) ) );
+	}
+	return array_values( array_unique( array_map( 'intval', $ids ) ) );
+}
+
+/**
+ * ACF 'location' array (OR'd rule groups) matching a page and all of
+ * its translations. Pass as the 'location' value of acf_add_local_field_group().
+ */
+function drolung_acf_page_location( $slug ) {
+	return array_map(
+		function ( $id ) {
+			return array( array( 'param' => 'page', 'operator' => '==', 'value' => $id ) );
+		},
+		drolung_acf_translated_page_ids( $slug )
+	);
+}
+
+/**
+ * IDs of the static front page in every language: the literal
+ * `page_on_front` option plus, when Polylang is active, all of its
+ * linked translations (e.g. an English "Homepage" page).
+ *
+ * A `page_type == front_page` ACF location rule only ever matches the
+ * option's literal ID, so it silently hides the field group on
+ * translated front pages — use this instead wherever a "front page"
+ * ACF group needs to work across languages too.
+ */
+function drolung_acf_front_page_ids() {
+	$front_id = (int) get_option( 'page_on_front' );
+	if ( ! $front_id ) {
+		return array();
+	}
+
+	$ids = array( $front_id );
+	if ( function_exists( 'pll_get_post_translations' ) ) {
+		$ids = array_merge( $ids, array_values( pll_get_post_translations( $front_id ) ) );
+	}
+
+	return array_values( array_unique( array_map( 'intval', $ids ) ) );
 }

@@ -14,8 +14,11 @@ wp-content/backup*/
 # ── Mockups statiques (déjà suivis dans le dossier Mock) ──
 /mock1/
 /mockup-dsf/
+/mockup-dsf-2/
 /mockup-dsm/
 
 # ── Divers ──
 .DS_Store
 Thumbs.db
+
+

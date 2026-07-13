@@ -135,7 +135,7 @@
     .section--dark { background: var(--charcoal); color: var(--cream); }
     .container { max-width: var(--container); margin: 0 auto; }
     .section-eyebrow {
-      font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+      font-size: 14px; font-weight: 600; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--saffron); margin-bottom: 12px;
     }
     .section-title {

@@ -190,6 +190,7 @@ function drolung_extract_projet( $post, $with_content = false ) {
 				'dsm_info'        => (string) get_post_meta( $id, 'dons_dsm_info', true ),
 			),
 			'site_canonical'            => get_post_meta( $id, 'site_canonical', true ) ?: 'dsf',
+			'featured_home'             => (bool) get_post_meta( $id, 'featured_home', true ),
 		),
 		'photos'            => drolung_extract_photos( $id ),
 		'partenaires'       => drolung_extract_partenaires( $id ),

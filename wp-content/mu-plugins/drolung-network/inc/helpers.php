@@ -105,6 +105,31 @@ function drolung_get_central_list( $post_type, $branch = null, $args = array() )
 		'field'    => 'slug',
 		'terms'    => $branch,
 	);
+	/*
+	 * Since projet/article became Polylang-translatable, Polylang
+	 * auto-filters any WP_Query on them to the "current" language,
+	 * silently dropping every other language's posts. This function
+	 * deliberately wants every language back — it does its own
+	 * selection right below via drolung_pick_best_language(). `lang=''`
+	 * is Polylang's documented opt-out for a single query.
+	 */
+	$query_args['lang'] = '';
+
+	/*
+	 * A caller-supplied `posts_per_page` limits how many *projects*
+	 * (translation groups) come back — never how many raw posts. Each
+	 * project has up to 3 language posts (fr/en/zh); applying the limit
+	 * on the raw query would truncate arbitrary language variants before
+	 * grouping (raw posts ordered by date, and translations are always
+	 * created after their FR original, so they'd crowd out older groups
+	 * and leave others with only 1-2 of their 3 variants present — the
+	 * page then can't show the right language for those incomplete
+	 * groups, since drolung_pick_best_language() has nothing else to
+	 * pick from). Always fetch every matching post across all languages,
+	 * group first, then slice to the requested count.
+	 */
+	$requested_limit             = (int) $query_args['posts_per_page'];
+	$query_args['posts_per_page'] = -1;
 
 	$extractor = 'projet' === $post_type ? 'drolung_extract_projet' : 'drolung_extract_article';
 	$items     = array();
@@ -115,6 +140,10 @@ function drolung_get_central_list( $post_type, $branch = null, $args = array() )
 	restore_current_blog();
 
 	$items = drolung_pick_best_language( $items, $chain );
+
+	if ( $requested_limit > 0 ) {
+		$items = array_slice( $items, 0, $requested_limit );
+	}
 
 	drolung_cache_set( $cache_key, $items );
 	return $items;
@@ -358,4 +387,83 @@ function drolung_get_don_instrument( $item, $branch = null ) {
  */
 function drolung_item() {
 	return isset( $GLOBALS['drolung_item'] ) ? $GLOBALS['drolung_item'] : null;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * OPTIONS RÉSEAU
+ * ───────────────────────────────────────────────────────────── */
+
+/**
+ * Lit un champ ACF de la page d'options réseau (site central), depuis
+ * n'importe quelle branche. À utiliser pour du contenu partagé qui n'est
+ * rattaché à aucun post précis (ex. hero de la page d'archive /projets/)
+ * — `drolung_field()` ne convient pas ici : il lit sur le post courant
+ * du thème, hors de propos pour un réglage réseau.
+ *
+ * @param string $key     Nom du champ ACF (option 'drolung-network-settings').
+ * @param mixed  $default Valeur de repli si le champ est vide.
+ * @return mixed
+ */
+function drolung_get_network_option( $key, $default = '' ) {
+	$cache_key = "option:{$key}";
+	$cached    = drolung_cache_get( $cache_key );
+	if ( false !== $cached ) {
+		return ( '' !== $cached && null !== $cached ) ? $cached : $default;
+	}
+
+	switch_to_blog( DROLUNG_MAIN_SITE_ID );
+	$value = function_exists( 'get_field' ) ? get_field( $key, 'option' ) : get_option( 'options_' . $key );
+	restore_current_blog();
+
+	drolung_cache_set( $cache_key, $value );
+
+	return ( '' !== $value && null !== $value && false !== $value ) ? $value : $default;
+}
+
+/**
+ * Variante traduisible de `drolung_get_network_option()`, pour du texte
+ * éditorial (pas d'image/URL) affiché sur une page sans post associé — la
+ * page d'archive `/projets/` en est aujourd'hui le seul exemple (voir
+ * `group_drolung_projets_archive`, acf-fields.php). Sans post, Polylang ne
+ * peut pas gérer de traduction "par page" comme pour les autres contenus ;
+ * on utilise donc son mécanisme de *chaînes de traduction*, prévu
+ * exactement pour ce cas (réglages admin sans post associé).
+ *
+ * Ne fait QUE la lecture traduite (`pll__()`) — l'enregistrement de la
+ * chaîne source (`pll_register_string()`) doit se faire ailleurs, sur un
+ * hook qui tourne aussi côté admin : Polylang ignore silencieusement
+ * `pll_register_string()` tant que `PLL()` n'est pas une instance
+ * `PLL_Admin_Base`, ce qui n'est jamais le cas sur une requête front-end
+ * pure (ex. un visiteur qui charge `/projets/`). Voir
+ * `drolung_register_projets_archive_strings()` (drolung-branch/functions.php,
+ * hooké sur `init`) pour l'enregistrement effectif.
+ *
+ * @param string $key     Nom du champ ACF (identique au nom de chaîne
+ *                         Polylang enregistré côté admin — garde les deux
+ *                         en phase).
+ * @param mixed  $default Valeur de repli si le champ est vide.
+ * @return mixed
+ */
+function drolung_get_network_option_translated( $key, $default = '' ) {
+	$value = drolung_get_network_option( $key, $default );
+
+	return ( function_exists( 'pll__' ) && is_string( $value ) ) ? pll__( $value ) : $value;
+}
+
+/**
+ * Traduit un nom de terme des taxonomies réseau (`projet_type`,
+ * `projet_statut`, `projet_domaine`) dans la langue courante de la
+ * branche — ces taxonomies ne sont pas gérées par Polylang (termes
+ * partagés entre toutes les langues), donc `$item['types']`/`['statut']`
+ * renvoient toujours le nom français brut. Les traductions sont
+ * enregistrées comme chaînes Polylang (voir `/tmp/register_taxonomy_strings.php`,
+ * exécuté une fois par branche — à ajouter en mu-plugin si de nouveaux
+ * termes sont créés). Retombe sur le nom français si aucune traduction
+ * n'est enregistrée ou si Polylang est absent.
+ *
+ * @param string $name Nom du terme tel qu'extrait (toujours en français).
+ * @return string
+ */
+function drolung_translate_term_name( $name ) {
+	return function_exists( 'pll__' ) ? pll__( $name ) : $name;
 }

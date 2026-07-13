@@ -12,7 +12,7 @@
  *   2. Chiffres clés Madagascar
  *   3. Intro — qui nous sommes
  *   4. Nos axes d'action (4 axes, pulled from notre-action ACF fields)
- *   5. Nos projets preview / map
+ *   5. Nos projets preview (4 cards, projets cochés "featured_home")
  *   6. Nos engagements (4 pillars, static — editable via ACF)
  *   7. Newsletter
  *   8. Faire un don
@@ -32,6 +32,28 @@ $donate_url = apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) );
 /* Resolve the notre-action page ID once (for pulling axe fields). */
 $notre_action_page = get_page_by_path( 'notre-action' );
 $notre_action_id   = $notre_action_page ? $notre_action_page->ID : 0;
+
+/*
+ * Nos projets preview — 4 projets cochés "featured_home" sur leur fiche
+ * (ACF, mu-plugins/drolung-network/inc/fields.php). Tant qu'aucun projet
+ * n'est coché, on retombe sur les 4 plus récents pour ne pas laisser le
+ * bloc vide (doc §6 : le site n'affiche jamais un trou de contenu).
+ */
+$featured_projets = array();
+if ( function_exists( 'drolung_get_projets' ) ) {
+	$featured_projets = drolung_get_projets( null, array(
+		'posts_per_page' => 4,
+		'meta_query'      => array(
+			array(
+				'key'   => 'featured_home',
+				'value' => '1',
+			),
+		),
+	) );
+	if ( empty( $featured_projets ) ) {
+		$featured_projets = drolung_get_projets( null, array( 'posts_per_page' => 4 ) );
+	}
+}
 ?>
 
 <!-- SCROLL PROGRESS BAR (cosmetic) -->
@@ -46,7 +68,7 @@ $notre_action_id   = $notre_action_page ? $notre_action_page->ID : 0;
 	<div class="hero-overlay"></div>
 	<div class="hero-saffron-line"></div>
 	<div class="hero-content">
-		<div class="hero-eyebrow"><?php echo esc_html( drolung_field( 'hero_eyebrow', __( 'Notre engagement', 'drolung-branch' ) ) ); ?></div>
+		<!-- <div class="hero-eyebrow"><?php echo esc_html( drolung_field( 'hero_eyebrow', __( 'Notre engagement', 'drolung-branch' ) ) ); ?></div> -->
 		<h1 class="hero-title"><?php
 			echo wp_kses_post( drolung_field( 'hero_title', __( 'Agir <em>localement</em>,<br>changer durablement.', 'drolung-branch' ) ) );
 		?></h1>
@@ -117,6 +139,58 @@ $notre_action_id   = $notre_action_page ? $notre_action_page->ID : 0;
 	</div>
 </section>
 
+
+<!-- NOS PROJETS PREVIEW -->
+<section class="inner-section inner-section--tint">
+	<div class="container">
+		<div class="projets-preview-header fade-up" style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap;margin-bottom:48px;">
+			<div>
+				<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'map_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
+				<h2 class="section-title" style="margin-bottom:0"><?php echo wp_kses_post( drolung_field( 'map_title', __( 'Quatre projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
+			</div>
+			<a href="<?php echo esc_url( home_url( '/projets/' ) ); ?>" class="btn-text"><?php esc_html_e( 'Voir tous les projets →', 'drolung-branch' ); ?></a>
+		</div>
+
+		<?php if ( ! empty( $featured_projets ) ) : ?>
+			<div class="four-col">
+				<?php foreach ( $featured_projets as $i => $item ) :
+					$statut_slugs = array_keys( $item['statut'] );
+					$statut_slug  = $statut_slugs[0] ?? '';
+					$statut_name  = $item['statut'][ $statut_slug ] ?? '';
+					$thumb_url    = isset( $item['thumbnail']['large'] ) ? $item['thumbnail']['large'] : '';
+					$permalink    = home_url( '/projets/' . $item['slug'] . '/' );
+					$delay        = ( $i % 4 ) * 0.08;
+					?>
+					<div class="card project-card fade-up"<?php echo $delay > 0 ? ' style="transition-delay:' . esc_attr( $delay ) . 's"' : ''; ?>>
+						<div class="card-img" style="position:relative;background:var(--cream);">
+							<?php if ( $thumb_url ) : ?>
+								<a href="<?php echo esc_url( $permalink ); ?>">
+									<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>" loading="lazy">
+								</a>
+							<?php endif; ?>
+							<?php if ( $statut_name ) : ?>
+								<span class="project-status" style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:rgba(255,255,255,0.95);color:var(--saffron);border:1px solid var(--saffron);">
+									<?php echo esc_html( drolung_translate_term_name( $statut_name ) ); ?>
+								</span>
+							<?php endif; ?>
+						</div>
+						<div class="card-body">
+							<div class="card-title">
+								<a href="<?php echo esc_url( $permalink ); ?>" style="color:inherit;text-decoration:none;"><?php echo esc_html( $item['title'] ); ?></a>
+							</div>
+							<?php if ( $item['excerpt'] ) : ?>
+								<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 20, '…' ) ); ?></p>
+							<?php endif; ?>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		<?php else : ?>
+			<p class="section-body"><?php esc_html_e( 'Nos premiers projets seront publiés ici très bientôt.', 'drolung-branch' ); ?></p>
+		<?php endif; ?>
+	</div>
+</section>
+
 <!-- INTRO — QUI NOUS SOMMES -->
 <section class="intro-section">
 	<div class="intro-grid">
@@ -144,6 +218,8 @@ $notre_action_id   = $notre_action_page ? $notre_action_page->ID : 0;
 		</div>
 	</div>
 </section>
+
+
 
 <!-- NOS AXES D'ACTION — 4 axes, pulled from page Notre action ACF fields -->
 <?php
@@ -179,7 +255,7 @@ $home_axe_defaults = [
 	],
 ];
 ?>
-<section class="programmes-section">
+<!-- <section class="programmes-section">
 	<div class="programmes-header fade-up">
 		<div>
 			<div class="section-eyebrow"><?php esc_html_e( 'Notre action', 'drolung-branch' ); ?></div>
@@ -214,67 +290,10 @@ $home_axe_defaults = [
 			</a>
 		<?php endforeach; ?>
 	</div>
-</section>
-
-<!-- NOS PROJETS PREVIEW -->
-<section class="map-section">
-	<div class="map-inner">
-		<div class="map-text fade-up">
-			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'map_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
-			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'map_title', __( 'Quatre projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
-			<p class="section-body"><?php echo esc_html( wp_strip_all_tags( drolung_field( 'map_body', __( 'Adduction d\'eau gravitaire à Ambohitrolomahitsy, relance de l\'École des Femmes d\'Anjozorobe, reprise de la forêt comestible d\'Anjozorobe, reconstruction d\'une école sinistrée à Tamatave — des projets concrets, ancrés dans les besoins réels des communautés malgaches.', 'drolung-branch' ) ) ) ); ?></p>
-
-			<div class="regions-list" style="margin-top:36px">
-				<div class="region-item">
-					<span class="region-flag">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--saffron);display:inline-block;vertical-align:-0.12em" aria-hidden="true"><path d="M12 3.5C12 3.5 6 10.2 6 14.5a6 6 0 0 0 12 0C18 10.2 12 3.5 12 3.5Z"/></svg>
-					</span>
-					<div>
-						<div class="region-name"><?php echo esc_html( drolung_field( 'region_1_name',  __( 'Eau potable', 'drolung-branch' ) ) ); ?></div>
-						<div class="region-count"><?php echo esc_html( drolung_field( 'region_1_count', __( 'Ambohitrolomahitsy · 1 300 bénéficiaires', 'drolung-branch' ) ) ); ?></div>
-					</div>
-				</div>
-				<div class="region-item">
-					<span class="region-flag">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--saffron);display:inline-block;vertical-align:-0.12em" aria-hidden="true"><path d="M12 6.8C10.1 5.2 7.6 4.5 4.5 4.5v13.2c3.1 0 5.6.7 7.5 2.3 1.9-1.6 4.4-2.3 7.5-2.3V4.5c-3.1 0-5.6.7-7.5 2.3Z"/><path d="M12 6.8V20"/></svg>
-					</span>
-					<div>
-						<div class="region-name"><?php echo esc_html( drolung_field( 'region_2_name',  __( 'École des Femmes', 'drolung-branch' ) ) ); ?></div>
-						<div class="region-count"><?php echo esc_html( drolung_field( 'region_2_count', __( 'Anjozorobe · 50–100 femmes/mois', 'drolung-branch' ) ) ); ?></div>
-					</div>
-				</div>
-				<div class="region-item">
-					<span class="region-flag">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--saffron);display:inline-block;vertical-align:-0.12em" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c0-4-2.6-6.5-6.5-6.5C5.5 10.4 8.1 13 12 13Z"/><path d="M12 11c0-3.4 2.2-5.5 5.5-5.5C17.5 8.9 15.3 11 12 11Z"/></svg>
-					</span>
-					<div>
-						<div class="region-name"><?php echo esc_html( drolung_field( 'region_3_name',  __( 'Forêt comestible', 'drolung-branch' ) ) ); ?></div>
-						<div class="region-count"><?php echo esc_html( drolung_field( 'region_3_count', __( 'Anjozorobe · 15 familles', 'drolung-branch' ) ) ); ?></div>
-					</div>
-				</div>
-				<div class="region-item">
-					<span class="region-flag">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--saffron);display:inline-block;vertical-align:-0.12em" aria-hidden="true"><path d="M4 20V10l8-5 8 5v10"/><path d="M10 20v-4.5h4V20"/><path d="M3 20h18"/><circle cx="12" cy="11" r="1.2"/></svg>
-					</span>
-					<div>
-						<div class="region-name"><?php echo esc_html( drolung_field( 'region_4_name',  __( 'École post-cyclone', 'drolung-branch' ) ) ); ?></div>
-						<div class="region-count"><?php echo esc_html( drolung_field( 'region_4_count', __( 'Tamatave · en évaluation', 'drolung-branch' ) ) ); ?></div>
-					</div>
-				</div>
-			</div>
-
-			<a href="<?php echo esc_url( home_url( '/projets/' ) ); ?>" class="btn-text" style="margin-top:36px;color:var(--saffron-lt);border-color:var(--saffron)"><?php esc_html_e( 'Voir tous les projets →', 'drolung-branch' ); ?></a>
-		</div>
-		<div class="map-visual fade-up" style="transition-delay:0.15s">
-			<img src="https://images.unsplash.com/photo-1659944984855-776187144baf?auto=format&fit=crop&q=80&w=900&h=450" alt="" class="map-photo" loading="lazy">
-			<img src="https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=440&h=340" alt="" class="map-photo" loading="lazy">
-			<img src="https://images.unsplash.com/photo-1585335740523-85d0d6dfbf27?auto=format&fit=crop&q=80&w=440&h=340" alt="" class="map-photo" loading="lazy">
-		</div>
-	</div>
-</section>
+</section> -->
 
 <!-- NOS ENGAGEMENTS (4 pillars) -->
-<section class="testimonial-section">
+<!-- <section class="testimonial-section">
 	<div class="testimonial-inner fade-up">
 		<div class="engagements-grid">
 			<?php
@@ -305,26 +324,7 @@ $home_axe_defaults = [
 			<?php endforeach; ?>
 		</div>
 	</div>
-</section>
-
-<!-- NEWSLETTER -->
-<section class="newsletter-section">
-	<div class="newsletter-inner fade-up">
-		<div class="newsletter-text">
-			<h2 class="newsletter-title"><?php echo esc_html( drolung_field( 'newsletter_title', __( 'Suivez nos avancées', 'drolung-branch' ) ) ); ?></h2>
-			<p class="newsletter-body"><?php echo esc_html( drolung_field( 'newsletter_body', __( 'Soyez informés en avant-première du lancement de nos projets.', 'drolung-branch' ) ) ); ?></p>
-		</div>
-		<?php
-		/* MailPoet integration point. For now: plain HTML form with action="#".
-		 * TODO: wire to MailPoet subscribe endpoint when lists are configured. */
-		?>
-		<form class="newsletter-form" action="#" method="post" novalidate>
-			<label style="position:absolute;left:-9999px" for="nl-email-branch"><?php esc_html_e( 'Adresse e-mail', 'drolung-branch' ); ?></label>
-			<input id="nl-email-branch" type="email" name="nl_email" placeholder="<?php esc_attr_e( 'Votre adresse e-mail', 'drolung-branch' ); ?>" required>
-			<button type="submit"><?php esc_html_e( 'Je m\'inscris', 'drolung-branch' ); ?></button>
-		</form>
-	</div>
-</section>
+</section> -->
 
 <!-- FAIRE UN DON -->
 <section class="donate-section" id="donate">
@@ -368,9 +368,28 @@ $home_axe_defaults = [
 				<?php endforeach; ?>
 			</div>
 
-			<a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>" class="btn-hero-primary"><?php echo esc_html( apply_filters( 'drolung_donate_label', __( 'Faire un don', 'drolung-branch' ) ) ); ?></a>
-			<p style="margin-top:16px;font-size:12px;color:rgba(255,255,255,0.35)"><?php esc_html_e( 'Notre système de paiement en ligne sera disponible prochainement. Contactez-nous pour contribuer dès maintenant.', 'drolung-branch' ); ?></p>
+			<a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>" class="btn-hero-primary"><?php echo esc_html( drolung_field( 'donate_cta_label', apply_filters( 'drolung_donate_label', __( 'Faire un don', 'drolung-branch' ) ) ) ); ?></a>
 		</div>
+	</div>
+</section>
+
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section">
+	<div class="newsletter-inner fade-up">
+		<div class="newsletter-text">
+			<h2 class="newsletter-title"><?php echo esc_html( drolung_field( 'newsletter_title', __( 'Suivez nos avancées', 'drolung-branch' ) ) ); ?></h2>
+			<p class="newsletter-body"><?php echo esc_html( drolung_field( 'newsletter_body', __( 'Soyez informés en avant-première du lancement de nos projets.', 'drolung-branch' ) ) ); ?></p>
+		</div>
+		<?php
+		/* MailPoet integration point. For now: plain HTML form with action="#".
+		 * TODO: wire to MailPoet subscribe endpoint when lists are configured. */
+		?>
+		<form class="newsletter-form" action="#" method="post" novalidate>
+			<label style="position:absolute;left:-9999px" for="nl-email-branch"><?php esc_html_e( 'Adresse e-mail', 'drolung-branch' ); ?></label>
+			<input id="nl-email-branch" type="email" name="nl_email" placeholder="<?php echo esc_attr( drolung_field( 'newsletter_placeholder', __( 'Votre adresse e-mail', 'drolung-branch' ) ) ); ?>" required>
+			<button type="submit"><?php echo esc_html( drolung_field( 'newsletter_cta_label', __( 'Je m\'inscris', 'drolung-branch' ) ) ); ?></button>
+		</form>
 	</div>
 </section>
 

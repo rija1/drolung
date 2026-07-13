@@ -59,7 +59,12 @@ if ( empty( $used_statuts ) ) {
 </div>
 
 <?php
-$hero_image_url = drolung_field(
+/*
+ * Champs partagés par toute la page d'archive (pas de "post" unique à
+ * qui les rattacher) — lus depuis la page d'options réseau, pas via
+ * drolung_field() (voir group_drolung_projets_archive, acf-fields.php).
+ */
+$hero_image_url = drolung_get_network_option(
 	'projets_hero_image',
 	'https://images.unsplash.com/photo-1570742544137-3a469196c32b?auto=format&fit=crop&q=80&w=1600&h=700'
 );
@@ -68,18 +73,18 @@ $hero_image_url = drolung_field(
 	<style>.page-hero::before { background-image: var(--hero-bg); }</style>
 	<div class="page-hero__line"></div>
 	<div class="container">
-		<div class="page-hero__eyebrow"><?php echo esc_html( drolung_field( 'projets_hero_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
-		<h1 class="page-hero__title"><?php echo wp_kses_post( drolung_field( 'projets_hero_title', __( 'Quatre projets, <em>une même conviction</em>', 'drolung-branch' ) ) ); ?></h1>
-		<p class="page-hero__sub"><?php echo esc_html( drolung_field( 'projets_hero_sub', __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ) ); ?></p>
+		<div class="page-hero__eyebrow"><?php echo esc_html( drolung_get_network_option_translated( 'projets_hero_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
+		<h1 class="page-hero__title"><?php echo wp_kses_post( drolung_get_network_option_translated( 'projets_hero_title', __( 'Quatre projets, <em>une même conviction</em>', 'drolung-branch' ) ) ); ?></h1>
+		<p class="page-hero__sub"><?php echo esc_html( drolung_get_network_option_translated( 'projets_hero_sub', __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ) ); ?></p>
 	</div>
 </section>
 
-<section class="inner-section inner-section--tint">
+<!-- <section class="inner-section inner-section--tint">
 	<div class="projets-intro fade-up">
 		<div>
-			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'projets_intro_eyebrow', __( 'Notre soutien', 'drolung-branch' ) ) ); ?></div>
-			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'projets_intro_title', __( 'Nos projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
-			<p class="section-body" style="margin-top:16px;"><?php echo esc_html( drolung_field( 'projets_intro_body', __( 'Ces projets sont en cours de montage ou en recherche de financement. Tous sont portés sur le terrain par nos associations sœurs. Vos dons les rendent possibles, directement et sans intermédiaire.', 'drolung-branch' ) ) ); ?></p>
+			<div class="section-eyebrow"><?php echo esc_html( drolung_get_network_option_translated( 'projets_intro_eyebrow', __( 'Notre soutien', 'drolung-branch' ) ) ); ?></div>
+			<h2 class="section-title"><?php echo wp_kses_post( drolung_get_network_option_translated( 'projets_intro_title', __( 'Nos projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
+			<p class="section-body" style="margin-top:16px;"><?php echo esc_html( drolung_get_network_option_translated( 'projets_intro_body', __( 'Ces projets sont en cours de montage ou en recherche de financement. Tous sont portés sur le terrain par nos associations sœurs. Vos dons les rendent possibles, directement et sans intermédiaire.', 'drolung-branch' ) ) ); ?></p>
 		</div>
 		<div class="projets-intro__filters">
 			<div class="project-filters">
@@ -88,7 +93,7 @@ $hero_image_url = drolung_field(
 					<div class="filter-group__btns">
 						<button class="filter-btn active" data-status="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
 						<?php foreach ( $used_statuts as $slug => $name ) : ?>
-							<button class="filter-btn" data-status="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
+							<button class="filter-btn" data-status="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( drolung_translate_term_name( $name ) ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</div>
@@ -97,14 +102,14 @@ $hero_image_url = drolung_field(
 					<div class="filter-group__btns">
 						<button class="filter-btn active" data-type="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
 						<?php foreach ( $used_types as $slug => $name ) : ?>
-							<button class="filter-btn" data-type="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
+							<button class="filter-btn" data-type="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( drolung_translate_term_name( $name ) ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</section>
+</section> -->
 
 <section class="inner-section">
 	<div class="container">
@@ -124,11 +129,19 @@ $hero_image_url = drolung_field(
 				$statut_name  = $item['statut'][ $statut_slug ] ?? '';
 
 				$thumb_url   = isset( $item['thumbnail']['large'] ) ? $item['thumbnail']['large'] : '';
-				$budget      = $item['meta']['budget'];
 				$commune     = $item['meta']['localisation']['commune'];
 				$region      = $item['meta']['localisation']['region'];
 				$location    = $commune . ( $region ? ', ' . $region : '' );
-				$partenaire  = $item['meta']['partenaire'];
+
+				/* Bénéficiaires : nombre en priorité, repli sur la description. */
+				$benef_nombre = (int) $item['meta']['beneficiaires_nombre'];
+				$beneficiaires = $benef_nombre > 0 ? number_format_i18n( $benef_nombre ) : $item['meta']['beneficiaires_description'];
+
+				/* Partenaires : tous ceux liés (CPT partenaire), repli sur le champ texte. */
+				$partenaires_noms = ! empty( $item['partenaires'] )
+					? wp_list_pluck( $item['partenaires'], 'nom' )
+					: array_filter( array( $item['meta']['partenaire'] ) );
+
 				$permalink   = home_url( '/projets/' . $item['slug'] . '/' );
 
 				$delay = ( $i % 4 ) * 0.08;
@@ -149,13 +162,13 @@ $hero_image_url = drolung_field(
 
 						<?php if ( $type_name ) : ?>
 							<span class="card-tag project-type" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.95);color:var(--maroon);padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
-								<?php echo esc_html( $type_name ); ?>
+								<?php echo esc_html( drolung_translate_term_name( $type_name ) ); ?>
 							</span>
 						<?php endif; ?>
 
 						<?php if ( $statut_name ) : ?>
 							<span class="project-status" style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:2px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:rgba(193,125,10,0.15);color:var(--saffron);border:1px solid var(--saffron);">
-								<?php echo esc_html( $statut_name ); ?>
+								<?php echo esc_html( drolung_translate_term_name( $statut_name ) ); ?>
 							</span>
 						<?php endif; ?>
 					</div>
@@ -168,18 +181,26 @@ $hero_image_url = drolung_field(
 							<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 28, '…' ) ); ?></p>
 						<?php endif; ?>
 
-						<?php if ( $budget || $location ) : ?>
+						<?php if ( $beneficiaires || $location ) : ?>
 							<div class="project-meta" style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--stone);font-family:var(--font-mono);letter-spacing:0.04em;">
-								<span><?php if ( $budget ) : ?><strong style="color:var(--maroon);"><?php echo esc_html( $budget ); ?></strong><?php endif; ?></span>
+								<span>
+									<?php if ( $benef_nombre > 0 ) : ?>
+										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong> <?php esc_html_e( 'bénéficiaires', 'drolung-branch' ); ?>
+									<?php elseif ( $beneficiaires ) : ?>
+										<?php echo esc_html( $beneficiaires ); ?>
+									<?php endif; ?>
+								</span>
 								<span><?php echo esc_html( $location ); ?></span>
 							</div>
 						<?php endif; ?>
 
-						<?php if ( $partenaire ) : ?>
+						<?php if ( ! empty( $partenaires_noms ) ) : ?>
 							<div class="project-meta" style="margin-top:8px;font-size:12px;color:var(--stone);font-family:var(--font-mono);">
 								<?php
-								/* translators: %s is the partner organisation name. */
-								printf( esc_html__( 'Partenaire : %s', 'drolung-branch' ), esc_html( $partenaire ) );
+								echo esc_html(
+									_n( 'Partenaire : ', 'Partenaires : ', count( $partenaires_noms ), 'drolung-branch' )
+									. implode( ', ', $partenaires_noms )
+								);
 								?>
 							</div>
 						<?php endif; ?>
@@ -204,7 +225,7 @@ $hero_image_url = drolung_field(
 					<?php esc_html_e( 'Nos premiers projets seront publiés ici très bientôt.', 'drolung-branch' ); ?>
 				</h3>
 				<p style="color:var(--stone);margin:0 0 24px;">
-					<?php esc_html_e( "L'association finalise actuellement les étapes administratives de sa création. Dès que les premiers projets démarrent sur le terrain, ils apparaîtront sur cette page avec leur budget, leur localisation et l'état d'avancement.", 'drolung-branch' ); ?>
+					<?php esc_html_e( "L'association finalise actuellement les étapes administratives de sa création. Dès que les premiers projets démarrent sur le terrain, ils apparaîtront sur cette page avec leur localisation et l'état d'avancement.", 'drolung-branch' ); ?>
 				</p>
 				<?php if ( current_user_can( 'edit_posts' ) ) : ?>
 					<a class="btn-link" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=projet' ) ); ?>" style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--maroon);">

@@ -1,13 +1,11 @@
 <?php
 /**
- * Drolung Branch header — top-bar + single sticky nav.
+ * Drolung Branch header — single sticky nav with inline language switcher.
  *
- * Mirrors the DUK design (drolung-duk/header.php) so DSF and DSM share the
- * same header layout. Replaces the parent (drolung-base) header which uses a
- * big centered logo + cross-fading compact bar.
+ * Replaces the parent (drolung-base) header which uses a big centered logo +
+ * cross-fading compact bar.
  *
  * Filterable hooks:
- *   drolung_topbar_tagline  — left-hand text in the top bar (default: empty)
  *   drolung_topbar_langs    — array of ['code' => 'XX', 'url' => '#', 'active' => bool]
  *   drolung_donate_url      — donate / s'engager URL
  *   drolung_donate_label    — CTA label (default: 'Faire un don')
@@ -28,31 +26,11 @@
 
 <header>
 	<?php
-	$topbar_tagline = apply_filters( 'drolung_topbar_tagline', '' );
-	$topbar_langs   = apply_filters( 'drolung_topbar_langs', [
+	$topbar_langs = apply_filters( 'drolung_topbar_langs', [
 		[ 'code' => 'FR', 'url' => '#', 'active' => true  ],
 		[ 'code' => 'EN', 'url' => '#', 'active' => false ],
 	] );
-	if ( $topbar_tagline || $topbar_langs ) : ?>
-	<div class="top-bar">
-		<div class="top-bar__inner">
-			<?php if ( $topbar_tagline ) : ?>
-				<span class="top-bar__tagline"><?php echo esc_html( $topbar_tagline ); ?></span>
-			<?php endif; ?>
-			<div class="top-bar__links">
-				<div class="lang-sel">
-					<?php foreach ( $topbar_langs as $lang ) : ?>
-						<?php if ( ! empty( $lang['url'] ) ) : ?>
-							<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active"' : ''; ?>><?php echo esc_html( $lang['code'] ); ?></a>
-						<?php else : ?>
-							<span<?php echo $lang['active'] ? ' class="active"' : ' class="unavailable"'; ?>><?php echo esc_html( $lang['code'] ); ?></span>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				</div>
-			</div>
-		</div>
-	</div>
-	<?php endif; ?>
+	?>
 
 	<nav class="site-nav" aria-label="<?php esc_attr_e( 'Navigation principale', 'drolung-branch' ); ?>">
 		<div class="site-nav__inner">
@@ -70,8 +48,9 @@
 			</button>
 			<div class="nav-links">
 				<?php
-				$donate_url   = apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) );
-				$donate_label = apply_filters( 'drolung_donate_label', __( 'Faire un don', 'drolung-branch' ) );
+				$donate_url    = apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) );
+				$donate_label_default = function_exists( 'pll__' ) ? pll__( 'Faire un don' ) : __( 'Faire un don', 'drolung-branch' );
+				$donate_label  = apply_filters( 'drolung_donate_label', $donate_label_default );
 
 				if ( has_nav_menu( 'primary' ) ) {
 					wp_nav_menu( [
@@ -80,7 +59,6 @@
 						'items_wrap'     => '%3$s',
 						'walker'         => class_exists( 'Drolung_Flat_Nav_Walker' ) ? new Drolung_Flat_Nav_Walker() : null,
 					] );
-					echo '<a href="' . esc_url( $donate_url ) . '" class="nav-donate">' . esc_html( $donate_label ) . '</a>';
 				} else {
 					?>
 					<?php
@@ -99,10 +77,22 @@
 					}
 					unset( $_current_url, $_fb_links, $_label, $_url, $_active );
 					?>
-					<a href="<?php echo esc_url( $donate_url ); ?>" class="nav-donate"><?php echo esc_html( $donate_label ); ?></a>
 					<?php
 				}
-				?>
+
+				if ( $topbar_langs ) : ?>
+					<div class="lang-sel">
+						<?php foreach ( $topbar_langs as $lang ) : ?>
+							<?php if ( ! empty( $lang['url'] ) ) : ?>
+								<a href="<?php echo esc_url( $lang['url'] ); ?>"<?php echo $lang['active'] ? ' class="active"' : ''; ?>><?php echo esc_html( $lang['code'] ); ?></a>
+							<?php else : ?>
+								<span<?php echo $lang['active'] ? ' class="active"' : ' class="unavailable"'; ?>><?php echo esc_html( $lang['code'] ); ?></span>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+
+				<a href="<?php echo esc_url( $donate_url ); ?>" class="nav-donate"><?php echo esc_html( $donate_label ); ?></a>
 			</div>
 		</div>
 	</nav>

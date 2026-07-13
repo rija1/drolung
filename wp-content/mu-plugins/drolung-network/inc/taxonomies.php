@@ -25,9 +25,9 @@ function drolung_network_register_taxonomies() {
 	register_taxonomy( 'drolung_branch', array( 'projet', 'article' ), array(
 		'labels' => array(
 			'name'          => 'Branches',
-			'singular_name' => 'Branche',
+			'singular_name' => 'Branch',
 			'menu_name'     => 'Branches',
-			'all_items'     => 'Toutes les branches',
+			'all_items'     => 'All Branches',
 		),
 		'public'            => false,
 		'show_ui'           => $show_ui,
@@ -39,10 +39,10 @@ function drolung_network_register_taxonomies() {
 
 	register_taxonomy( 'projet_domaine', array( 'projet', 'article' ), array(
 		'labels' => array(
-			'name'          => 'Domaines',
-			'singular_name' => 'Domaine',
-			'menu_name'     => 'Domaines',
-			'all_items'     => 'Tous les domaines',
+			'name'          => 'Domains',
+			'singular_name' => 'Domain',
+			'menu_name'     => 'Domains',
+			'all_items'     => 'All Domains',
 		),
 		'public'            => true,
 		'show_ui'           => $show_ui,
@@ -54,12 +54,12 @@ function drolung_network_register_taxonomies() {
 
 	register_taxonomy( 'projet_type', 'projet', array(
 		'labels' => array(
-			'name'          => 'Types de projet',
-			'singular_name' => 'Type de projet',
+			'name'          => 'Project Types',
+			'singular_name' => 'Project Type',
 			'menu_name'     => 'Types',
-			'all_items'     => 'Tous les types',
-			'add_new_item'  => 'Ajouter un type',
-			'search_items'  => 'Rechercher un type',
+			'all_items'     => 'All Types',
+			'add_new_item'  => 'Add New Type',
+			'search_items'  => 'Search Types',
 		),
 		'public'            => true,
 		'show_ui'           => $show_ui,
@@ -71,10 +71,10 @@ function drolung_network_register_taxonomies() {
 
 	register_taxonomy( 'projet_statut', 'projet', array(
 		'labels' => array(
-			'name'          => 'Statuts de projet',
-			'singular_name' => 'Statut',
-			'menu_name'     => 'Statuts',
-			'all_items'     => 'Tous les statuts',
+			'name'          => 'Project Statuses',
+			'singular_name' => 'Status',
+			'menu_name'     => 'Statuses',
+			'all_items'     => 'All Statuses',
 		),
 		'public'            => true,
 		'show_ui'           => $show_ui,
@@ -86,10 +86,10 @@ function drolung_network_register_taxonomies() {
 
 	register_taxonomy( 'theme_article', 'article', array(
 		'labels' => array(
-			'name'          => 'Thèmes d\'article',
-			'singular_name' => 'Thème',
-			'menu_name'     => 'Thèmes',
-			'all_items'     => 'Tous les thèmes',
+			'name'          => 'Article Themes',
+			'singular_name' => 'Theme',
+			'menu_name'     => 'Themes',
+			'all_items'     => 'All Themes',
 		),
 		'public'            => true,
 		'show_ui'           => $show_ui,

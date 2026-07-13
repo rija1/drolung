@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: S'engager
+ *
  * Template for the "S'engager" page.
  * Mirrors mockups/mockup-dsf/get-involved.html (canonical source).
  * DSF and DSM share this template; per-site copy is controlled via ACF fields.
@@ -81,9 +83,69 @@ if ( $asc_collect_id ) {
     </div>
 
     <!-- Formulaire AssoConnect centré, largeur limitée, séparé visuellement -->
+    <style>
+      .asc-don-embed { position: relative; min-height: 420px; }
+      .asc-loading {
+        position: absolute; inset: 0; z-index: 1;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+        background: var(--cream); border: 1px solid var(--border); border-radius: 2px;
+        transition: opacity 0.3s ease;
+      }
+      .asc-loading.is-hidden { opacity: 0; pointer-events: none; }
+      .asc-loading__spinner {
+        width: 32px; height: 32px; border-radius: 50%;
+        border: 3px solid var(--border); border-top-color: var(--saffron);
+        animation: asc-spin 0.8s linear infinite;
+      }
+      .asc-loading__text {
+        font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em;
+        text-transform: uppercase; color: var(--stone);
+      }
+      @keyframes asc-spin { to { transform: rotate(360deg); } }
+    </style>
     <div class="asc-don-embed fade-up" style="max-width:600px;margin:48px auto 0;">
+      <div class="asc-loading">
+        <span class="asc-loading__spinner" aria-hidden="true"></span>
+        <span class="asc-loading__text"><?php esc_html_e( 'Chargement du formulaire de don…', 'drolung-branch' ); ?></span>
+      </div>
       <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
     </div>
+    <script>
+      (function () {
+        var loader = document.querySelector( '.asc-loading' );
+        if ( ! loader ) { return; }
+
+        var hidden = false;
+        function hideLoader() {
+          if ( hidden ) { return; }
+          hidden = true;
+          loader.classList.add( 'is-hidden' );
+        }
+
+        /* Le SDK AssoConnect (iframeSDK.js) crée l'<iframe> immédiatement,
+         * mais son contenu met plusieurs secondes à se rendre à l'intérieur
+         * (carré blanc) — l'évènement `load` de l'iframe se déclenche trop
+         * tôt (juste le document, pas le rendu). Le vrai signal « contenu
+         * prêt » est le postMessage `iframe.height` que le formulaire envoie
+         * une fois rendu (c'est ce même message que le SDK AssoConnect
+         * utilise pour ajuster la hauteur de l'iframe) — on s'y branche. */
+        window.addEventListener( 'message', function ( event ) {
+          if (
+            typeof event.origin === 'string' &&
+            event.origin.indexOf( 'assoconnect.com' ) !== -1 &&
+            event.data &&
+            event.data.action === 'iframe.height'
+          ) {
+            hideLoader();
+          }
+        } );
+
+        /* Filet de sécurité : le formulaire AssoConnect peut être lent ou
+         * échouer silencieusement (bloqueur de pub, réseau, postMessage
+         * jamais reçu) — ne pas laisser le spinner tourner indéfiniment. */
+        setTimeout( hideLoader, 15000 );
+      })();
+    </script>
 
     <?php else : ?>
 
@@ -109,7 +171,7 @@ if ( $asc_collect_id ) {
 </section>
 
 <!-- Section 2 — Partagez (two-col, tint) -->
-<section class="inner-section inner-section--tint">
+<!-- <section class="inner-section inner-section--tint">
   <div class="container">
     <div class="two-col fade-up">
       <div>
@@ -125,7 +187,7 @@ if ( $asc_collect_id ) {
       <img src="<?php echo esc_url( drolung_field( 'engager_partage_image', 'https://images.unsplash.com/photo-1659944984855-776187144baf?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_partage_image_alt', __( 'Partager', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
     </div>
   </div>
-</section>
+</section> -->
 
 <!-- Section 3 — Partenariat (two-col, dark) -->
 <section class="inner-section inner-section--dark">

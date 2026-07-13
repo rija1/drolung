@@ -472,7 +472,7 @@
     ══════════════════════════ */
     .section-eyebrow {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 14px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--saffron);
@@ -519,6 +519,7 @@
     }
     .intro-visual {
       position: relative;
+      z-index: 0;                    /* isolated stacking context so .intro-accent's z-index:-1 stays contained (2026-06-16 fix) */
     }
     .intro-img {
       width: 100%;
@@ -1176,6 +1177,12 @@
       transform: none;
     }
 
+    /* ── GUTENBERG BLOCK CONTENT ── */
+    h2.wp-block-heading {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
 /* ===== Inner page templates ===== */
 /* These rules style page-hero, inner-section, three/four-col, cards, breadcrumb, stat-band,
    form fields and the page-level btn-page. Restored from the original mockup HTML where they
@@ -1530,6 +1537,7 @@
     /* Badges domaine / statut */
     .sp-hero__badges {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 14px;
     }
@@ -1561,6 +1569,14 @@
       color: var(--maroon);
       line-height: 1.1;
       margin-bottom: 6px;
+    }
+    /* Variante pour une valeur textuelle de longueur variable (ex. liste de
+       partenaires) plutôt qu'un chiffre court — la typo géante standard la
+       fait déborder sur plusieurs lignes de façon disproportionnée. */
+    .pp-num--compact {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.4;
     }
     .pp-numlabel {
       font-family: var(--font-mono);
@@ -1736,8 +1752,13 @@
 /* ── 900px — tablet ── */
 @media (max-width: 900px) {
 
-  /* Conteneur : resserrer légèrement le padding latéral */
-  .container { padding: 0 24px; }
+  /*
+   * Conteneur : garder le même padding qu'en desktop (32px) jusqu'au
+   * palier mobile (600px, cf. plus bas). Le resserrement à 24px ici
+   * rendait les héros pleine largeur (photo + gros titre serif, ex.
+   * fiche projet) visuellement collés au bord entre ~600 et ~900px de
+   * large — un palier intermédiaire trop agressif pour ce contenu.
+   */
 
   /* Grilles de contenu génériques */
   .two-col {

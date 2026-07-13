@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Notre action
+ *
  * Template for the "Notre action" page.
  * Mirrors mockups/mockup-dsf/what-we-do.html and mockups/mockup-dsm/what-we-do.html.
  * DSF and DSM share this template; per-site copy is controlled via ACF fields

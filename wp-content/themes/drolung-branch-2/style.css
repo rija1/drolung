@@ -1,0 +1,14 @@
+/*
+Theme Name: Drolung — Branch 2 (Terrain)
+Template: drolung-base
+Theme URI: https://drolung.org
+Author: Drolung
+Author URI: https://drolung.org
+Description: Alternative branch theme with the "Terrain" humanitarian-clean design (mockup-dsf-2) — white background, single saffron accent, bold DM Sans, short copy. Inspired by Médecins du Monde / Fondation Zurcher. Child of drolung-base; reuses the same branding helpers, ACF fields and network CPT "projet" as drolung-branch, so switching between the two themes is content-safe.
+Version: 0.1.0
+Text Domain: drolung-branch-2
+*/
+
+/* All design CSS lives in assets/css/theme.css (enqueued by functions.php).
+   The parent's base.css and base.js are dequeued — this theme ships its own
+   complete design system. */

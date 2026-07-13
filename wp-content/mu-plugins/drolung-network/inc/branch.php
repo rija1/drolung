@@ -73,8 +73,8 @@ function drolung_branch_blog_id( $branch ) {
  */
 function drolung_lang_fallback_chain() {
 	$chains = array(
-		'dsf' => array( 'fr', 'en' ),
-		'dsm' => array( 'fr', 'en' ),            // + 'mg' plus tard (doc §14)
+		'dsf' => array( 'fr', 'en', 'zh' ),
+		'dsm' => array( 'fr', 'en', 'zh' ),      // + 'mg' plus tard (doc §14)
 		'duk' => array( 'en' ),
 		'org' => array( 'en', 'fr', 'zh' ),
 	);

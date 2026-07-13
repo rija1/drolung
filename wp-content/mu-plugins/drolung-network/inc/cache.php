@@ -66,3 +66,14 @@ function drolung_cache_on_delete( $post_id, $post ) {
 		drolung_cache_flush();
 	}
 }
+
+/**
+ * Idem pour la page d'options réseau (drolung_get_network_option()) —
+ * ACF ne passe pas par 'save_post' pour ça.
+ */
+add_action( 'acf/save_post', 'drolung_cache_on_options_save', 20 );
+function drolung_cache_on_options_save( $post_id ) {
+	if ( is_main_site() && 'options' === $post_id ) {
+		drolung_cache_flush();
+	}
+}

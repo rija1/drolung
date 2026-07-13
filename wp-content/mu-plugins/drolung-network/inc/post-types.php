@@ -15,6 +15,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Rend `projet` et `article` traduisibles par Polylang. Sans ce filtre,
+ * Polylang ignore complètement ces CPT réseau (ni taxonomie `language`,
+ * ni `post_translations`) — `drolung_extract_lang_info()` (extract.php)
+ * ne peut alors jamais regrouper une fiche FR et sa traduction EN sous
+ * un même `translation_group` : elles apparaîtraient comme deux projets
+ * distincts au lieu d'un seul avec bascule de langue.
+ * Doit être ajouté tôt (avant que Polylang ne mette en cache sa liste de
+ * types traduits) — un mu-plugin convient parfaitement.
+ */
+add_filter( 'pll_get_post_types', function ( $post_types ) {
+	$post_types['projet']  = 'projet';
+	$post_types['article'] = 'article';
+	return $post_types;
+} );
+
+/**
+ * On the /projets/ and /articles/ archives, Polylang's language switcher
+ * decides whether to show a translation link by counting how many posts
+ * of that post type exist, in that language, on the CURRENT site
+ * (PLL_Model::count_posts()). But 'projet'/'article' content only ever
+ * lives on the central site — a branch's own database always has zero
+ * of them, in every language — so Polylang always counted 0 and hid
+ * every non-active language link on the archive, including ones that
+ * demonstrably work (verified via drolung_get_projets()). Force it to
+ * never hide for these two post types; the real availability check
+ * already happens per-item via drolung_get_projets()/pick_best_language.
+ */
+add_filter( 'pll_hide_archive_translation_url', function ( $hide, $lang_slug, $args ) {
+	if ( isset( $args['post_type'] ) && in_array( $args['post_type'], array( 'projet', 'article' ), true ) ) {
+		return false;
+	}
+	return $hide;
+}, 10, 3 );
+
 add_action( 'init', 'drolung_network_register_post_types', 6 );
 function drolung_network_register_post_types() {
 
@@ -23,21 +58,21 @@ function drolung_network_register_post_types() {
 	/* ── PROJET ──────────────────────────────────────────────── */
 	register_post_type( 'projet', array(
 		'labels' => array(
-			'name'                  => 'Projets',
-			'singular_name'         => 'Projet',
-			'menu_name'             => 'Projets',
-			'add_new'               => 'Ajouter',
-			'add_new_item'          => 'Ajouter un projet',
-			'edit_item'             => 'Modifier le projet',
-			'new_item'              => 'Nouveau projet',
-			'view_item'             => 'Voir le projet',
-			'view_items'            => 'Voir les projets',
-			'search_items'          => 'Rechercher un projet',
-			'not_found'             => 'Aucun projet trouvé.',
-			'all_items'             => 'Tous les projets',
-			'featured_image'        => 'Photo principale',
-			'set_featured_image'    => 'Définir la photo principale',
-			'remove_featured_image' => 'Retirer la photo principale',
+			'name'                  => 'Projects',
+			'singular_name'         => 'Project',
+			'menu_name'             => 'Projects',
+			'add_new'               => 'Add New',
+			'add_new_item'          => 'Add New Project',
+			'edit_item'             => 'Edit Project',
+			'new_item'              => 'New Project',
+			'view_item'             => 'View Project',
+			'view_items'            => 'View Projects',
+			'search_items'          => 'Search Projects',
+			'not_found'             => 'No projects found.',
+			'all_items'             => 'All Projects',
+			'featured_image'        => 'Main Photo',
+			'set_featured_image'    => 'Set main photo',
+			'remove_featured_image' => 'Remove main photo',
 		),
 		'public'             => true,
 		'publicly_queryable' => true,
@@ -56,14 +91,14 @@ function drolung_network_register_post_types() {
 	/* ── PROJET UPDATE (nouvelles du terrain) ───────────────── */
 	register_post_type( 'projet_update', array(
 		'labels' => array(
-			'name'          => 'Updates projet',
-			'singular_name' => 'Update projet',
+			'name'          => 'Project Updates',
+			'singular_name' => 'Project Update',
 			'menu_name'     => 'Updates',
-			'add_new'       => 'Ajouter',
-			'add_new_item'  => 'Ajouter une update',
-			'edit_item'     => 'Modifier l\'update',
-			'all_items'     => 'Toutes les updates',
-			'not_found'     => 'Aucune update.',
+			'add_new'       => 'Add New',
+			'add_new_item'  => 'Add New Update',
+			'edit_item'     => 'Edit Update',
+			'all_items'     => 'All Updates',
+			'not_found'     => 'No updates found.',
 		),
 		'public'             => false,
 		'publicly_queryable' => false,   /* affichées en timeline, jamais en page propre */
@@ -79,12 +114,12 @@ function drolung_network_register_post_types() {
 	/* ── PARTENAIRE (référentiel logos, non traduit) ────────── */
 	register_post_type( 'partenaire', array(
 		'labels' => array(
-			'name'          => 'Partenaires',
-			'singular_name' => 'Partenaire',
-			'menu_name'     => 'Partenaires',
-			'add_new_item'  => 'Ajouter un partenaire',
-			'edit_item'     => 'Modifier le partenaire',
-			'all_items'     => 'Tous les partenaires',
+			'name'          => 'Partners',
+			'singular_name' => 'Partner',
+			'menu_name'     => 'Partners',
+			'add_new_item'  => 'Add New Partner',
+			'edit_item'     => 'Edit Partner',
+			'all_items'     => 'All Partners',
 		),
 		'public'             => false,
 		'publicly_queryable' => false,
@@ -102,13 +137,13 @@ function drolung_network_register_post_types() {
 	/* ── ARTICLE (éditorial de fond partageable, doc §3.4) ──── */
 	register_post_type( 'article', array(
 		'labels' => array(
-			'name'          => 'Articles réseau',
-			'singular_name' => 'Article réseau',
-			'menu_name'     => 'Articles réseau',
-			'add_new_item'  => 'Ajouter un article',
-			'edit_item'     => 'Modifier l\'article',
-			'all_items'     => 'Tous les articles',
-			'not_found'     => 'Aucun article.',
+			'name'          => 'Network Articles',
+			'singular_name' => 'Network Article',
+			'menu_name'     => 'Network Articles',
+			'add_new_item'  => 'Add New Article',
+			'edit_item'     => 'Edit Article',
+			'all_items'     => 'All Articles',
+			'not_found'     => 'No articles found.',
 		),
 		'public'             => true,
 		'publicly_queryable' => true,
@@ -122,4 +157,25 @@ function drolung_network_register_post_types() {
 		'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions', 'author' ),
 		'capability_type'    => 'post',
 	) );
+}
+
+/**
+ * Le nom du CPT ('name' dans les labels ci-dessus) sert aussi de titre
+ * d'onglet par défaut pour la page d'archive publique — mais ces labels
+ * sont volontairement en anglais (interface d'admin, doc demandée pour
+ * les utilisateurs non-francophones). Sans ce filtre, l'archive
+ * publique de DSF/DSM afficherait "Projects"/"Network Articles" en
+ * anglais alors que le reste de la page est en français. On force donc
+ * le titre public dans la langue de la branche courante.
+ */
+add_filter( 'post_type_archive_title', 'drolung_network_public_archive_title', 10, 2 );
+function drolung_network_public_archive_title( $title, $post_type ) {
+	$is_english = function_exists( 'drolung_current_branch' ) && 'duk' === drolung_current_branch();
+
+	$titles = array(
+		'projet'  => $is_english ? 'Projects' : 'Projets',
+		'article' => $is_english ? 'Articles' : 'Articles',
+	);
+
+	return $titles[ $post_type ] ?? $title;
 }

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: Ressources
+ *
  * Template for the "Ressources" page.
  * Mirrors mockups/mockup-dsf/resources.html and mockups/mockup-dsm/resources.html.
  * Contenu identique sur les deux mockups — placeholder "Bientôt disponible".

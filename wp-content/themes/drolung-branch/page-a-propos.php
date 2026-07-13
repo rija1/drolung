@@ -1,5 +1,7 @@
 <?php
 /**
+ * Template Name: À propos
+ *
  * Template for the "À propos" page.
  * Mirrors mockups/mockup-dsf/about.html (canonical source).
  * DSM and DSF share this template; per-site copy (hero text, team members,
@@ -60,7 +62,7 @@ get_header();
 </section>
 
 <!-- Nos valeurs — dark section with 4 values -->
-<section class="inner-section inner-section--dark">
+<!-- <section class="inner-section inner-section--dark">
   <div class="container">
     <div class="section-header fade-up" style="max-width:680px;margin:0 auto 48px;text-align:center;">
       <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'valeurs_eyebrow', __( 'Nos valeurs', 'drolung-branch' ) ) ); ?></div>
@@ -102,7 +104,7 @@ get_header();
       <?php endforeach; ?>
     </div>
   </div>
-</section>
+</section> -->
 
 <!-- Drupon Khen Rinpoche — maroon feature section -->
 <section class="inner-section inner-section--maroon">
