@@ -148,7 +148,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 				<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'map_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
 				<h2 class="section-title" style="margin-bottom:0"><?php echo wp_kses_post( drolung_field( 'map_title', __( 'Quatre projets <em>en cours de montage</em>', 'drolung-branch' ) ) ); ?></h2>
 			</div>
-			<a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>" class="btn-text"><?php esc_html_e( 'Voir tous les projets →', 'drolung-branch' ); ?></a>
+			<a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>" class="btn-text"><?php echo esc_html( drolung_pll__( 'Voir tous les projets →' ) ); ?></a>
 		</div>
 
 		<?php if ( ! empty( $featured_projets ) ) : ?>

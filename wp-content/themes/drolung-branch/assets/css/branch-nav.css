@@ -80,6 +80,18 @@
   color: var(--charcoal-mid);
   transition: background var(--transition), color var(--transition);
 }
+/*
+ * Spécificité renforcée (.lang-switch en tête) : ces liens sont imbriqués
+ * dans .nav-links en DOM, donc .nav-links a.active (même spécificité,
+ * déclaré plus loin dans ce fichier) gagnerait sinon la cascade et
+ * imposerait son soulignement border-bottom — on ne veut ici qu'un fond
+ * en évidence, pas de soulignement.
+ */
+.lang-switch .lang-switch__menu a,
+.lang-switch .lang-switch__menu a:hover,
+.lang-switch .lang-switch__menu a.active {
+  border-bottom: none;
+}
 .lang-switch__menu a:hover { background: var(--cream-dark); color: var(--maroon); }
 .lang-switch__menu a.active {
   color: var(--saffron);

@@ -78,7 +78,7 @@ if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
         </ul>' ) ); ?>
         <?php if ( $asc_donate_url ) :
-          $asc_btn_label = function_exists( 'pll__' ) ? pll__( 'Faire un don via AssoConnect' ) : __( 'Faire un don via AssoConnect', 'drolung-branch' );
+          $asc_btn_label = drolung_pll__( 'Faire un don via AssoConnect' );
           ?>
           <a href="<?php echo esc_url( $asc_donate_url ); ?>" class="btn-page btn-page--primary" style="margin-top:28px;font-style:normal;font-family:var(--font-body);" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $asc_btn_label ); ?></a>
         <?php else : ?>

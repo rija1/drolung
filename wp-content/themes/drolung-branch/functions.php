@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.2' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.4' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -214,7 +214,7 @@ function drolung_branch_footer_content() {
 				<img src="<?php echo esc_url( drolung_get_logo_url() ); ?>" alt="" style="height:32px;width:auto;">
 				<span class="footer-brand__name"><?php echo esc_html( drolung_get_brand_name() ); ?></span>
 			</div>
-			<p><?php esc_html_e( 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.', 'drolung-branch' ); ?></p>
+			<p><?php echo esc_html( drolung_pll__( 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.' ) ); ?></p>
 			<div class="footer-social">
 				<a href="<?php echo esc_url( $facebook ); ?>" class="social-btn" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
 					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
@@ -229,25 +229,25 @@ function drolung_branch_footer_content() {
 		</div>
 
 		<div class="footer-col">
-			<div class="footer-col__title"><?php esc_html_e( 'Navigation', 'drolung-branch' ); ?></div>
+			<div class="footer-col__title"><?php echo esc_html( drolung_pll__( 'Navigation' ) ); ?></div>
 			<ul>
-				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( drolung_lang_url( 'a-propos' ) ); ?>"><?php esc_html_e( 'À propos', 'drolung-branch' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Accueil' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'a-propos' ) ); ?>"><?php echo esc_html( drolung_pll__( 'À propos' ) ); ?></a></li>
 			</ul>
 		</div>
 
 		<div class="footer-col">
-			<div class="footer-col__title"><?php esc_html_e( "S'engager", 'drolung-branch' ); ?></div>
+			<div class="footer-col__title"><?php echo esc_html( drolung_pll__( "S'engager" ) ); ?></div>
 			<ul>
-				<li><a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>"><?php esc_html_e( 'Faire un don', 'drolung-branch' ); ?></a></li>
-				<li><a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a></li>
+				<li><a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>"><?php echo esc_html( drolung_pll__( 'Faire un don' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'projets' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Nos projets' ) ); ?></a></li>
 			</ul>
 		</div>
 
 		<div class="footer-col">
-			<div class="footer-col__title"><?php esc_html_e( 'Contact', 'drolung-branch' ); ?></div>
+			<div class="footer-col__title"><?php echo esc_html( drolung_pll__( 'Contact' ) ); ?></div>
 			<ul>
-				<li><a href="<?php echo esc_url( drolung_lang_url( 'contact' ) ); ?>"><?php esc_html_e( 'Nous contacter', 'drolung-branch' ); ?></a></li>
+				<li><a href="<?php echo esc_url( drolung_lang_url( 'contact' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Nous contacter' ) ); ?></a></li>
 			</ul>
 		</div>
 
@@ -294,9 +294,23 @@ function drolung_register_projets_archive_strings() {
 }
 
 /**
- * Enregistre le libellé du bouton de don AssoConnect (page S'engager) comme
- * chaîne Polylang — même raison que ci-dessus : ce libellé n'est rattaché à
- * aucun champ ACF par page, donc pas de traduction "par page" possible.
+ * Traduit une chaîne d'interface fixe via Polylang si dispo, sinon repli sur
+ * le gettext classique du thème (jamais traduit tant que Loco Translate
+ * n'est pas installé — voir CLAUDE.md § i18n stack). À utiliser à la place
+ * de `esc_html_e()` pour tout libellé enregistré dans
+ * `drolung_register_engager_strings()` ci-dessous.
+ */
+function drolung_pll__( $text, $domain = 'drolung-branch' ) {
+	return function_exists( 'pll__' ) ? pll__( $text ) : __( $text, $domain );
+}
+
+/**
+ * Enregistre les libellés d'interface fixes (boutons, liens, titres de
+ * colonnes du footer) qui ne sont rattachés à aucun champ ACF par page,
+ * donc pas de traduction "par page" possible. Ces chaînes utilisaient
+ * `esc_html_e()` (gettext classique) — `pll_register_string()` + `pll__()`
+ * (via `drolung_pll__()`) permet de les traduire dès maintenant via
+ * Polylang, sans attendre Loco Translate.
  *
  * Traductions à saisir : wp-admin de CHAQUE branche → Langues → Traduction
  * des chaînes → groupe « Drolung — Interface ».
@@ -306,5 +320,19 @@ function drolung_register_engager_strings() {
 	if ( ! function_exists( 'pll_register_string' ) ) {
 		return;
 	}
-	pll_register_string( 'engager_asc_btn_label', 'Faire un don via AssoConnect', 'Drolung — Interface' );
+	$strings = array(
+		'interface_asc_btn_label'  => 'Faire un don via AssoConnect',
+		'interface_see_all_projects' => 'Voir tous les projets →',
+		'interface_footer_tagline'   => 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.',
+		'interface_footer_nav_title' => 'Navigation',
+		'interface_footer_home'      => 'Accueil',
+		'interface_footer_about'     => 'À propos',
+		'interface_footer_engager_title' => "S'engager",
+		'interface_footer_donate'    => 'Faire un don',
+		'interface_footer_contact_title' => 'Contact',
+		'interface_footer_contact_us'    => 'Nous contacter',
+	);
+	foreach ( $strings as $name => $string ) {
+		pll_register_string( $name, $string, 'Drolung — Interface' );
+	}
 }
