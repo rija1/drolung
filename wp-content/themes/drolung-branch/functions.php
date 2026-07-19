@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.5' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.6' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -438,8 +438,6 @@ function drolung_register_engager_strings() {
 		return;
 	}
 	$strings = array(
-		'interface_asc_btn_label'  => 'Faire un don via AssoConnect',
-		'interface_voaray_btn_label' => 'Faire un don via Voaray',
 		'interface_see_all_projects' => 'Voir tous les projets →',
 		'interface_footer_tagline'   => 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.',
 		'interface_footer_nav_title' => 'Navigation',

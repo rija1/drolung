@@ -48,18 +48,31 @@ get_header();
 
 <?php
 /*
- * AssoConnect — lien de redirection, PAS d'intégration en iframe.
+ * AssoConnect — formulaire intégré en iframe.
  *
- * L'iframe embarquée a été abandonnée (bug confirmé côté AssoConnect :
- * leur widget de paiement Adyen échoue même en accès direct sur leur
- * propre domaine, hors de tout contexte d'intégration — voir journal
- * technique §15, session 2026-07-13). Le visiteur est donc redirigé vers
- * le formulaire AssoConnect dans un nouvel onglet plutôt que de l'afficher
- * intégré sur cette page.
+ * Historique : abandonné les 2026-07-13/14 après deux échecs (bug Adyen /
+ * crypto.subtle côté AssoConnect, confirmé reproductible même hors iframe).
+ * Un formulaire de test caché (`page-don-debug.php`, non lié dans les
+ * menus) a permis au support AssoConnect de diagnostiquer et corriger le
+ * problème de leur côté. Le formulaire fonctionne maintenant — l'iframe est
+ * réintégrée ici de façon permanente. Voir journal technique §15.
+ *
+ * $asc_collect_id — identifiant de collecte AssoConnect (champ ACF, ou
+ * repli DSF codé en dur). Si absent (ex. DSM, pas encore de compte
+ * AssoConnect), on retombe sur un bouton de contact classique.
  */
-$asc_donate_url = drolung_field( 'engager_assoconnect_url', '' );
-if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung_current_branch() === 'dsf' ) {
-	$asc_donate_url = 'https://drolung-solidarite-france.assoconnect.com/collect/description/726668-x-soutenir-dsf-drolung-solidarite-france';
+$asc_collect_id = drolung_field( 'engager_assoconnect_id', '' );
+if ( ! $asc_collect_id && function_exists( 'drolung_current_branch' ) && drolung_current_branch() === 'dsf' ) {
+	$asc_collect_id = '01KVYT98B8F32ER528VJ6CFMPG';
+}
+if ( $asc_collect_id ) {
+	wp_enqueue_script(
+		'assoconnect-iframe',
+		'https://drolung-solidarite-france.assoconnect.com/public/build/js/iframe.js',
+		array(),
+		null,
+		true /* footer */
+	);
 }
 ?>
 
@@ -67,7 +80,7 @@ if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung
 <section class="inner-section">
   <div class="container">
 
-    <div class="two-col fade-up">
+    <div class="two-col fade-up" style="align-items:flex-start">
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_don_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_don_title', __( 'Votre don agit <em>directement</em>', 'drolung-branch' ) ) ); ?></h2>
@@ -77,16 +90,18 @@ if ( ! $asc_donate_url && function_exists( 'drolung_current_branch' ) && drolung
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 830 €', 'drolung-branch' ) . '</strong> — ' . __( 'le budget d\'une année complète de l\'École des Femmes à Anjozorobe (12 sessions, 50 à 100 femmes)', 'drolung-branch' ) . '</span></li>
           <li style="display:flex;gap:12px;align-items:flex-start"><span style="color:var(--saffron);font-size:18px">&#10022;</span><span style="font-size:15px;color:var(--text-muted)"><strong style="color:var(--charcoal)">' . __( '4 380 €', 'drolung-branch' ) . '</strong> — ' . __( 'le démarrage de la forêt comestible d\'Anjozorobe pour 15 familles', 'drolung-branch' ) . '</span></li>
         </ul>' ) ); ?>
-        <?php if ( $asc_donate_url ) :
-          $asc_btn_label = drolung_pll__( 'Faire un don via AssoConnect' );
-          ?>
-          <a href="<?php echo esc_url( $asc_donate_url ); ?>" class="btn-page btn-page--primary" style="margin-top:28px;font-style:normal;font-family:var(--font-body);" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $asc_btn_label ); ?></a>
-        <?php else : ?>
+        <?php if ( ! $asc_collect_id ) : ?>
           <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', drolung_lang_url( 'contact' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
         <?php endif; ?>
       </div>
-      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
+      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy" style="max-height:360px;object-fit:cover">
     </div>
+
+    <?php if ( $asc_collect_id ) : ?>
+      <div class="asc-don-embed fade-up" style="max-width:600px;margin:48px auto 0;">
+        <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
+      </div>
+    <?php endif; ?>
 
   </div>
 </section>
