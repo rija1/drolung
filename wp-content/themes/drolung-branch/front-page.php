@@ -381,15 +381,14 @@ $home_axe_defaults = [
 			<h2 class="newsletter-title"><?php echo esc_html( drolung_field( 'newsletter_title', __( 'Suivez nos avancées', 'drolung-branch' ) ) ); ?></h2>
 			<p class="newsletter-body"><?php echo esc_html( drolung_field( 'newsletter_body', __( 'Soyez informés en avant-première du lancement de nos projets.', 'drolung-branch' ) ) ); ?></p>
 		</div>
-		<?php
-		/* MailPoet integration point. For now: plain HTML form with action="#".
-		 * TODO: wire to MailPoet subscribe endpoint when lists are configured. */
-		?>
-		<form class="newsletter-form" action="#" method="post" novalidate>
-			<label style="position:absolute;left:-9999px" for="nl-email-branch"><?php esc_html_e( 'Adresse e-mail', 'drolung-branch' ); ?></label>
-			<input id="nl-email-branch" type="email" name="nl_email" placeholder="<?php echo esc_attr( drolung_field( 'newsletter_placeholder', __( 'Votre adresse e-mail', 'drolung-branch' ) ) ); ?>" required>
-			<button type="submit"><?php echo esc_html( drolung_field( 'newsletter_cta_label', __( 'Je m\'inscris', 'drolung-branch' ) ) ); ?></button>
-		</form>
+		<div>
+			<form class="newsletter-form" action="#" method="post" novalidate>
+				<label style="position:absolute;left:-9999px" for="nl-email-branch"><?php esc_html_e( 'Adresse e-mail', 'drolung-branch' ); ?></label>
+				<input id="nl-email-branch" type="email" name="nl_email" placeholder="<?php echo esc_attr( drolung_field( 'newsletter_placeholder', __( 'Votre adresse e-mail', 'drolung-branch' ) ) ); ?>" required>
+				<button type="submit"><?php echo esc_html( drolung_field( 'newsletter_cta_label', __( 'Je m\'inscris', 'drolung-branch' ) ) ); ?></button>
+			</form>
+			<div class="newsletter-message" aria-live="polite"></div>
+		</div>
 	</div>
 </section>
 

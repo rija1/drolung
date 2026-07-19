@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.4' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.5' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -111,6 +111,123 @@ function drolung_branch_enqueue_assets() {
 		DROLUNG_BRANCH_VERSION,
 		true
 	);
+
+	/* Newsletter form (home) — AJAX submit to MailPoet, see below. */
+	wp_enqueue_script(
+		'drolung-newsletter-js',
+		DROLUNG_BRANCH_URI . '/assets/js/newsletter.js',
+		[],
+		DROLUNG_BRANCH_VERSION,
+		true
+	);
+	wp_localize_script( 'drolung-newsletter-js', 'drolungNewsletter', array(
+		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+		'nonce'   => wp_create_nonce( 'drolung_newsletter_subscribe' ),
+		'i18n'    => array(
+			'success' => drolung_pll__( 'Merci ! Vérifiez votre boîte mail pour confirmer votre inscription.' ),
+			'exists'  => drolung_pll__( 'Cette adresse est déjà inscrite à notre newsletter.' ),
+			'invalid' => drolung_pll__( 'Merci de saisir une adresse e-mail valide.' ),
+			'error'   => drolung_pll__( 'Une erreur est survenue, merci de réessayer plus tard.' ),
+		),
+	) );
+}
+
+/**
+ * Newsletter — inscription MailPoet (section home "Suivez nos avancées").
+ * Un contact base par entité (DSF/DSM séparées, cf. CLAUDE.md § Stack
+ * decisions) : chaque branche a sa propre liste MailPoet, retrouvée par nom
+ * exact ou créée automatiquement au premier appel (find-or-create — pas
+ * besoin de configuration manuelle ni de script de synchronisation prod,
+ * contrairement aux correctifs Polylang de cette même session). L'ID
+ * trouvé/créé est mis en cache dans une option du site pour éviter un
+ * aller-retour API MailPoet à chaque requête.
+ */
+function drolung_mailpoet_list_name_for_branch( $branch ) {
+	$names = array(
+		'dsf' => 'Drolung Solidarité France — Newsletter',
+		'dsm' => 'Drolung Solidarité Madagascar — Newsletter',
+	);
+	return isset( $names[ $branch ] ) ? $names[ $branch ] : 'Drolung — Newsletter';
+}
+
+function drolung_get_or_create_mailpoet_list_id() {
+	if ( ! class_exists( '\MailPoet\API\API' ) ) {
+		return 0;
+	}
+
+	$branch     = function_exists( 'drolung_current_branch' ) ? drolung_current_branch() : 'org';
+	$option_key = 'drolung_mailpoet_list_id_' . $branch;
+	$cached     = get_option( $option_key );
+	if ( $cached ) {
+		return (int) $cached;
+	}
+
+	$list_name = drolung_mailpoet_list_name_for_branch( $branch );
+
+	try {
+		$mailpoet = \MailPoet\API\API::MP( 'v1' );
+		foreach ( $mailpoet->getLists() as $list ) {
+			if ( isset( $list['name'] ) && $list['name'] === $list_name ) {
+				update_option( $option_key, $list['id'] );
+				return (int) $list['id'];
+			}
+		}
+		$created = $mailpoet->addList( array( 'name' => $list_name ) );
+		if ( ! empty( $created['id'] ) ) {
+			update_option( $option_key, $created['id'] );
+			return (int) $created['id'];
+		}
+	} catch ( \Exception $e ) {
+		return 0;
+	}
+
+	return 0;
+}
+
+add_action( 'wp_ajax_drolung_newsletter_subscribe', 'drolung_ajax_newsletter_subscribe' );
+add_action( 'wp_ajax_nopriv_drolung_newsletter_subscribe', 'drolung_ajax_newsletter_subscribe' );
+function drolung_ajax_newsletter_subscribe() {
+	check_ajax_referer( 'drolung_newsletter_subscribe', 'nonce' );
+
+	$email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	if ( ! $email || ! is_email( $email ) ) {
+		wp_send_json_error( array( 'code' => 'invalid' ) );
+	}
+
+	if ( ! class_exists( '\MailPoet\API\API' ) ) {
+		wp_send_json_error( array( 'code' => 'error' ) );
+	}
+
+	$list_id = drolung_get_or_create_mailpoet_list_id();
+
+	try {
+		$mailpoet = \MailPoet\API\API::MP( 'v1' );
+		$mailpoet->addSubscriber(
+			array( 'email' => $email ),
+			$list_id ? array( $list_id ) : array()
+		);
+		wp_send_json_success( array( 'code' => 'success' ) );
+	} catch ( \MailPoet\API\MP\v1\APIException $e ) {
+		/*
+		 * CONFIRMATION_FAILED_TO_SEND (10) et WELCOME_FAILED_TO_SEND (17) sont
+		 * levées APRÈS que l'abonné a déjà été enregistré dans la liste (voir
+		 * Subscribers::_sendConfirmationEmail() / _scheduleWelcomeNotification()
+		 * dans le plugin) — seul l'envoi de l'email a échoué (ex. méthode
+		 * d'envoi MailPoet non configurée). Traiter comme un succès plutôt que
+		 * de dire à la personne que son inscription a échoué alors qu'elle a
+		 * bien été prise en compte.
+		 */
+		$code = $e->getCode();
+		if ( \MailPoet\API\MP\v1\APIException::SUBSCRIBER_EXISTS === $code ) {
+			wp_send_json_success( array( 'code' => 'exists' ) );
+		}
+		if ( in_array( $code, array( \MailPoet\API\MP\v1\APIException::CONFIRMATION_FAILED_TO_SEND, \MailPoet\API\MP\v1\APIException::WELCOME_FAILED_TO_SEND ), true ) ) {
+			wp_send_json_success( array( 'code' => 'success' ) );
+		}
+		wp_send_json_error( array( 'code' => 'error' ) );
+	} catch ( \Exception $e ) {
+		wp_send_json_error( array( 'code' => 'error' ) );
+	}
 }
 
 /**
@@ -322,6 +439,7 @@ function drolung_register_engager_strings() {
 	}
 	$strings = array(
 		'interface_asc_btn_label'  => 'Faire un don via AssoConnect',
+		'interface_voaray_btn_label' => 'Faire un don via Voaray',
 		'interface_see_all_projects' => 'Voir tous les projets →',
 		'interface_footer_tagline'   => 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.',
 		'interface_footer_nav_title' => 'Navigation',
@@ -331,6 +449,10 @@ function drolung_register_engager_strings() {
 		'interface_footer_donate'    => 'Faire un don',
 		'interface_footer_contact_title' => 'Contact',
 		'interface_footer_contact_us'    => 'Nous contacter',
+		'interface_newsletter_success'   => 'Merci ! Vérifiez votre boîte mail pour confirmer votre inscription.',
+		'interface_newsletter_exists'    => 'Cette adresse est déjà inscrite à notre newsletter.',
+		'interface_newsletter_invalid'   => 'Merci de saisir une adresse e-mail valide.',
+		'interface_newsletter_error'     => 'Une erreur est survenue, merci de réessayer plus tard.',
 	);
 	foreach ( $strings as $name => $string ) {
 		pll_register_string( $name, $string, 'Drolung — Interface' );

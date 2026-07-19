@@ -254,3 +254,13 @@
   .lang-switch__menu { right: auto; left: 50%; transform: translate(-50%, -6px); }
   .lang-switch.open .lang-switch__menu { transform: translate(-50%, 0); }
 }
+
+/* ── NEWSLETTER — feedback inline (succès / erreur) ── */
+.newsletter-message {
+  margin-top: 10px;
+  font-size: 13px;
+  min-height: 1em;
+}
+.newsletter-message.is-success { color: var(--saffron-lt); font-weight: 600; }
+.newsletter-message.is-error { color: #ffb4b4; font-weight: 600; }
+.newsletter-form.is-loading button { opacity: 0.6; pointer-events: none; }
