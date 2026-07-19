@@ -41,10 +41,6 @@ get_header();
 <section class="inner-section">
   <div class="container">
 
-    <div style="max-width:600px;margin:0 auto 32px;padding:16px 20px;background:var(--cream-dark);border:1px solid var(--border);border-radius:2px;font-size:14px;color:var(--text-muted)">
-      Page de test interne — intégration du formulaire de don AssoConnect en iframe, pour reproduire et diagnostiquer le bug signalé (le formulaire de paiement ne se charge pas correctement en iframe). Cette page n'est pas liée dans la navigation du site.
-    </div>
-
     <?php if ( $asc_collect_id ) : ?>
       <div class="asc-don-embed fade-up" style="max-width:600px;margin:0 auto;">
         <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
