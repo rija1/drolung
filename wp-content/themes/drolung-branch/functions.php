@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.6' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.8' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -451,6 +451,7 @@ function drolung_register_engager_strings() {
 		'interface_newsletter_exists'    => 'Cette adresse est déjà inscrite à notre newsletter.',
 		'interface_newsletter_invalid'   => 'Merci de saisir une adresse e-mail valide.',
 		'interface_newsletter_error'     => 'Une erreur est survenue, merci de réessayer plus tard.',
+		'interface_asc_loading_text'     => 'Chargement du formulaire de don…',
 	);
 	foreach ( $strings as $name => $string ) {
 		pll_register_string( $name, $string, 'Drolung — Interface' );

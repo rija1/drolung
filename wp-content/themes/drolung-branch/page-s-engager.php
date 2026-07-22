@@ -98,9 +98,69 @@ if ( $asc_collect_id ) {
     </div>
 
     <?php if ( $asc_collect_id ) : ?>
+      <style>
+        .asc-don-embed { position: relative; min-height: 420px; }
+        .asc-loading {
+          position: absolute; inset: 0; z-index: 1;
+          display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+          background: var(--cream); border: 1px solid var(--border); border-radius: 2px;
+          transition: opacity 0.3s ease;
+        }
+        .asc-loading.is-hidden { opacity: 0; pointer-events: none; }
+        .asc-loading__spinner {
+          width: 32px; height: 32px; border-radius: 50%;
+          border: 3px solid var(--border); border-top-color: var(--saffron);
+          animation: asc-spin 0.8s linear infinite;
+        }
+        .asc-loading__text {
+          font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em;
+          text-transform: uppercase; color: var(--stone);
+        }
+        @keyframes asc-spin { to { transform: rotate(360deg); } }
+      </style>
       <div class="asc-don-embed fade-up" style="max-width:600px;margin:48px auto 0;">
+        <div class="asc-loading">
+          <span class="asc-loading__spinner" aria-hidden="true"></span>
+          <span class="asc-loading__text"><?php echo esc_html( drolung_pll__( 'Chargement du formulaire de don…' ) ); ?></span>
+        </div>
         <div class="iframe-asc-container" data-type="collect" data-collect-id="<?php echo esc_attr( $asc_collect_id ); ?>"></div>
       </div>
+      <script>
+        (function () {
+          var loader = document.querySelector( '.asc-loading' );
+          if ( ! loader ) { return; }
+
+          var hidden = false;
+          function hideLoader() {
+            if ( hidden ) { return; }
+            hidden = true;
+            loader.classList.add( 'is-hidden' );
+          }
+
+          /* Le SDK AssoConnect (iframeSDK.js) crée l'<iframe> immédiatement,
+           * mais son contenu met plusieurs secondes à se rendre à l'intérieur
+           * (carré blanc) — l'évènement `load` de l'iframe se déclenche trop
+           * tôt (juste le document, pas le rendu). Le vrai signal « contenu
+           * prêt » est le postMessage `iframe.height` que le formulaire envoie
+           * une fois rendu (c'est ce même message que le SDK AssoConnect
+           * utilise pour ajuster la hauteur de l'iframe) — on s'y branche. */
+          window.addEventListener( 'message', function ( event ) {
+            if (
+              typeof event.origin === 'string' &&
+              event.origin.indexOf( 'assoconnect.com' ) !== -1 &&
+              event.data &&
+              event.data.action === 'iframe.height'
+            ) {
+              hideLoader();
+            }
+          } );
+
+          /* Filet de sécurité : le formulaire AssoConnect peut être lent ou
+           * échouer silencieusement (bloqueur de pub, réseau, postMessage
+           * jamais reçu) — ne pas laisser le spinner tourner indéfiniment. */
+          setTimeout( hideLoader, 15000 );
+        })();
+      </script>
     <?php endif; ?>
 
   </div>
