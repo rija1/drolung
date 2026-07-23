@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.8' );
+define( 'DROLUNG_BRANCH_VERSION', '0.2.9' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -452,6 +452,21 @@ function drolung_register_engager_strings() {
 		'interface_newsletter_invalid'   => 'Merci de saisir une adresse e-mail valide.',
 		'interface_newsletter_error'     => 'Une erreur est survenue, merci de réessayer plus tard.',
 		'interface_asc_loading_text'     => 'Chargement du formulaire de don…',
+		'interface_sp_eyebrow_projet'    => 'Le projet',
+		'interface_sp_eyebrow_defi'      => 'Le défi structurel',
+		'interface_sp_eyebrow_images'    => 'En images',
+		'interface_sp_eyebrow_budget'    => 'Budget',
+		'interface_sp_eyebrow_timeline'  => 'Nouvelles du terrain',
+		'interface_sp_timeline_title'    => 'La chronologie',
+		'interface_sp_eyebrow_cta'       => 'Soutenir ce projet',
+		'interface_sp_localisation'      => 'Localisation',
+		'interface_sp_beneficiaires'     => 'bénéficiaires',
+		'interface_sp_partenaire_sg'     => 'Partenaire',
+		'interface_sp_partenaire_pl'     => 'Partenaires',
+		'interface_sp_periode'           => 'période du projet',
+		'interface_archive_statut'       => 'Statut',
+		'interface_archive_tous'         => 'Tous',
+		'interface_archive_type'         => 'Type',
 	);
 	foreach ( $strings as $name => $string ) {
 		pll_register_string( $name, $string, 'Drolung — Interface' );

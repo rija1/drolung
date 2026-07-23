@@ -52,9 +52,9 @@ if ( empty( $used_statuts ) ) {
 
 <div class="page-breadcrumb">
 	<div class="container">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a>
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Accueil' ) ); ?></a>
 		<span>›</span>
-		<span><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></span>
+		<span><?php echo esc_html( drolung_pll__( 'Nos projets' ) ); ?></span>
 	</div>
 </div>
 
@@ -89,18 +89,18 @@ $hero_image_url = drolung_get_network_option(
 		<div class="projets-intro__filters">
 			<div class="project-filters">
 				<div class="filter-group">
-					<div class="filter-group__label"><?php esc_html_e( 'Statut', 'drolung-branch' ); ?></div>
+					<div class="filter-group__label"><?php echo esc_html( drolung_pll__( 'Statut' ) ); ?></div>
 					<div class="filter-group__btns">
-						<button class="filter-btn active" data-status="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
+						<button class="filter-btn active" data-status="all"><?php echo esc_html( drolung_pll__( 'Tous' ) ); ?></button>
 						<?php foreach ( $used_statuts as $slug => $name ) : ?>
 							<button class="filter-btn" data-status="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( drolung_translate_term_name( $name ) ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</div>
 				<div class="filter-group">
-					<div class="filter-group__label"><?php esc_html_e( 'Type', 'drolung-branch' ); ?></div>
+					<div class="filter-group__label"><?php echo esc_html( drolung_pll__( 'Type' ) ); ?></div>
 					<div class="filter-group__btns">
-						<button class="filter-btn active" data-type="all"><?php esc_html_e( 'Tous', 'drolung-branch' ); ?></button>
+						<button class="filter-btn active" data-type="all"><?php echo esc_html( drolung_pll__( 'Tous' ) ); ?></button>
 						<?php foreach ( $used_types as $slug => $name ) : ?>
 							<button class="filter-btn" data-type="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( drolung_translate_term_name( $name ) ); ?></button>
 						<?php endforeach; ?>
@@ -185,7 +185,7 @@ $hero_image_url = drolung_get_network_option(
 							<div class="project-meta" style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--stone);font-family:var(--font-mono);letter-spacing:0.04em;">
 								<span>
 									<?php if ( $benef_nombre > 0 ) : ?>
-										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong> <?php esc_html_e( 'bénéficiaires', 'drolung-branch' ); ?>
+										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong> <?php echo esc_html( drolung_pll__( 'bénéficiaires' ) ); ?>
 									<?php elseif ( $beneficiaires ) : ?>
 										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong>
 									<?php endif; ?>

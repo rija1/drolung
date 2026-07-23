@@ -71,24 +71,24 @@ $sp_badge_3_num = $sp_badge_3_label = '';
 $sp_badge_4_num = $sp_badge_4_label = '';
 
 /* Récit: use content_html as the body; title from the post title. */
-$sp_recit_eyebrow = __( 'Le projet', 'drolung-branch' );
+$sp_recit_eyebrow = drolung_pll__( 'Le projet' );
 $sp_recit_title   = '';
 $sp_recit_body    = $item['content_html'] ?? '';
 
-$sp_defi_eyebrow = __( 'Le défi structurel', 'drolung-branch' );
+$sp_defi_eyebrow = drolung_pll__( 'Le défi structurel' );
 $sp_defi_title = $sp_defi_body = '';
 
-$sp_galerie_eyebrow = __( 'En images', 'drolung-branch' );
+$sp_galerie_eyebrow = drolung_pll__( 'En images' );
 $sp_galerie_title = $sp_galerie_sub = '';
 
-$sp_budget_eyebrow = __( 'Budget', 'drolung-branch' );
+$sp_budget_eyebrow = drolung_pll__( 'Budget' );
 $sp_budget_title = $sp_budget_intro = $sp_budget_lines = '';
 
-$sp_timeline_eyebrow = __( 'Nouvelles du terrain', 'drolung-branch' );
-$sp_timeline_title   = __( 'La chronologie', 'drolung-branch' );
+$sp_timeline_eyebrow = drolung_pll__( 'Nouvelles du terrain' );
+$sp_timeline_title   = drolung_pll__( 'La chronologie' );
 $sp_timeline_items   = '';
 
-$sp_cta_eyebrow = __( 'Soutenir ce projet', 'drolung-branch' );
+$sp_cta_eyebrow = drolung_pll__( 'Soutenir ce projet' );
 $sp_cta_title = $sp_cta_body = $sp_cta_footer = '';
 
 /* Gallery from extract (photos already resolved to URLs). */
@@ -119,9 +119,9 @@ if ( $projet_date_debut || $projet_date_fin ) {
 
 	<div class="page-breadcrumb">
 		<div class="container">
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Accueil', 'drolung-branch' ); ?></a>
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Accueil' ) ); ?></a>
 			<span>›</span>
-			<a href="<?php echo esc_url( function_exists( 'drolung_lang_url' ) ? drolung_lang_url( 'projets' ) : home_url( '/projets/' ) ); ?>"><?php esc_html_e( 'Nos projets', 'drolung-branch' ); ?></a>
+			<a href="<?php echo esc_url( function_exists( 'drolung_lang_url' ) ? drolung_lang_url( 'projets' ) : home_url( '/projets/' ) ); ?>"><?php echo esc_html( drolung_pll__( 'Nos projets' ) ); ?></a>
 			<span>›</span>
 			<span><?php echo esc_html( $post_title ); ?></span>
 		</div>
@@ -165,11 +165,11 @@ if ( $projet_date_debut || $projet_date_fin ) {
 		if ( $commune || $region ) {
 			$stats[] = [
 				'num'   => esc_html( $commune ?: $region ),
-				'label' => esc_html( $commune && $region ? $region : __( 'Localisation', 'drolung-branch' ) ),
+				'label' => esc_html( $commune && $region ? $region : drolung_pll__( 'Localisation' ) ),
 			];
 		}
 		if ( $projet_beneficiaires ) {
-			$stats[] = [ 'num' => esc_html( $projet_beneficiaires ), 'label' => __( 'bénéficiaires', 'drolung-branch' ) ];
+			$stats[] = [ 'num' => esc_html( $projet_beneficiaires ), 'label' => drolung_pll__( 'bénéficiaires' ) ];
 		}
 		if ( ! empty( $partenaires_noms ) ) {
 			/*
@@ -180,12 +180,12 @@ if ( $projet_date_debut || $projet_date_fin ) {
 			 */
 			$stats[] = [
 				'num'     => esc_html( implode( ', ', $partenaires_noms ) ),
-				'label'   => _n( 'Partenaire', 'Partenaires', count( $partenaires_noms ), 'drolung-branch' ),
+				'label'   => 1 === count( $partenaires_noms ) ? drolung_pll__( 'Partenaire' ) : drolung_pll__( 'Partenaires' ),
 				'compact' => true,
 			];
 		}
 		if ( $dates_str ) {
-			$stats[] = [ 'num' => esc_html( $dates_str ), 'label' => __( 'période du projet', 'drolung-branch' ) ];
+			$stats[] = [ 'num' => esc_html( $dates_str ), 'label' => drolung_pll__( 'période du projet' ) ];
 		}
 	}
 	?>
@@ -314,7 +314,7 @@ if ( $projet_date_debut || $projet_date_fin ) {
 			<?php if ( $sp_cta_body ) : ?>
 			<p class="section-body"><?php echo wp_kses_post( $sp_cta_body ); ?></p>
 			<?php endif; ?>
-			<a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>" class="pp-cta-btn" style="margin-top:24px;"><?php echo esc_html( apply_filters( 'drolung_donate_label', __( 'Faire un don', 'drolung-branch' ) ) ); ?></a>
+			<a href="<?php echo esc_url( apply_filters( 'drolung_donate_url', home_url( '/s-engager/' ) ) ); ?>" class="pp-cta-btn" style="margin-top:24px;"><?php echo esc_html( apply_filters( 'drolung_donate_label', drolung_pll__( 'Faire un don' ) ) ); ?></a>
 			<?php if ( $sp_cta_footer ) : /* localisation + partenaires ont désormais leur propre affichage plus haut */ ?>
 			<p style="margin-top:36px;font-family:var(--font-mono);font-size:12px;letter-spacing:0.06em;color:rgba(255,255,255,0.55);"><?php echo esc_html( $sp_cta_footer ); ?></p>
 			<?php endif; ?>
