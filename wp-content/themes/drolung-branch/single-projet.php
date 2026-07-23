@@ -134,10 +134,10 @@ if ( $projet_date_debut || $projet_date_fin ) {
 			<?php if ( $projet_domaine || $projet_statut ) : ?>
 			<div class="sp-hero__badges">
 				<?php if ( $projet_domaine ) : ?>
-				<span class="sp-badge sp-badge--cream"><?php echo esc_html( strtoupper( drolung_translate_term_name( $projet_domaine ) ) ); ?></span>
+				<span class="sp-badge sp-badge--cream"><?php echo esc_html( mb_strtoupper( drolung_translate_term_name( $projet_domaine ), 'UTF-8' ) ); ?></span>
 				<?php endif; ?>
 				<?php if ( $projet_statut ) : ?>
-				<span class="sp-badge sp-badge--saffron"><?php echo esc_html( strtoupper( drolung_translate_term_name( $projet_statut ) ) ); ?></span>
+				<span class="sp-badge sp-badge--saffron"><?php echo esc_html( mb_strtoupper( drolung_translate_term_name( $projet_statut ), 'UTF-8' ) ); ?></span>
 				<?php endif; ?>
 			</div>
 			<?php endif; ?>

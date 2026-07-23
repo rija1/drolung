@@ -72,7 +72,7 @@ function drolung_get_brand_name() {
  */
 function drolung_get_brand_tag() {
 	$tag = get_theme_mod( 'drolung_brand_tag', '' );
-	return $tag ? strtoupper( $tag ) : '';
+	return $tag ? mb_strtoupper( $tag, 'UTF-8' ) : '';
 }
 
 /**

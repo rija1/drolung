@@ -178,7 +178,7 @@ $hero_image_url = drolung_get_network_option(
 							<a href="<?php echo esc_url( $permalink ); ?>" style="color:inherit;text-decoration:none;"><?php echo esc_html( $item['title'] ); ?></a>
 						</div>
 						<?php if ( $item['excerpt'] ) : ?>
-							<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 28, '…' ) ); ?></p>
+							<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 40, '' ) ); ?></p>
 						<?php endif; ?>
 
 						<?php if ( $beneficiaires || $location ) : ?>
@@ -187,10 +187,12 @@ $hero_image_url = drolung_get_network_option(
 									<?php if ( $benef_nombre > 0 ) : ?>
 										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong> <?php esc_html_e( 'bénéficiaires', 'drolung-branch' ); ?>
 									<?php elseif ( $beneficiaires ) : ?>
-										<?php echo esc_html( $beneficiaires ); ?>
+										<strong style="color:var(--maroon);"><?php echo esc_html( $beneficiaires ); ?></strong>
 									<?php endif; ?>
 								</span>
-								<span><?php echo esc_html( $location ); ?></span>
+								<?php if ( $location ) : ?>
+									<span style="padding-left:14px;border-left:1px solid var(--border);"><?php echo esc_html( $location ); ?></span>
+								<?php endif; ?>
 							</div>
 						<?php endif; ?>
 

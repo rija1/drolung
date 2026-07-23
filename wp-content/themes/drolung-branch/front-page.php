@@ -179,7 +179,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 								<a href="<?php echo esc_url( $permalink ); ?>" style="color:inherit;text-decoration:none;"><?php echo esc_html( $item['title'] ); ?></a>
 							</div>
 							<?php if ( $item['excerpt'] ) : ?>
-								<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 20, '…' ) ); ?></p>
+								<p class="card-desc"><?php echo esc_html( wp_trim_words( $item['excerpt'], 40, '' ) ); ?></p>
 							<?php endif; ?>
 						</div>
 					</div>
