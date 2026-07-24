@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DROLUNG_BRANCH_VERSION', '0.2.9' );
+define( 'DROLUNG_BRANCH_VERSION', '0.3.0' );
 define( 'DROLUNG_BRANCH_URI', get_stylesheet_directory_uri() );
 
 /**
@@ -332,6 +332,11 @@ function drolung_branch_footer_content() {
 				<span class="footer-brand__name"><?php echo esc_html( drolung_get_brand_name() ); ?></span>
 			</div>
 			<p><?php echo esc_html( drolung_pll__( 'Une association de proximité qui soutient des projets concrets en éducation, santé et environnement, en partenariat avec les communautés locales.' ) ); ?></p>
+			<!--
+			Réseaux sociaux — pas encore de comptes actifs, section masquée
+			jusqu'à ce qu'il y en ait (cf. demande explicite). Remettre en
+			ligne dès que $facebook/$linkedin/$instagram pointent vers de
+			vrais comptes (champs ACF engager_facebook_url etc.).
 			<div class="footer-social">
 				<a href="<?php echo esc_url( $facebook ); ?>" class="social-btn" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
 					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg>
@@ -343,6 +348,7 @@ function drolung_branch_footer_content() {
 					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
 				</a>
 			</div>
+			-->
 		</div>
 
 		<div class="footer-col">
