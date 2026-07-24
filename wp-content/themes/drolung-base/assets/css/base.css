@@ -1186,6 +1186,18 @@
       padding-top: 20px;
       padding-bottom: 20px;
     }
+    /*
+     * Le reset universel `* { padding: 0 }` (ligne ~46) supprime aussi le
+     * retrait par défaut des <ul>/<ol> — sans lui, la puce (list-style-
+     * position: outside par défaut) se rend hors de la boîte, à cheval sur
+     * le bord gauche du conteneur plutôt qu'alignée avec le texte au-dessus.
+     * Concerne tout le contenu éditorial (récit de projet, etc.) rendu en
+     * blocs Gutenberg.
+     */
+    .wp-block-list {
+      padding-left: 1.3em;
+      margin: 16px 0;
+    }
 
 /* ===== Inner page templates ===== */
 /* These rules style page-hero, inner-section, three/four-col, cards, breadcrumb, stat-band,
