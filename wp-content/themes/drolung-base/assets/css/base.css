@@ -1216,7 +1216,7 @@
     .page-hero__eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-lt); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     .page-hero__eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--saffron); }
     .page-hero__title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 700; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
-    .page-hero__title em { font-style: italic; color: var(--saffron-lt); }
+    .page-hero__title em { font-style: normal; color: var(--saffron-lt); }
     .page-hero__sub { font-size: 18px; color: rgba(255,255,255,0.72); max-width: 600px; line-height: 1.65; font-weight: 300; }
     .page-hero__line { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--maroon), var(--saffron), var(--maroon)); z-index: 2; }
     .inner-section { padding: 80px 0; }
