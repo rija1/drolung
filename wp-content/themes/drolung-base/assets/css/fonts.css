@@ -1,0 +1,46 @@
+/**
+ * Polices auto-hébergées — remplace le chargement depuis fonts.googleapis.com.
+ *
+ * Playfair Display et DM Sans sont des polices variables (un seul fichier
+ * couvre toute la plage de graisses) ; DM Mono ne l'est pas, deux fichiers
+ * statiques (400/500) suffisent aux usages du thème. Sous-ensemble "latin"
+ * uniquement (U+0000-00FF) — couvre le français (é, è, à, ç, œ…) et
+ * l'anglais ; le chinois passe par les polices système, ces fichiers ne
+ * contiennent pas de glyphes CJK.
+ */
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../fonts/playfair-display-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../fonts/playfair-display-italic-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('../fonts/dm-sans-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/dm-mono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/dm-mono-500.woff2') format('woff2');
+}

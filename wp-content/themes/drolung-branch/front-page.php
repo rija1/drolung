@@ -197,7 +197,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 		<div class="intro-visual fade-up">
 			<div class="intro-accent"></div>
 			<?php
-			$intro_img = drolung_field( 'intro_image', 'https://images.unsplash.com/photo-1504598578017-40d9b776f1bc?auto=format&fit=crop&q=80&w=700&h=880' );
+			$intro_img = drolung_field( 'intro_image', DROLUNG_BASE_URI . '/assets/images/stock/home-intro.jpg' );
 			?>
 			<img src="<?php echo esc_url( $intro_img ); ?>" alt="" class="intro-img" loading="lazy">
 			<div class="intro-badge">

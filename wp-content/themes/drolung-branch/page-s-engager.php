@@ -36,7 +36,7 @@ get_header();
   </div>
 </div>
 
-<section class="page-hero" style="--hero-bg: url('https://images.unsplash.com/photo-1659944984855-776187144baf?auto=format&fit=crop&q=80&w=1600&h=700');">
+<section class="page-hero" style="--hero-bg: url('<?php echo esc_url( DROLUNG_BASE_URI . '/assets/images/stock/notre-action-hero.jpg' ); ?>');">
   <style>.page-hero::before { background-image: var(--hero-bg); }</style>
   <div class="page-hero__line"></div>
   <div class="container">
@@ -94,7 +94,7 @@ if ( $asc_collect_id ) {
           <a href="<?php echo esc_url( drolung_field( 'engager_don_cta_url', drolung_lang_url( 'contact' ) ) ); ?>" class="btn-page btn-page--primary" style="margin-top:28px"><?php echo esc_html( drolung_field( 'engager_don_cta_label', __( 'Nous contacter pour un don', 'drolung-branch' ) ) ); ?></a>
         <?php endif; ?>
       </div>
-      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy" style="max-height:360px;object-fit:cover">
+      <img src="<?php echo esc_url( drolung_field( 'engager_don_image', DROLUNG_BASE_URI . '/assets/images/stock/apropos-hero.jpg' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_don_image_alt', __( 'Madagascar, terrain', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy" style="max-height:360px;object-fit:cover">
     </div>
 
     <?php if ( $asc_collect_id ) : ?>
@@ -180,7 +180,7 @@ if ( $asc_collect_id ) {
           <a href="<?php echo esc_url( drolung_field( 'engager_instagram_url', '#' ) ); ?>" class="btn-page btn-page--saffron"><?php esc_html_e( 'Instagram', 'drolung-branch' ); ?></a>
         </div>
       </div>
-      <img src="<?php echo esc_url( drolung_field( 'engager_partage_image', 'https://images.unsplash.com/photo-1659944984855-776187144baf?auto=format&fit=crop&q=80&w=700&h=480' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_partage_image_alt', __( 'Partager', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
+      <img src="<?php echo esc_url( drolung_field( 'engager_partage_image', DROLUNG_BASE_URI . '/assets/images/stock/notre-action-hero.jpg' ) ); ?>" alt="<?php echo esc_attr( drolung_field( 'engager_partage_image_alt', __( 'Partager', 'drolung-branch' ) ) ); ?>" class="img-full" loading="lazy">
     </div>
   </div>
 </section> -->

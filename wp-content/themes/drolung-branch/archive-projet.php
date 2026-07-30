@@ -66,7 +66,7 @@ if ( empty( $used_statuts ) ) {
  */
 $hero_image_url = drolung_get_network_option(
 	'projets_hero_image',
-	'https://images.unsplash.com/photo-1570742544137-3a469196c32b?auto=format&fit=crop&q=80&w=1600&h=700'
+	DROLUNG_BASE_URI . '/assets/images/stock/axe-archive-hero.jpg'
 );
 ?>
 <section class="page-hero" style="--hero-bg: url('<?php echo esc_url( $hero_image_url ); ?>');">

@@ -28,7 +28,7 @@ get_header();
   </div>
 </div>
 
-<section class="page-hero" style="--hero-bg: url('https://images.unsplash.com/photo-1659944984855-776187144baf?auto=format&fit=crop&q=80&w=1600&h=700');">
+<section class="page-hero" style="--hero-bg: url('<?php echo esc_url( DROLUNG_BASE_URI . '/assets/images/stock/notre-action-hero.jpg' ); ?>');">
   <style>.page-hero::before { background-image: var(--hero-bg); }</style>
   <div class="page-hero__line"></div>
   <div class="container">
@@ -68,28 +68,31 @@ get_header();
               'title' => __( 'Apprendre, transmettre, faire grandir', 'drolung-branch' ),
               'body'  => '<p>' . __( 'Donner aux enfants les moyens d\'aller à l\'école, accompagner les jeunes dans leur parcours, soutenir les passeurs de savoirs locaux. Notre engagement porte sur l\'avenir d\'une génération.', 'drolung-branch' ) . '</p>',
               'tag'   => __( 'Éducation', 'drolung-branch' ),
-              'image' => 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=700&h=420',
+              'image' => DROLUNG_BASE_URI . '/assets/images/stock/axe-education.jpg',
               'alt'   => __( 'Éducation et transmission', 'drolung-branch' ),
           ],
           2 => [
               'title' => __( 'Prendre soin, sans condition', 'drolung-branch' ),
               'body'  => '<p>' . __( 'Soutenir l\'accès aux soins de base, les structures de santé locales et l\'accompagnement de la santé maternelle et infantile. Parce que se soigner ne devrait jamais relever du privilège.', 'drolung-branch' ) . '</p>',
               'tag'   => __( 'Santé', 'drolung-branch' ),
-              'image' => 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=700&h=420',
+              'image' => DROLUNG_BASE_URI . '/assets/images/stock/axe-sante.jpg',
               'alt'   => __( 'Santé et accès aux soins', 'drolung-branch' ),
           ],
           3 => [
               'title' => __( 'Vivre de son sol, durablement', 'drolung-branch' ),
               'body'  => '<p>' . __( 'Soutenir l\'agriculture vivrière, les coopératives et les artisans, et la préservation des écosystèmes. Parce que prospérer chez soi vaut mieux que de devoir partir.', 'drolung-branch' ) . '</p>',
               'tag'   => __( 'Environnement', 'drolung-branch' ),
-              'image' => 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=700&h=420',
+              'image' => DROLUNG_BASE_URI . '/assets/images/stock/axe-environnement.jpg',
               'alt'   => __( 'Environnement et économies locales', 'drolung-branch' ),
           ],
           4 => [
               'title' => __( 'L\'eau, avant tout', 'drolung-branch' ),
               'body'  => '<p>' . __( 'Financer l\'accès à l\'eau potable et aux infrastructures sanitaires là où elles manquent le plus. Parce que sans eau, rien d\'autre n\'est possible.', 'drolung-branch' ) . '</p>',
               'tag'   => __( 'Eau &amp; Assainissement', 'drolung-branch' ),
-              'image' => 'https://images.unsplash.com/photo-1569511166187-97b27af41b5a?auto=format&fit=crop&q=80&w=700&h=420',
+              /* Ancienne image Unsplash (photo-1569511166187) retournait déjà un
+               * 404 — remplacée par une photo réelle du projet eau potable
+               * d'Ambohitrolomahitsy (voir CLAUDE.md, projets réseau). */
+              'image' => DROLUNG_BASE_URI . '/assets/images/stock/axe-eau.jpg',
               'alt'   => __( 'Eau et assainissement', 'drolung-branch' ),
           ],
       ];

@@ -33,7 +33,7 @@ get_header();
   </div>
 </div>
 
-<section class="page-hero" style="--hero-bg: url('<?php echo esc_url( drolung_field( 'hero_image', 'https://images.unsplash.com/photo-1627580206975-ede73a2ca147?auto=format&fit=crop&q=80&w=1600&h=700' ) ); ?>');">
+<section class="page-hero" style="--hero-bg: url('<?php echo esc_url( drolung_field( 'hero_image', DROLUNG_BASE_URI . '/assets/images/stock/apropos-hero.jpg' ) ); ?>');">
   <style>.page-hero::before { background-image: var(--hero-bg); }</style>
   <div class="page-hero__line"></div>
   <div class="container">
@@ -56,7 +56,7 @@ get_header();
           . '<p class="section-body" style="margin-top:16px">' . __( 'Le constat d\'origine est simple : ce que nous voulons offrir comme soutien depuis la France a besoin d\'un cadre clair, transparent et juridiquement adapté ; ce que nous voulons faire à Madagascar a besoin d\'être ancré là-bas. Deux entités, une seule intention.', 'drolung-branch' ) . '</p>'
         ) ); ?>
       </div>
-      <img src="<?php echo esc_url( drolung_field( 'histoire_image', 'https://images.unsplash.com/photo-1504598578017-40d9b776f1bc?auto=format&fit=crop&q=80&w=700&h=500' ) ); ?>" alt="<?php esc_attr_e( 'Solidarité', 'drolung-branch' ); ?>" class="img-full" loading="lazy">
+      <img src="<?php echo esc_url( drolung_field( 'histoire_image', DROLUNG_BASE_URI . '/assets/images/stock/home-intro.jpg' ) ); ?>" alt="<?php esc_attr_e( 'Solidarité', 'drolung-branch' ); ?>" class="img-full" loading="lazy">
     </div>
   </div>
 </section>
@@ -211,7 +211,7 @@ get_header();
 <section class="inner-section">
   <div class="container">
     <div class="two-col fade-up">
-      <img src="<?php echo esc_url( drolung_field( 'reseau_image', 'https://images.unsplash.com/photo-1627900355526-f77d70cc6887?auto=format&fit=crop&q=80&w=700&h=500' ) ); ?>" alt="<?php esc_attr_e( 'Réseau Drolung', 'drolung-branch' ); ?>" class="img-full" loading="lazy">
+      <img src="<?php echo esc_url( drolung_field( 'reseau_image', DROLUNG_BASE_URI . '/assets/images/stock/apropos-team.jpg' ) ); ?>" alt="<?php esc_attr_e( 'Réseau Drolung', 'drolung-branch' ); ?>" class="img-full" loading="lazy">
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'reseau_eyebrow', __( 'Le réseau Drolung', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'reseau_title', __( 'Une famille <em>internationale</em>', 'drolung-branch' ) ) ); ?></h2>
