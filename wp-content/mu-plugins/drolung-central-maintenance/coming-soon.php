@@ -19,10 +19,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Drolung — Coming Soon</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400 900;
+    font-display: swap;
+    src: url('<?php echo esc_url( content_url( 'themes/drolung-base/assets/fonts/playfair-display-var.woff2' ) ); ?>') format('woff2');
+  }
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: italic;
+    font-weight: 400 900;
+    font-display: swap;
+    src: url('<?php echo esc_url( content_url( 'themes/drolung-base/assets/fonts/playfair-display-italic-var.woff2' ) ); ?>') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 100 1000;
+    font-display: swap;
+    src: url('<?php echo esc_url( content_url( 'themes/drolung-base/assets/fonts/dm-sans-var.woff2' ) ); ?>') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('<?php echo esc_url( content_url( 'themes/drolung-base/assets/fonts/dm-mono-400.woff2' ) ); ?>') format('woff2');
+  }
+  @font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('<?php echo esc_url( content_url( 'themes/drolung-base/assets/fonts/dm-mono-500.woff2' ) ); ?>') format('woff2');
+  }
   :root {
     --saffron:      #C17D0A;
     --saffron-lt:   #E09B20;
