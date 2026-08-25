@@ -163,15 +163,12 @@ if ( ! defined( 'ABSPATH' ) ) {
       <img class="logo" src="<?php echo esc_url( $logo_url ); ?>" alt="Drolung" loading="eager">
     <?php endif; ?>
     <div class="wordmark">DROLUNG</div>
-    <div class="tag">Global Network</div>
+    
 
     <div class="rule"></div>
 
     <h1>A new site is <em>coming soon</em></h1>
-    <p class="sub">The Drolung International Foundation network site is under construction. In the meantime, visit Drolung Solidarité France at <a href="https://solidarite.drolung.fr" style="color:inherit;text-decoration:underline;">solidarite.drolung.fr</a>.</p>
-    <p class="sub fr">Un nouveau site arrive bientôt. En attendant, retrouvez Drolung Solidarité France sur solidarite.drolung.fr.</p>
-
-    <div class="contact">contact@drolung.org</div>
+    <p class="sub">The Drolung site is under construction.</p>
   </div>
 </body>
 </html>
