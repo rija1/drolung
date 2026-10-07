@@ -58,7 +58,7 @@ get_header();
  * réintégrée ici de façon permanente. Voir journal technique §15.
  *
  * $asc_collect_id — identifiant de collecte AssoConnect (champ ACF, ou
- * repli DSF codé en dur). Si absent (ex. DSM, pas encore de compte
+ * repli TKF codé en dur). Si absent (ex. DSM, pas encore de compte
  * AssoConnect), on retombe sur un bouton de contact classique.
  */
 $asc_collect_id = drolung_field( 'engager_assoconnect_id', '' );
@@ -173,7 +173,7 @@ if ( $asc_collect_id ) {
       <div>
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'engager_partage_eyebrow', __( 'Partagez', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'engager_partage_title', __( 'Parlez de nous, <em>partagez nos projets</em>', 'drolung-branch' ) ) ); ?></h2>
-        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_partage_body', __( 'Le plus simple des engagements — et l\'un des plus puissants. Mentionner DSF et DSM autour de vous, partager nos publications, relayer nos projets : chaque partage élargit notre portée.', 'drolung-branch' ) ) ); ?></p>
+        <p class="section-body"><?php echo esc_html( drolung_field( 'engager_partage_body', __( 'Le plus simple des engagements — et l\'un des plus puissants. Mentionner TKF et DSM autour de vous, partager nos publications, relayer nos projets : chaque partage élargit notre portée.', 'drolung-branch' ) ) ); ?></p>
         <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
           <a href="<?php echo esc_url( drolung_field( 'engager_facebook_url', '#' ) ); ?>" class="btn-page btn-page--saffron"><?php esc_html_e( 'Facebook', 'drolung-branch' ); ?></a>
           <a href="<?php echo esc_url( drolung_field( 'engager_linkedin_url', '#' ) ); ?>" class="btn-page btn-page--saffron"><?php esc_html_e( 'LinkedIn', 'drolung-branch' ); ?></a>

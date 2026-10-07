@@ -38,7 +38,7 @@ function drolung_canonical_tag() {
 	$target = isset( $item['meta']['site_canonical'] ) ? $item['meta']['site_canonical'] : 'dsf';
 
 	/* Garde-fou : si le site canonical choisi n'affiche pas cet item
-	 * (ex. projet dharma ciblé DUK avec défaut DSF), retomber sur la
+	 * (ex. projet dharma ciblé DUK avec défaut TKF), retomber sur la
 	 * première branche cochée — jamais de canonical vers un 404. */
 	if ( ! empty( $item['branches'] ) && ! in_array( $target, $item['branches'], true ) ) {
 		$target = $item['branches'][0];

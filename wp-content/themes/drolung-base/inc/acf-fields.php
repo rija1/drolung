@@ -412,7 +412,7 @@ function drolung_register_acf_fields() {
 	/* ─────────────────────────────────────────────────────────
 	 * S'ENGAGER PAGE.
 	 * Bound by slug (same pattern as a-propos, notre-action).
-	 * Uses a URL-condition so the group shows on both DSF and DSM:
+	 * Uses a URL-condition so the group shows on both TKF and DSM:
 	 *   slug == s-engager  (matches any site that has this page).
 	 * Portée 2026-06-16.
 	 * ───────────────────────────────────────────────────────── */
@@ -437,9 +437,9 @@ function drolung_register_acf_fields() {
 			[ 'key' => 'field_engager_don_title',         'label' => 'Don — titre (HTML)',       'name' => 'engager_don_title',         'type' => 'textarea', 'rows' => 2 ],
 			[ 'key' => 'field_engager_don_intro',         'label' => 'Don — phrase intro',       'name' => 'engager_don_intro',         'type' => 'textarea', 'rows' => 3 ],
 			[ 'key' => 'field_engager_don_body',          'label' => 'Don — corps (HTML — liste exemples)',  'name' => 'engager_don_body',  'type' => 'wysiwyg', 'toolbar' => 'basic', 'media_upload' => 0,
-			                                                'instructions' => 'Pour DSF : liste des coûts projets (le formulaire AssoConnect est inséré automatiquement dessous). Pour DSM : boîte de renvoi vers DSF.' ],
+			                                                'instructions' => 'Pour TKF : liste des coûts projets (le formulaire AssoConnect est inséré automatiquement dessous). Pour DSM : boîte de renvoi vers TKF.' ],
 			[ 'key' => 'field_engager_assoconnect_id',    'label' => 'Don — identifiant de collecte AssoConnect',    'name' => 'engager_assoconnect_id', 'type' => 'text',
-			                                                'instructions' => 'Identifiant de collecte AssoConnect (formulaire intégré en iframe sur la page). Vide = bouton "Nous contacter" à la place. Pré-rempli automatiquement pour DSF.' ],
+			                                                'instructions' => 'Identifiant de collecte AssoConnect (formulaire intégré en iframe sur la page). Vide = bouton "Nous contacter" à la place. Pré-rempli automatiquement pour TKF.' ],
 			[ 'key' => 'field_engager_don_cta_label',     'label' => 'Don — texte du bouton (si pas de formulaire)',  'name' => 'engager_don_cta_label',  'type' => 'text' ],
 			[ 'key' => 'field_engager_don_cta_url',       'label' => 'Don — URL du bouton (si pas de formulaire)',    'name' => 'engager_don_cta_url',    'type' => 'url',
 			                                                'instructions' => 'Laisser vide pour utiliser /contact/ par défaut.' ],

@@ -86,14 +86,14 @@ get_header();
           </div>
           <div class="bcard__body">
             <div class="bcard__flag">🇫🇷</div>
-            <div class="bcard__name">DROLUNG Solidarités France</div>
+            <div class="bcard__name">Tuktse France</div>
             <div class="bcard__country">France · Association loi 1901</div>
             <p class="bcard__desc">The French branch leads humanitarian coordination for the Solidarités sub-network, channelling support to Madagascar and the DRC from a European base. It also engages the French Buddhist community and partners with French development agencies on joint programming in francophone Africa.</p>
             <div class="bcard__facts">
               <div class="bcard__fact"><div class="bcard__fact-label">Founded</div><div class="bcard__fact-val">2016</div></div>
               <div class="bcard__fact"><div class="bcard__fact-label">Region</div><div class="bcard__fact-val">Francophone Africa</div></div>
             </div>
-            <a href="#" class="bcard__link">Visit Drolung Solidarités France →</a>
+            <a href="#" class="bcard__link">Visit Tuktse France →</a>
           </div>
         </div>
 

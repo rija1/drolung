@@ -46,7 +46,7 @@ function drolung_seed_acf_per_site() {
 		}
 		/* DSM — surcharge de la section don de la page S'engager.
 		 * DSM redirige vers DSF pour les dons (boîte "rendez-vous sur DSF").
-		 * v2 2026-06-25 : ajout engager_don_cta_url → page S'engager DSF.
+		 * v2 2026-06-25 : ajout engager_don_cta_url → page S'engager TKF.
 		 * Pour rejouer : delete_option( 'drolung_dsm_engager_v2' ); */
 		if ( $domain === 'dsm.' . $root && ! get_option( 'drolung_dsm_engager_v2' ) ) {
 			drolung_seed_dsm_engager();
@@ -141,12 +141,12 @@ function drolung_seed_acf_values() {
 			// Don section.
 			'engager_don_eyebrow'   => __( 'Faire un don', 'drolung-branch' ),
 			'engager_don_title'     => __( 'Votre don agit <em>directement</em>', 'drolung-branch' ),
-			'engager_don_intro'     => __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois).', 'drolung-branch' ),
+			'engager_don_intro'     => __( 'Chaque euro versé à TKF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois).', 'drolung-branch' ),
 			'engager_don_cta_label' => __( 'Nous contacter pour un don', 'drolung-branch' ),
 			// Partage section.
 			'engager_partage_eyebrow' => __( 'Partagez', 'drolung-branch' ),
 			'engager_partage_title'   => __( 'Parlez de nous, <em>partagez nos projets</em>', 'drolung-branch' ),
-			'engager_partage_body'    => __( 'Le plus simple des engagements — et l\'un des plus puissants. Mentionner DSF et DSM autour de vous, partager nos publications, relayer nos projets : chaque partage élargit notre portée.', 'drolung-branch' ),
+			'engager_partage_body'    => __( 'Le plus simple des engagements — et l\'un des plus puissants. Mentionner TKF et DSM autour de vous, partager nos publications, relayer nos projets : chaque partage élargit notre portée.', 'drolung-branch' ),
 			// Partenariat section.
 			'engager_partenariat_eyebrow'   => __( 'Partenariat', 'drolung-branch' ),
 			'engager_partenariat_title'     => __( 'Vous êtes une entreprise <em>ou une fondation ?</em>', 'drolung-branch' ),
@@ -258,23 +258,23 @@ function drolung_seed_dsm_engager() {
 	$fields = [
 		// Hero — DSM framing.
 		'engager_hero_title' => __( 'Soutenez <em>notre action de terrain</em>', 'drolung-branch' ),
-		'engager_hero_sub'   => __( 'Un don via notre association sœur DSF, un partenariat local, un relai — chaque soutien compte pour les communautés malgaches.', 'drolung-branch' ),
+		'engager_hero_sub'   => __( 'Un don via notre association sœur TKF, un partenariat local, un relai — chaque soutien compte pour les communautés malgaches.', 'drolung-branch' ),
 
 		// Don section — DSM redirects to DSF.
-		'engager_don_title'     => __( 'Vos dons passent <em>par DSF</em>', 'drolung-branch' ),
-		'engager_don_intro'     => __( 'Les dons destinés à nos projets sont collectés depuis la France par notre association sœur Drolung Solidarité France. C\'est elle qui reçoit, gère et transfère les fonds vers nos actions à Madagascar.', 'drolung-branch' ),
+		'engager_don_title'     => __( 'Vos dons passent <em>par TKF</em>', 'drolung-branch' ),
+		'engager_don_intro'     => __( 'Les dons destinés à nos projets sont collectés depuis la France par notre association sœur Tuktse France. C\'est elle qui reçoit, gère et transfère les fonds vers nos actions à Madagascar.', 'drolung-branch' ),
 		'engager_don_body'      => '<p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin:0 0 16px">'
 			. __( 'Ce choix garantit une traçabilité complète des fonds et une gouvernance transparente pour les donateurs français et européens.', 'drolung-branch' )
 			. '</p>'
 			. '<div style="background:var(--saffron-pale);border-left:3px solid var(--saffron);padding:20px 24px;margin-top:28px;border-radius:0 2px 2px 0">'
 			. '<div style="font-weight:600;color:var(--charcoal);margin-bottom:8px;font-size:15px">'
-			. __( 'Pour faire un don, rendez-vous sur le site de DSF', 'drolung-branch' )
+			. __( 'Pour faire un don, rendez-vous sur le site de TKF', 'drolung-branch' )
 			. '</div>'
 			. '<p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin:0 0 16px">'
-			. __( 'Drolung Solidarité France — association loi 1901, équipe entièrement bénévole. 100 % des fonds collectés vont aux projets DSM.', 'drolung-branch' )
+			. __( 'Tuktse France — association loi 1901, équipe entièrement bénévole. 100 % des fonds collectés vont aux projets DSM.', 'drolung-branch' )
 			. '</p>'
 			. '</div>',
-		'engager_don_cta_label' => __( 'Faire un don sur DSF →', 'drolung-branch' ),
+		'engager_don_cta_label' => __( 'Faire un don sur TKF →', 'drolung-branch' ),
 		'engager_don_cta_url'   => function_exists( 'drolung_branch_blog_id' )
 			? get_home_url( drolung_branch_blog_id( 'dsf' ), '/s-engager/' )
 			: '',
@@ -309,7 +309,7 @@ function drolung_seed_dsf_axes() {
 		// Intro two-col — "Notre rôle / Un pont entre deux rives".
 		'intro_eyebrow' => __( 'Notre rôle', 'drolung-branch' ),
 		'intro_title'   => __( 'Un pont <em>entre deux rives</em>', 'drolung-branch' ),
-		'intro_body'    => '<p>' . __( 'Drolung Solidarité France n\'agit pas seule sur le terrain. Notre vocation est de construire, depuis la France, le soutien matériel et humain qui permet à Drolung Solidarité Madagascar de conduire ses actions.', 'drolung-branch' ) . '</p><p style="margin-top:16px">' . __( 'L\'intégralité des fonds que nous collectons est destinée aux projets portés par notre association sœur à Madagascar. Pour qu\'à chaque don, à chaque mobilisation, corresponde une action concrète et identifiée sur le terrain.', 'drolung-branch' ) . '</p>',
+		'intro_body'    => '<p>' . __( 'Tuktse France n\'agit pas seule sur le terrain. Notre vocation est de construire, depuis la France, le soutien matériel et humain qui permet à Drolung Solidarité Madagascar de conduire ses actions.', 'drolung-branch' ) . '</p><p style="margin-top:16px">' . __( 'L\'intégralité des fonds que nous collectons est destinée aux projets portés par notre association sœur à Madagascar. Pour qu\'à chaque don, à chaque mobilisation, corresponde une action concrète et identifiée sur le terrain.', 'drolung-branch' ) . '</p>',
 
 		// Axes section header — DSF.
 		'axes_eyebrow' => __( 'Les actions que nous soutenons', 'drolung-branch' ),
@@ -352,7 +352,7 @@ function drolung_seed_dsf_axes() {
 		'principe_3_label' => __( 'Transparence intégrale', 'drolung-branch' ),
 		'principe_3_body'  => __( 'Chaque euro engagé est suivi, documenté et rendu public dans nos comptes annuels.', 'drolung-branch' ),
 		'principe_4_label' => __( 'Un lien direct', 'drolung-branch' ),
-		'principe_4_body'  => __( 'Pas d\'intermédiaire entre le don à DSF et l\'action à Madagascar. Une seule association sœur, une seule destination.', 'drolung-branch' ),
+		'principe_4_body'  => __( 'Pas d\'intermédiaire entre le don à TKF et l\'action à Madagascar. Une seule association sœur, une seule destination.', 'drolung-branch' ),
 	];
 
 	foreach ( $fields as $key => $val ) {
@@ -467,8 +467,8 @@ function drolung_seed_dsf_home_copy() {
 			'engagement_1_label' => __( 'L\'essentiel vers le terrain', 'drolung-branch' ),
 			'engagement_1_body'  => __( 'La quasi-totalité des dons collectés va aux projets à Madagascar. Les frais incompressibles (banque, obligations associatives) représentent environ 100 € par mois — soit moins de 3 % à l\'échelle annuelle.', 'drolung-branch' ),
 			'engagement_2_label' => __( 'Un bureau bénévole', 'drolung-branch' ),
-			'engagement_2_body'  => __( 'Le bureau de DSF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ),
-			'donate_body'        => '<p>' . __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>',
+			'engagement_2_body'  => __( 'Le bureau de TKF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ),
+			'donate_body'        => '<p>' . __( 'Chaque euro versé à TKF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>',
 		];
 		foreach ( $home_fields as $key => $val ) {
 			update_field( $key, $val, $front_id );
@@ -538,7 +538,7 @@ function drolung_seed_dsm_axes_v1() {
 			. __( 'Pour faire un don, rendez-vous sur le site de DSF', 'drolung-branch' )
 			. '</div>'
 			. '<p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin:0 0 16px">'
-			. __( 'Drolung Solidarité France — association loi 1901, équipe entièrement bénévole. La quasi-totalité des fonds collectés va aux projets DSM (frais bancaires et légaux incompressibles : env. 100 €/mois).', 'drolung-branch' )
+			. __( 'Tuktse France — association loi 1901, équipe entièrement bénévole. La quasi-totalité des fonds collectés va aux projets DSM (frais bancaires et légaux incompressibles : env. 100 €/mois).', 'drolung-branch' )
 			. '</p>'
 			. '</div>',
 			$engager->ID
@@ -547,8 +547,8 @@ function drolung_seed_dsm_axes_v1() {
 }
 
 /**
- * DSF — overrides des engagements et du chapeau donate sur la home page.
- * DSF collecte les dons qui vont aux projets de DSM : le wording doit le préciser.
+ * TKF — overrides des engagements et du chapeau donate sur la home page.
+ * TKF collecte les dons qui vont aux projets de DSM : le wording doit le préciser.
  * To replay: delete_option( 'drolung_dsf_home_v1' ) on dsf.drolung.local.
  */
 function drolung_seed_dsf_home() {
@@ -558,18 +558,18 @@ function drolung_seed_dsf_home() {
 	}
 
 	$fields = [
-		// Engagements — wording honnête DSF.
+		// Engagements — wording honnête TKF.
 		'engagement_1_label' => __( 'L\'essentiel vers le terrain', 'drolung-branch' ),
 		'engagement_1_body'  => __( 'La quasi-totalité des dons collectés va aux projets à Madagascar. Les frais incompressibles (banque, obligations associatives) représentent environ 100 € par mois — soit moins de 3 % à l\'échelle annuelle.', 'drolung-branch' ),
 		'engagement_2_label' => __( 'Un bureau bénévole', 'drolung-branch' ),
-		'engagement_2_body'  => __( 'Le bureau de DSF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ),
+		'engagement_2_body'  => __( 'Le bureau de TKF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ),
 		'engagement_3_label' => __( 'Transparence intégrale', 'drolung-branch' ),
 		'engagement_3_body'  => __( 'Chaque euro engagé est suivi, documenté et rendu public dans nos comptes annuels.', 'drolung-branch' ),
 		'engagement_4_label' => __( 'Un lien direct', 'drolung-branch' ),
-		'engagement_4_body'  => __( 'Pas d\'intermédiaire entre le don à DSF et l\'action à Madagascar. Une seule association sœur, une seule destination.', 'drolung-branch' ),
+		'engagement_4_body'  => __( 'Pas d\'intermédiaire entre le don à TKF et l\'action à Madagascar. Une seule association sœur, une seule destination.', 'drolung-branch' ),
 
 		// Donate section — hors frais incompressibles.
-		'donate_body'        => '<p>' . __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>',
+		'donate_body'        => '<p>' . __( 'Chaque euro versé à TKF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>',
 	];
 
 	foreach ( $fields as $key => $val ) {

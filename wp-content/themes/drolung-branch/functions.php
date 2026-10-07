@@ -134,7 +134,7 @@ function drolung_branch_enqueue_assets() {
 
 /**
  * Newsletter — inscription MailPoet (section home "Suivez nos avancées").
- * Un contact base par entité (DSF/DSM séparées, cf. CLAUDE.md § Stack
+ * Un contact base par entité (TKF/DSM séparées, cf. CLAUDE.md § Stack
  * decisions) : chaque branche a sa propre liste MailPoet, retrouvée par nom
  * exact ou créée automatiquement au premier appel (find-or-create — pas
  * besoin de configuration manuelle ni de script de synchronisation prod,
@@ -144,7 +144,7 @@ function drolung_branch_enqueue_assets() {
  */
 function drolung_mailpoet_list_name_for_branch( $branch ) {
 	$names = array(
-		'dsf' => 'Drolung Solidarité France — Newsletter',
+		'dsf' => 'Tuktse France — Newsletter',
 		'dsm' => 'Drolung Solidarité Madagascar — Newsletter',
 	);
 	return isset( $names[ $branch ] ) ? $names[ $branch ] : 'Drolung — Newsletter';
@@ -402,7 +402,7 @@ function drolung_register_projets_archive_strings() {
 	$fields = array(
 		'projets_hero_eyebrow'  => __( 'Nos projets', 'drolung-branch' ),
 		'projets_hero_title'    => __( 'Quatre projets, <em>une même conviction</em>', 'drolung-branch' ),
-		'projets_hero_sub'      => __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ),
+		'projets_hero_sub'      => ( 'dsf' === drolung_current_branch() ? __( 'Les projets que Tuktse France finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) : __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ),
 		'projets_intro_eyebrow' => __( 'Notre soutien', 'drolung-branch' ),
 		'projets_intro_title'   => __( 'Nos projets <em>en cours de montage</em>', 'drolung-branch' ),
 		'projets_intro_body'    => __( 'Ces projets sont en cours de montage ou en recherche de financement. Tous sont portés sur le terrain par nos associations sœurs. Vos dons les rendent possibles, directement et sans intermédiaire.', 'drolung-branch' ),

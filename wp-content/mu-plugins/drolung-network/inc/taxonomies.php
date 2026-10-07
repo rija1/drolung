@@ -111,7 +111,7 @@ function drolung_network_seed_terms() {
 
 	$seeds = array(
 		'drolung_branch' => array(
-			'DSF — Drolung Solidarités France'  => 'dsf',
+			'TKF — Tuktse France'  => 'dsf',
 			'DSM — Drolung Solidarité Madagascar' => 'dsm',
 			'DUK — Drolung UK'                  => 'duk',
 			'Drolung International'             => 'org',

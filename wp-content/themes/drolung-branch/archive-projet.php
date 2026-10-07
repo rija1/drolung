@@ -75,7 +75,7 @@ $hero_image_url = drolung_get_network_option(
 	<div class="container">
 		<div class="page-hero__eyebrow"><?php echo esc_html( drolung_get_network_option_translated( 'projets_hero_eyebrow', __( 'Nos projets', 'drolung-branch' ) ) ); ?></div>
 		<h1 class="page-hero__title"><?php echo wp_kses_post( drolung_get_network_option_translated( 'projets_hero_title', __( 'Quatre projets, <em>une même conviction</em>', 'drolung-branch' ) ) ); ?></h1>
-		<p class="page-hero__sub"><?php echo esc_html( drolung_get_network_option_translated( 'projets_hero_sub', __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ) ); ?></p>
+		<p class="page-hero__sub"><?php echo esc_html( drolung_get_network_option_translated( 'projets_hero_sub', ( 'dsf' === drolung_current_branch() ? __( 'Les projets que Tuktse France finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) : __( 'Les projets que Drolung Solidarité finance et accompagne, portés sur le terrain par notre association sœur.', 'drolung-branch' ) ) ) ); ?></p>
 	</div>
 </section>
 

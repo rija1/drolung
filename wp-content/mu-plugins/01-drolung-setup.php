@@ -60,7 +60,7 @@ function drolung_run_one_time_setup() {
 
 	$sites = [
 		[ 'slug' => 'dsm', 'title' => 'Drolung Solidarité Madagascar' ],
-		[ 'slug' => 'dsf', 'title' => 'Drolung Solidarité France' ],
+		[ 'slug' => 'dsf', 'title' => 'Tuktse France' ],
 		[ 'slug' => 'duk', 'title' => 'Drolung UK' ],
 	];
 

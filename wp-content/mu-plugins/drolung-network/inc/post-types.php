@@ -164,7 +164,7 @@ function drolung_network_register_post_types() {
  * d'onglet par défaut pour la page d'archive publique — mais ces labels
  * sont volontairement en anglais (interface d'admin, doc demandée pour
  * les utilisateurs non-francophones). Sans ce filtre, l'archive
- * publique de DSF/DSM afficherait "Projects"/"Network Articles" en
+ * publique de TKF/DSM afficherait "Projects"/"Network Articles" en
  * anglais alors que le reste de la page est en français. On force donc
  * le titre public dans la langue de la branche courante.
  */

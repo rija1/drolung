@@ -8,7 +8,7 @@
  *   ou : wp option delete drolung_member_photos_v1 --url=dsf.drolung.local
  *
  * Sources photos :
- *   DSF : mockup-dsf/bureau/ (Barbara.JPEG, Petra.JPEG, Rija.jpg)
+ *   TKF : mockup-dsf/bureau/ (Barbara.JPEG, Petra.JPEG, Rija.jpg)
  *   DSM : mockup-dsm/bureau/ (Francine.jpg, Hajasoa.jpg, Hajatiana.jpg, Rija.jpg)
  *   Suzy Ratsimbazafy (DSM membre 5) n'a pas de photo disponible — initiales affichées.
  *

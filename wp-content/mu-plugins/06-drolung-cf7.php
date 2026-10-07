@@ -142,7 +142,7 @@ function drolung_cf7_form_body( $site ) {
 /**
  * Configuration mail standard CF7 pour DSF/DSM.
  *
- * @param string $label  Libellé de l'entité (DSF ou DSM).
+ * @param string $label  Libellé de l'entité (TKF ou DSM).
  * @param string $email  Adresse destinataire.
  * @return array
  */

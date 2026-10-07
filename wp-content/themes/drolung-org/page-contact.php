@@ -62,7 +62,7 @@ get_header();
             <div class="bc-item">
               <div class="bc-item__head">
                 <span class="bc-item__flag">🇫🇷</span>
-                <span class="bc-item__name">DROLUNG Solidarités France</span>
+                <span class="bc-item__name">Tuktse France</span>
               </div>
               <div class="bc-item__links">
                 <a href="#">Website →</a>

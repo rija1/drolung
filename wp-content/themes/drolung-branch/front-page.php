@@ -225,7 +225,7 @@ if ( function_exists( 'drolung_get_projets' ) ) {
 <?php
 /*
  * Defaults for any branch not yet seeded.
- * DSF overrides axe_1..4 via drolung_dsf_axes_v1 seed flag.
+ * TKF overrides axe_1..4 via drolung_dsf_axes_v1 seed flag.
  * See mu-plugins/05-drolung-acf-seed.php.
  */
 $home_axe_defaults = [
@@ -304,7 +304,7 @@ $home_axe_defaults = [
 				],
 				2 => [
 					'label' => drolung_field( 'engagement_2_label', __( 'Un bureau bénévole', 'drolung-branch' ) ),
-					'body'  => drolung_field( 'engagement_2_body',  __( 'Le bureau de DSF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ) ),
+					'body'  => drolung_field( 'engagement_2_body',  __( 'Le bureau de TKF et tous ses contributeurs sont bénévoles. À terme, DSM emploiera une équipe salariée sur place à Madagascar pour piloter les projets — c\'est précisément ce que nos dons rendent possible.', 'drolung-branch' ) ),
 				],
 				3 => [
 					'label' => drolung_field( 'engagement_3_label', __( 'Transparence intégrale', 'drolung-branch' ) ),
@@ -312,7 +312,7 @@ $home_axe_defaults = [
 				],
 				4 => [
 					'label' => drolung_field( 'engagement_4_label', __( 'Un lien direct', 'drolung-branch' ) ),
-					'body'  => drolung_field( 'engagement_4_body',  __( 'Pas d\'intermédiaire entre le don à DSF et l\'action à Madagascar.', 'drolung-branch' ) ),
+					'body'  => drolung_field( 'engagement_4_body',  __( 'Pas d\'intermédiaire entre le don à TKF et l\'action à Madagascar.', 'drolung-branch' ) ),
 				],
 			];
 			foreach ( $engagements_defaults as $eng ) :
@@ -332,7 +332,7 @@ $home_axe_defaults = [
 		<div class="donate-text fade-up">
 			<div class="section-eyebrow"><?php echo esc_html( drolung_field( 'donate_eyebrow', __( 'Faire un don', 'drolung-branch' ) ) ); ?></div>
 			<h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'donate_title', __( 'Votre don <em>agit directement</em>', 'drolung-branch' ) ) ); ?></h2>
-			<div class="section-body" style="margin-bottom:32px"><?php echo wp_kses_post( drolung_field( 'donate_body', '<p>' . __( 'Chaque euro versé à DSF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>' ) ); ?></div>
+			<div class="section-body" style="margin-bottom:32px"><?php echo wp_kses_post( drolung_field( 'donate_body', '<p>' . __( 'Chaque euro versé à TKF est affecté aux projets portés par Drolung Solidarité Madagascar, hors frais administratifs incompressibles (banque + obligations légales, de l\'ordre de 100 € par mois). Les comptes de l\'association sont publiés chaque année dans un souci de transparence totale.', 'drolung-branch' ) . '</p>' ) ); ?></div>
 
 			<!-- Exemples de coûts (statiques — éditables via ACF) -->
 			<div style="display:flex;flex-direction:column;gap:16px;margin-bottom:40px">

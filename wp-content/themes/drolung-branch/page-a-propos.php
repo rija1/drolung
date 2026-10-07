@@ -39,7 +39,7 @@ get_header();
   <div class="container">
     <div class="page-hero__eyebrow"><?php echo esc_html( drolung_field( 'hero_eyebrow', __( 'À propos', 'drolung-branch' ) ) ); ?></div>
     <h1 class="page-hero__title"><?php echo wp_kses_post( drolung_field( 'hero_title', __( 'Un pont <em>vers Madagascar</em>', 'drolung-branch' ) ) ); ?></h1>
-    <p class="page-hero__sub"><?php echo esc_html( drolung_field( 'hero_sub', __( 'Drolung Solidarité France mobilise depuis la France les ressources et le soutien nécessaires aux actions menées par notre association sœur à Madagascar. Une équipe bénévole, un engagement transparent.', 'drolung-branch' ) ) ); ?></p>
+    <p class="page-hero__sub"><?php echo esc_html( drolung_field( 'hero_sub', __( 'Tuktse France mobilise depuis la France les ressources et le soutien nécessaires aux actions menées par notre association sœur à Madagascar. Une équipe bénévole, un engagement transparent.', 'drolung-branch' ) ) ); ?></p>
   </div>
 </section>
 
@@ -51,8 +51,8 @@ get_header();
         <div class="section-eyebrow"><?php echo esc_html( drolung_field( 'histoire_eyebrow', __( 'Notre histoire', 'drolung-branch' ) ) ); ?></div>
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'histoire_title', __( 'Deux assos, <em>une même intention</em>', 'drolung-branch' ) ) ); ?></h2>
         <?php echo wp_kses_post( drolung_field( 'histoire_body',
-          '<p class="section-body">' . __( 'En 2025, plusieurs membres du réseau Drolung — bouddhistes pratiquants franco-malgaches et leurs proches — ont décidé de structurer leur engagement. En 2026, deux associations sœurs voient le jour : Drolung Solidarité France pour mobiliser depuis l\'Hexagone les ressources et le soutien nécessaires, Drolung Solidarité Madagascar pour porter directement les actions auprès des communautés sur l\'île.', 'drolung-branch' ) . '</p>'
-          . '<p class="section-body" style="margin-top:16px">' . __( 'Basée en France, Drolung Solidarité France rassemble des bénévoles engagés autour d\'une conviction simple : les fonds collectés en Europe doivent servir des projets réels, identifiés, conduits par des personnes qui connaissent le terrain. Notre rôle est de faire le lien — mobiliser ici, pour que les choses changent là-bas.', 'drolung-branch' ) . '</p>'
+          '<p class="section-body">' . __( 'En 2025, plusieurs membres du réseau Drolung — bouddhistes pratiquants franco-malgaches et leurs proches — ont décidé de structurer leur engagement. En 2026, deux associations sœurs voient le jour : Tuktse France pour mobiliser depuis l\'Hexagone les ressources et le soutien nécessaires, Drolung Solidarité Madagascar pour porter directement les actions auprès des communautés sur l\'île.', 'drolung-branch' ) . '</p>'
+          . '<p class="section-body" style="margin-top:16px">' . __( 'Basée en France, Tuktse France rassemble des bénévoles engagés autour d\'une conviction simple : les fonds collectés en Europe doivent servir des projets réels, identifiés, conduits par des personnes qui connaissent le terrain. Notre rôle est de faire le lien — mobiliser ici, pour que les choses changent là-bas.', 'drolung-branch' ) . '</p>'
           . '<p class="section-body" style="margin-top:16px">' . __( 'Le constat d\'origine est simple : ce que nous voulons offrir comme soutien depuis la France a besoin d\'un cadre clair, transparent et juridiquement adapté ; ce que nous voulons faire à Madagascar a besoin d\'être ancré là-bas. Deux entités, une seule intention.', 'drolung-branch' ) . '</p>'
         ) ); ?>
       </div>
@@ -121,7 +121,7 @@ get_header();
         <h2 class="section-title" style="color:var(--white)"><?php echo wp_kses_post( drolung_field( 'rinpoche_title', __( 'L\'inspiration <em>à l\'origine de tout</em>', 'drolung-branch' ) ) ); ?></h2>
         <?php echo wp_kses_post( drolung_field( 'rinpoche_body',
           '<p class="section-body" style="color:rgba(255,255,255,0.72)">' . __( 'Né au Tibet, Drupon Khen Rinpoche Karma Lhabu a reçu sa formation à l\'ermitage de Drolung — lieu sacré de la lignée Kagyüpa dont le réseau tire son nom. Sous la direction de Khenchen Thrangu Rinpoche, il est devenu drupon (maître de retraite) et dirige depuis 2004 le centre de retraite de Thrangu Sekhar, au Népal.', 'drolung-branch' ) . '</p>'
-          . '<p class="section-body" style="color:rgba(255,255,255,0.72);margin-top:16px">' . __( 'En 2024, il a fondé la Drolung Fondation Bouddhiste Internationale et entrepris la construction d\'un monastère pour les moines qu\'il ordonne. C\'est son enseignement — que la compassion doit se traduire en actes concrets au service des plus vulnérables — qui inspire la création des associations Drolung Solidarité.', 'drolung-branch' ) . '</p>'
+          . '<p class="section-body" style="color:rgba(255,255,255,0.72);margin-top:16px">' . __( 'En 2024, il a fondé la Drolung Fondation Bouddhiste Internationale et entrepris la construction d\'un monastère pour les moines qu\'il ordonne. C\'est son enseignement — que la compassion doit se traduire en actes concrets au service des plus vulnérables — qui inspire la création des associations Tuktse.', 'drolung-branch' ) . '</p>'
         ) ); ?>
         <a href="<?php echo esc_url( drolung_field( 'rinpoche_url', 'https://www.druponrinpoche.org' ) ); ?>" target="_blank" rel="noopener" class="btn-text" style="margin-top:28px;color:var(--saffron-lt);border-color:var(--saffron);"><?php echo esc_html( drolung_field( 'rinpoche_link_label', 'druponrinpoche.org ↗' ) ); ?></a>
       </div>
@@ -217,7 +217,7 @@ get_header();
         <h2 class="section-title"><?php echo wp_kses_post( drolung_field( 'reseau_title', __( 'Une famille <em>internationale</em>', 'drolung-branch' ) ) ); ?></h2>
         <?php echo wp_kses_post( drolung_field( 'reseau_body',
           '<p class="section-body">' . __( 'Drolung est un réseau international d\'organisations indépendantes partageant un même héritage spirituel et un même engagement humanitaire. À ses côtés, on trouve Drolung UK, Drolung Nepal, Drolung Hong Kong et plusieurs autres entités sœurs, présentes dans plus de vingt pays.', 'drolung-branch' ) . '</p>'
-          . '<p class="section-body" style="margin-top:16px">' . __( 'DSM et DSF sont les deux entités franco-malgaches du réseau. Autonomes dans leur gouvernance et leurs actions, elles restent reliées au reste de la famille Drolung par les valeurs partagées, le partage d\'expérience et l\'entraide.', 'drolung-branch' ) . '</p>'
+          . '<p class="section-body" style="margin-top:16px">' . __( 'DSM et TKF sont les deux entités franco-malgaches du réseau. Autonomes dans leur gouvernance et leurs actions, elles restent reliées au reste de la famille Drolung par les valeurs partagées, le partage d\'expérience et l\'entraide.', 'drolung-branch' ) . '</p>'
         ) ); ?>
       </div>
     </div>

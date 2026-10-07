@@ -81,7 +81,7 @@ function drolung_network_register_fields() {
 			'layout'     => 'block',
 			'instructions' => 'Leave empty = the site\'s donate button falls back to the entity\'s generic donation form.',
 			'sub_fields' => array(
-				array( 'key' => 'field_prj_don_dsf', 'label' => 'DSF — AssoConnect form URL', 'name' => 'assoconnect_url', 'type' => 'url' ),
+				array( 'key' => 'field_prj_don_dsf', 'label' => 'TKF — AssoConnect form URL', 'name' => 'assoconnect_url', 'type' => 'url' ),
 				array( 'key' => 'field_prj_don_duk', 'label' => 'DUK — Stripe URL (Payment Link)', 'name' => 'duk_url', 'type' => 'url' ),
 				array( 'key' => 'field_prj_don_dsm', 'label' => 'DSM — local donation info (MVola…)', 'name' => 'dsm_info', 'type' => 'text' ),
 			),
@@ -103,9 +103,9 @@ function drolung_network_register_fields() {
 			'label'         => 'Canonical Site (SEO)',
 			'name'          => 'site_canonical',
 			'type'          => 'select',
-			'instructions'  => 'The "official" version for Google (doc §10). Defaults to DSF: that\'s where international donors can give.',
+			'instructions'  => 'The "official" version for Google (doc §10). Defaults to TKF: that\'s where international donors can give.',
 			'choices'       => array(
-				'dsf'     => 'DSF — dsf.drolung.org',
+				'dsf'     => 'TKF — dsf.drolung.org',
 				'dsm'     => 'DSM — dsm.drolung.org',
 				'duk'     => 'DUK — duk.drolung.org',
 				'org'     => 'Central — drolung.org',
@@ -206,7 +206,7 @@ function drolung_network_register_fields() {
 				'type'          => 'select',
 				'choices'       => array(
 					'org' => 'Central — drolung.org',
-					'dsf' => 'DSF — dsf.drolung.org',
+					'dsf' => 'TKF — dsf.drolung.org',
 					'dsm' => 'DSM — dsm.drolung.org',
 					'duk' => 'DUK — duk.drolung.org',
 				),

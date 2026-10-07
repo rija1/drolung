@@ -102,7 +102,7 @@ get_header();
         </div>
         <div class="branch-card fade-up" style="transition-delay:0.18s">
           <div class="branch-flag">🇫🇷</div>
-          <div class="branch-name">DROLUNG Solidarités France</div>
+          <div class="branch-name">Tuktse France</div>
           <div class="branch-country">France</div>
           <p class="branch-desc">Association loi 1901 coordinating humanitarian response and community development programmes in francophone regions.</p>
           <a href="#" class="branch-link">Visit →</a>
