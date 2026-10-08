@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) exit;
 use MailPoet\Config\Renderer;
 use MailPoet\Config\ServicesChecker;
 use MailPoet\Cron\CronHelper;
+use MailPoet\EmailEditor\Integrations\MailPoet\PersonalizationTags\PersonalizationTagLinkResolver;
 use MailPoet\Entities\NewsletterEntity;
 use MailPoet\Entities\NewsletterLinkEntity;
 use MailPoet\Entities\ScheduledTaskEntity;
@@ -69,6 +70,8 @@ class Worker {
   /** @var DotcomHelperFunctions */
   private $dotcomHelperFunctions;
 
+  private PersonalizationTagLinkResolver $personalizationTagLinkResolver;
+
   public function __construct(
     MailerFactory $mailerFactory,
     Renderer $renderer,
@@ -82,7 +85,8 @@ class Worker {
     SubscribersFeature $subscribersFeature,
     SubscribersRepository $subscribersRepository,
     ServicesChecker $servicesChecker,
-    DotcomHelperFunctions $dotcomHelperFunctions
+    DotcomHelperFunctions $dotcomHelperFunctions,
+    PersonalizationTagLinkResolver $personalizationTagLinkResolver
   ) {
     $this->renderer = $renderer;
     $this->mailerFactory = $mailerFactory;
@@ -97,6 +101,7 @@ class Worker {
     $this->subscribersRepository = $subscribersRepository;
     $this->servicesChecker = $servicesChecker;
     $this->dotcomHelperFunctions = $dotcomHelperFunctions;
+    $this->personalizationTagLinkResolver = $personalizationTagLinkResolver;
   }
 
   /** @throws \Exception */
@@ -156,9 +161,12 @@ class Worker {
   private function prepareContext(NewsletterEntity $newsletter, SendingQueueEntity $sendingQueue, ?NewsletterLinkEntity $link = null, array $settings = []) {
     $statistics = $this->newsletterStatisticsRepository->getStatistics($newsletter);
     $totalSentCount = $statistics->getTotalSentCount() ?: 1;
-    $clicked = ($statistics->getClickCount() * 100) / $totalSentCount;
-    $opened = ($statistics->getOpenCount() * 100) / $totalSentCount;
-    $machineOpened = ($statistics->getMachineOpenCount() * 100) / $totalSentCount;
+    // Opens and clicks over the recipients sent with tracking; unsubscribes and bounces over
+    // everyone. With nobody tracked the rate is 0, not a count divided by 1.
+    $trackedSentCount = $statistics->getTrackedSentCount();
+    $clicked = $trackedSentCount > 0 ? ($statistics->getClickCount() * 100) / $trackedSentCount : 0;
+    $opened = $trackedSentCount > 0 ? ($statistics->getOpenCount() * 100) / $trackedSentCount : 0;
+    $machineOpened = $trackedSentCount > 0 ? ($statistics->getMachineOpenCount() * 100) / $trackedSentCount : 0;
     $unsubscribed = ($statistics->getUnsubscribeCount() * 100) / $totalSentCount;
     $bounced = ($statistics->getBounceCount() * 100) / $totalSentCount;
     $subject = $sendingQueue->getNewsletterRenderedSubject();
@@ -192,6 +200,10 @@ class Worker {
       'machineOpened' => $machineOpened,
       'unsubscribed' => $unsubscribed,
       'bounced' => $bounced,
+      // The digest is a push: for many merchants this is the first place they
+      // see the higher open rate, so the coverage line matters most here.
+      'notTracked' => $statistics->getNotTrackedCount(),
+      'trackedSent' => $statistics->getTrackedSentCount(),
       'subscribersLimitReached' => $this->subscribersFeature->check(),
       'hasValidApiKey' => $hasValidApiKey,
       'subscribersLimit' => $this->subscribersFeature->getSubscribersLimit(),
@@ -202,7 +214,9 @@ class Worker {
     if ($link) {
       $context['topLinkClicks'] = $link->getTotalClicksCount();
       $mappings = self::getShortcodeLinksMapping();
-      $context['topLink'] = isset($mappings[$link->getUrl()]) ? $mappings[$link->getUrl()] : $link->getUrl();
+      $context['topLink'] = $mappings[$link->getUrl()]
+        ?? $this->personalizationTagLinkResolver->getDisplayName($link->getUrl())
+        ?? $link->getUrl();
     }
     $context['blogName'] = WPFunctions::get()->getBloginfo('name');
     $context['recipientFirstName'] = $this->getRecipientFirstName($settings['address'] ?? '');
@@ -232,6 +246,10 @@ class Worker {
     $this->entityManager->flush();
   }
 
+  /**
+   * Labels for legacy shortcode system links. Block-email system links are stored as
+   * personalization tag tokens and labelled with the tag name instead.
+   */
   public static function getShortcodeLinksMapping() {
     return [
       NewsletterLinkEntity::UNSUBSCRIBE_LINK_SHORT_CODE => __('Unsubscribe link', 'mailpoet'),

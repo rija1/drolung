@@ -3,10 +3,10 @@
 namespace IAWPSCOPED;
 
 use IAWP\ActivationLifecycle;
+use IAWP\BreakdanceFormAction;
 use IAWP\Click_Tracking\Click_Processing_Job;
 use IAWP\Click_Tracking\Config_File_Manager;
 use IAWP\ComplianzIntegration;
-use IAWP\Custom_WordPress_Columns\Views_Column;
 use IAWP\Dashboard_Options;
 use IAWP\Database;
 use IAWP\Date_Range\Exact_Date_Range;
@@ -29,10 +29,11 @@ use IAWP\Public_API\Singular_Analytics;
 use IAWP\Public_API\Top_Posts;
 use IAWP\Report_Finder;
 use IAWP\Utils\BladeOne;
+use IAWP\ViewsColumn\ViewsColumn;
 use IAWP\WP_Option_Cache_Bust;
 \define( 'IAWP_DIRECTORY', \rtrim( \plugin_dir_path( __FILE__ ), \DIRECTORY_SEPARATOR ) );
 \define( 'IAWP_URL', \rtrim( \plugin_dir_url( __FILE__ ), '/' ) );
-\define( 'IAWP_VERSION', '2.14.10' );
+\define( 'IAWP_VERSION', '2.15.5' );
 \define( 'IAWP_DATABASE_VERSION', '52' );
 \define( 'IAWP_LANGUAGES_DIRECTORY', \dirname( \plugin_basename( __FILE__ ) ) . '/languages' );
 \define( 'IAWP_PLUGIN_FILE', __DIR__ . '/iawp.php' );
@@ -300,6 +301,7 @@ WP_Option_Cache_Bust::register( 'iawp_geo_database_version' );
 WP_Option_Cache_Bust::register( 'iawp_overview_modules' );
 WP_Option_Cache_Bust::register( 'iawp_modules_refreshed_at' );
 WP_Option_Cache_Bust::register( 'iawp_default_modules_added' );
+WP_Option_Cache_Bust::register( 'iawp_pruning_cutoff' );
 /** @internal */
 function iawp() {
     return Independent_Analytics::getInstance();
@@ -347,6 +349,7 @@ function iawp() {
     ( new Geo_Database_Health_Check_Job() )->schedule();
     ( new Migration_Fixer_Job() )->schedule();
     ( new FetchFaviconsJob() )->schedule();
+    BreakdanceFormAction::register();
     if ( \IAWPSCOPED\iawp_is_pro() ) {
         ( new Click_Processing_Job() )->schedule();
         ( new Module_Refresh_Job() )->schedule();
@@ -390,6 +393,6 @@ function iawp() {
         }
     }
 } );
-Views_Column::initialize();
+ViewsColumn::initialize();
 MainWP::initialize();
 ComplianzIntegration::initialize();

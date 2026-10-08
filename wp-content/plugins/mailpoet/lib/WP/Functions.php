@@ -167,6 +167,10 @@ class Functions {
     return current_user_can($capability);
   }
 
+  public function wpDoingAjax() {
+    return wp_doing_ajax();
+  }
+
   public function userCan($user, $capability) {
     return user_can($user, $capability);
   }
@@ -175,12 +179,17 @@ class Functions {
     return date_i18n($dateformatstring, $timestampWithOffset, $gmt);
   }
 
+  /** @return string|false */
+  public function wpDate($format, $timestamp = null, $timezone = null) {
+    return wp_date($format, $timestamp, $timezone);
+  }
+
   public function deleteCommentMeta($commentId, $metaKey, $metaValue = '') {
     return delete_comment_meta($commentId, $metaKey, $metaValue);
   }
 
-  public function addOption($option, $value) {
-    return add_option($option, $value);
+  public function addOption($option, $value, $autoload = null) {
+    return add_option($option, $value, '', $autoload);
   }
 
   public function deleteOption($option) {
@@ -235,6 +244,15 @@ class Functions {
     return get_comment_meta($commentId, $key, $single);
   }
 
+  /**
+   * @param int|null $blogId
+   * @return string
+   */
+  public function getBlogPrefix($blogId = null) {
+    global $wpdb;
+    return $wpdb->get_blog_prefix($blogId);
+  }
+
   public function getCurrentScreen() {
     return get_current_screen();
   }
@@ -256,6 +274,9 @@ class Functions {
   }
 
   public function getEditableRoles() {
+    if (!function_exists('get_editable_roles')) {
+      require_once ABSPATH . 'wp-admin/includes/user.php';
+    }
     return get_editable_roles();
   }
 
@@ -329,6 +350,14 @@ class Functions {
 
   public function getPostType($post = null) {
     return get_post_type($post);
+  }
+
+  /**
+   * @param string $status
+   * @return object|null
+   */
+  public function getPostStatusObject($status) {
+    return get_post_status_object($status);
   }
 
   public function getPosts(?array $args = null) {
@@ -588,6 +617,13 @@ class Functions {
     wp_enqueue_media($args);
   }
 
+  /**
+   * @return array|false
+   */
+  public function wpEnqueueCodeEditor(array $args) {
+    return wp_enqueue_code_editor($args);
+  }
+
   public function wpEnqueueScript($handle, $src = '', array $deps = [], $ver = false, $inFooter = false) {
     return wp_enqueue_script($handle, $src, $deps, $ver, $inFooter);
   }
@@ -635,6 +671,10 @@ class Functions {
 
   public function wpGetThemeSupport($feature = null, $args = null) {
     return get_theme_support($feature, $args);
+  }
+
+  public function wpGetGlobalSettings(array $path = [], array $context = []) {
+    return wp_get_global_settings($path, $context);
   }
 
   public function wpInsertPost(array $postarr, $wpError = false) {
@@ -705,12 +745,25 @@ class Functions {
     return wp_safe_redirect($location, $status);
   }
 
+  public function wpValidateRedirect($location, $fallbackUrl = '') {
+    return wp_validate_redirect($location, $fallbackUrl);
+  }
+
   public function wpStaticizeEmoji($text) {
     return wp_staticize_emoji($text);
   }
 
   public function wpTrimWords($text, $numWords = 55, $more = null) {
     return wp_trim_words($text, $numWords, $more);
+  }
+
+  public function wpCacheSet($key, $data, $group = '', $expire = 0) {
+    // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined -- generic wrapper, expiry is controlled by callers.
+    return wp_cache_set($key, $data, $group, $expire);
+  }
+
+  public function wpCacheDelete($key, $group = '') {
+    return wp_cache_delete($key, $group);
   }
 
   public function wpUploadDir($time = null, $createDir = true, $refreshCache = false) {
@@ -723,6 +776,24 @@ class Functions {
 
   public function wpautop($pee, $br = true) {
     return wpautop($pee, $br);
+  }
+
+  /**
+   * @param int|string|\WP_Post|null $post
+   */
+  public function hasBlocks($post = null): bool {
+    return has_blocks($post);
+  }
+
+  /**
+   * @param int|\WP_Post|null $post
+   */
+  public function postPasswordRequired($post = null): bool {
+    return post_password_required($post);
+  }
+
+  public function stripShortcodes(string $content): string {
+    return strip_shortcodes($content);
   }
 
   public function inTheLoop(): bool {
@@ -865,6 +936,10 @@ class Functions {
    */
   public function wpKses(string $string, $allowedHtml, $allowedProtocols = []) {
     return wp_kses($string, $allowedHtml, $allowedProtocols);
+  }
+
+  public function wpKsesAllowedHtml($context = '') {
+    return wp_kses_allowed_html($context);
   }
 
   public function wpKsesPost(string $string): string {
@@ -1024,6 +1099,10 @@ class Functions {
    */
   public function updatePostMeta(int $postId, string $metaKey, $metaValue, $prevValue = '') {
     return update_post_meta($postId, $metaKey, $metaValue, $prevValue);
+  }
+
+  public function deletePostMeta(int $postId, string $metaKey, $metaValue = ''): bool {
+    return delete_post_meta($postId, $metaKey, $metaValue);
   }
 
   public function getFileData(string $file, array $default_headers, string $context = 'plugin'): array {

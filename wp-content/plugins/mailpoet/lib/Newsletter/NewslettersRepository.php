@@ -76,6 +76,22 @@ class NewslettersRepository extends Repository {
       ->getSingleScalarResult());
   }
 
+  /**
+   * Counts the emails the user has, trashed ones included. Emails MailPoet
+   * creates on their behalf do not count, so this is zero on a fresh install
+   * even when WooCommerce or signup confirmation emails were customized.
+   */
+  public function countUserCreatedNewsletters(): int {
+    return intval($this->entityManager
+      ->createQueryBuilder()
+      ->select('COUNT(n.id)')
+      ->from(NewsletterEntity::class, 'n')
+      ->where('n.type NOT IN (:types)')
+      ->setParameter('types', NewsletterEntity::AUTO_CREATED_TYPES, ArrayParameterType::STRING)
+      ->getQuery()
+      ->getSingleScalarResult());
+  }
+
   public function getCountOfActiveAutomaticEmailsForEvent(string $event): int {
     return intval($this->entityManager->createQueryBuilder()
       ->select('COUNT(n.id)')
@@ -145,6 +161,9 @@ class NewslettersRepository extends Repository {
       ->getResult();
   }
 
+  /**
+   * Returns the number of standard newsletter campaigns sent in the given period.
+   */
   public function getStandardNewsletterSentCount(DateTimeInterface $since): int {
     return (int)$this->doctrineRepository->createQueryBuilder('n')
       ->select('COUNT(n)')
@@ -153,6 +172,8 @@ class NewslettersRepository extends Repository {
       ->andWhere('n.type = :type')
       ->andWhere('n.status = :status')
       ->andWhere('t.status = :taskStatus')
+      // Intentionally skip "Send latest newsletter" replay sends; they would skew the campaign count.
+      // We use only the date of the initial sending.
       ->andWhere('q.meta IS NULL OR q.meta NOT LIKE :latestNewsletterReplayMeta')
       ->andWhere('t.meta IS NULL OR t.meta NOT LIKE :latestNewsletterReplayMeta')
       ->andWhere('t.processedAt >= :since')
@@ -447,6 +468,8 @@ class NewslettersRepository extends Repository {
         AND st.processed_at IS NOT NULL
         AND sq.count_processed > 0
         AND ns.segment_id = :segmentId
+        -- Skip replay queues/tasks so we pick the original standard send as the replay source,
+        -- not a previous replay (whose processed_at could otherwise win the ORDER BY).
         AND (sq.meta IS NULL OR sq.meta NOT LIKE :latestNewsletterReplayMeta)
         AND (st.meta IS NULL OR st.meta NOT LIKE :latestNewsletterReplayMeta)
       ORDER BY st.processed_at DESC, st.id DESC
@@ -896,5 +919,26 @@ class NewslettersRepository extends Repository {
       $wpPostIds = array_map('intval', $wpPostIds);
 
       return $wpPostIds;
+  }
+
+  /**
+   * @param int[] $ids
+   * @return int[] the subset of $ids that are not of the given type
+   */
+  public function getIdsExcludingType(array $ids, string $type): array {
+    if (!$ids) {
+      return [];
+    }
+    /** @var string[] $filteredIds */
+    $filteredIds = $this->entityManager->createQueryBuilder()
+      ->select('n.id')
+      ->from(NewsletterEntity::class, 'n')
+      ->where('n.id IN (:ids)')
+      ->andWhere('n.type != :type')
+      ->setParameter('ids', $ids)
+      ->setParameter('type', $type)
+      ->getQuery()
+      ->getSingleColumnResult();
+    return array_map('intval', $filteredIds);
   }
 }

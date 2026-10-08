@@ -20,7 +20,7 @@
 <?php endif; ?>
 
 <p class="iawp-referrer-box-title"><?php esc_html_e('Landing Page', 'independent-analytics'); ?></p>
-<p class="iawp-referrer-box-value" data-testid="landing-page"><a href="<?php echo $record->initial_page_url ?>" target="_blank"><?php echo $record->initial_page_title ?></a></p>
+<p class="iawp-referrer-box-value" data-testid="landing-page"><a href="<?php echo esc_url($record->initial_page_url); ?>" target="_blank"><?php echo esc_html($record->initial_page_title); ?></a></p>
 
 <p class="iawp-referrer-box-title"><?php esc_html_e('Pages viewed', 'independent-analytics'); ?></p>
 <p class="iawp-referrer-box-value" data-testid="pages-viewed"><?php echo $record->total_views ?></p>
@@ -42,6 +42,6 @@
     <a href="<?php echo esc_url($journey_url); ?>"><span class="dashicons dashicons-admin-users"></span> <?php esc_html_e('View full journey', 'independent-analytics'); ?> <span class="iawp-arrow">&rarr;</span></a>
 </p>
 
-<p class="iawp-referrer-box-attribution"><?php 
-    printf(esc_html__('Powered by %s.', 'independent-analytics'), iawp_is_pro() ? 'Independent Analytics Pro' : 'Independent Analytics'); 
+<p class="iawp-referrer-box-attribution"><?php
+    printf(esc_html__('Powered by %s.', 'independent-analytics'), iawp_is_pro() ? 'Independent Analytics Pro' : 'Independent Analytics');
 ?></p>

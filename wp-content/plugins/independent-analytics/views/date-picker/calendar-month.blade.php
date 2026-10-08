@@ -15,15 +15,15 @@
         </button>
     </div>
     <div class="iawp-day-names">
-        <?php echo wp_kses_post($month->days_of_week()); ?>
+        <?php echo  \IAWP\Utils\Security::span_tags_only($month->days_of_week()); ?>
     </div>
     <div class="iawp-days"><?php
         for ($i = 0; $i < $month->extra_cells(); $i++) {
             echo '<span class="iawp-cell empty"></span>';
         }
-        foreach($month->days() as $day) :
-            $day->setTime(0, 0, 0, 0);
-            $class = $month->day_class($day, $first_data, $start_date, $end_date); ?>
+foreach($month->days() as $day) :
+    $day->setTime(0, 0, 0, 0);
+    $class = $month->day_class($day, $first_data, $start_date, $end_date); ?>
             <span class="<?php echo esc_attr($class); ?>" 
                 data-date="<?php echo esc_attr($day->format('Y-m-d')); ?>"
                 data-display-date="<?php echo esc_attr(iawp()->date_i18n($user_format, $day)); ?>"

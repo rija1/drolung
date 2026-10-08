@@ -76,6 +76,7 @@ class Menu {
 
   public $mpApiKeyValid;
   public $premiumKeyValid;
+  public $mssKeyExpiring;
 
   /** @var AccessControl */
   private $accessControl;
@@ -125,6 +126,8 @@ class Menu {
   }
 
   public function init() {
+    // Runs first: checkPremiumKey() suppresses its expiring notice when this one already covered it.
+    $this->checkMSSKey();
     $this->checkPremiumKey();
 
     $this->wp->addAction('admin_init', [$this, 'maybeRenderAutomationPreviewEmbed'], 1);
@@ -156,11 +159,8 @@ class Menu {
     $this->wp->doAction('mailpoet_conflict_resolver_styles');
     $this->wp->doAction('mailpoet_conflict_resolver_scripts');
 
-    if (
-      !isset($_REQUEST['page'])
-      || !is_string($_REQUEST['page'])
-      || sanitize_text_field(wp_unslash($_REQUEST['page'])) !== 'mailpoet-newsletter-editor'
-    ) {
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized through WPFunctions below.
+    if (self::sanitizeRequestValue($this->wp, $_REQUEST['page'] ?? null) !== 'mailpoet-newsletter-editor') {
       return;
     }
     // Disable WP emojis to not interfere with the newsletter editor emoji handling
@@ -245,7 +245,7 @@ class Menu {
     );
 
     // Emails page
-    $newslettersPage = $this->wp->addSubmenuPage(
+    $this->wp->addSubmenuPage(
       self::MAIN_PAGE_SLUG,
       $this->setPageTitle(__('Emails', 'mailpoet')),
       esc_html__('Emails', 'mailpoet'),
@@ -256,18 +256,6 @@ class Menu {
         'newsletters',
       ]
     );
-
-    // add limit per page to screen options
-    $this->wp->addAction('load-' . $newslettersPage, function() {
-      $this->wp->addScreenOption('per_page', [
-        'label' => _x(
-          'Number of newsletters per page',
-          'newsletters per page (screen options)',
-          'mailpoet'
-        ),
-        'option' => 'mailpoet_newsletters_per_page',
-      ]);
-    });
 
     // newsletter editor
     $this->wp->addSubmenuPage(
@@ -331,7 +319,7 @@ class Menu {
     );
 
     // Subscribers page
-    $subscribersPage = $this->wp->addSubmenuPage(
+    $this->wp->addSubmenuPage(
       self::MAIN_PAGE_SLUG,
       $this->setPageTitle(__('Subscribers', 'mailpoet')),
       esc_html__('Subscribers', 'mailpoet'),
@@ -342,18 +330,6 @@ class Menu {
         'subscribers',
       ]
     );
-
-    // add limit per page to screen options
-    $this->wp->addAction('load-' . $subscribersPage, function() {
-      $this->wp->addScreenOption('per_page', [
-        'label' => _x(
-          'Number of subscribers per page',
-          'subscribers per page (screen options)',
-          'mailpoet'
-        ),
-        'option' => 'mailpoet_subscribers_per_page',
-      ]);
-    });
 
     // import
     $this->wp->addSubmenuPage(
@@ -408,7 +384,7 @@ class Menu {
     );
 
     // Lists page
-    $listsPage = $this->wp->addSubmenuPage(
+    $this->wp->addSubmenuPage(
       self::MAIN_PAGE_SLUG,
       $this->setPageTitle(__('Lists', 'mailpoet')),
       esc_html__('Lists', 'mailpoet'),
@@ -419,21 +395,6 @@ class Menu {
         'lists',
       ]
     );
-
-    // add limit per page to screen options
-    // The lists page renders the StaticSegments listing, which reads its limit
-    // via PageLimit::getLimitPerPage('segments') -- so the screen option must
-    // write to the `mailpoet_segments_per_page` user meta.
-    $this->wp->addAction('load-' . $listsPage, function() {
-      $this->wp->addScreenOption('per_page', [
-        'label' => _x(
-          'Number of lists per page',
-          'lists per page (screen options)',
-          'mailpoet'
-        ),
-        'option' => 'mailpoet_segments_per_page',
-      ]);
-    });
 
     // Segments page
     $this->wp->addSubmenuPage(
@@ -848,11 +809,14 @@ class Menu {
    * to display admin notices only
    */
   public static function addErrorPage(AccessControl $accessControl) {
-    if (!self::isOnMailPoetAdminPage() || !isset($_REQUEST['page']) || !is_string($_REQUEST['page'])) {
+    if (!self::isOnMailPoetAdminPage()) {
       return false;
     }
-
-    $page = sanitize_text_field(wp_unslash($_REQUEST['page']));
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized through WPFunctions below.
+    $page = self::sanitizeRequestValue(WPFunctions::get(), $_REQUEST['page'] ?? null);
+    if ($page === null) {
+      return false;
+    }
     // Check if page already exists
     if (
       get_plugin_page_hook($page, '')
@@ -878,14 +842,40 @@ class Menu {
   }
 
   public function checkPremiumKey(?ServicesChecker $checker = null) {
-    $showNotices = self::isOnMailPoetAdminPage() || (isset($_SERVER['SCRIPT_NAME']) && is_string($_SERVER['SCRIPT_NAME'])
-      && stripos(sanitize_text_field(wp_unslash($_SERVER['SCRIPT_NAME'])), 'plugins.php') !== false);
     $checker = $checker ?: $this->servicesChecker;
-    $this->premiumKeyValid = $checker->isPremiumKeyValid($showNotices);
+    // Same key, same expiry: don't tell the customer to "renew" when the sending-plan notice already covers it.
+    $suppressExpiringNotice = $this->mssKeyExpiring && $checker->isSameKeyUsedForMSSAndPremium();
+    $this->premiumKeyValid = $checker->isPremiumKeyValid($this->shouldShowKeyNotices(), $suppressExpiringNotice);
+  }
+
+  public function checkMSSKey(?ServicesChecker $checker = null) {
+    $checker = $checker ?: $this->servicesChecker;
+    $this->mssKeyExpiring = $checker->isMailPoetAPIKeyExpiring($this->shouldShowKeyNotices());
+  }
+
+  private function shouldShowKeyNotices(): bool {
+    if (self::isOnMailPoetAdminPage()) {
+      return true;
+    }
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized through WPFunctions below.
+    $scriptName = self::sanitizeRequestValue($this->wp, $_SERVER['SCRIPT_NAME'] ?? null);
+    return $scriptName !== null && stripos($scriptName, 'plugins.php') !== false;
+  }
+
+  /**
+   * @param mixed $raw
+   */
+  private static function sanitizeRequestValue(WPFunctions $wp, $raw): ?string {
+    if (!is_string($raw)) {
+      return null;
+    }
+    $unslashed = $wp->wpUnslash($raw);
+    return is_string($unslashed) ? $wp->sanitizeTextField($unslashed) : null;
   }
 
   public function getPageFromContext(): ?string {
-    $context = isset($_GET['context']) && is_string($_GET['context']) ? sanitize_text_field(wp_unslash($_GET['context'])) : null;
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized through WPFunctions below.
+    $context = self::sanitizeRequestValue($this->wp, $_GET['context'] ?? null);
     if ($context === 'automation') {
       return self::AUTOMATIONS_PAGE_SLUG;
     }

@@ -16,6 +16,7 @@ use MailPoet\Newsletter\Scheduler\WelcomeScheduler;
 use MailPoet\Services\Validator;
 use MailPoet\Settings\SettingsController;
 use MailPoet\Subscribers\ConfirmationEmailMailer;
+use MailPoet\Subscribers\SegmentsCountRecalculator;
 use MailPoet\Subscribers\Source;
 use MailPoet\Subscribers\SubscriberSegmentRepository;
 use MailPoet\Subscribers\SubscribersRepository;
@@ -35,6 +36,14 @@ class WP {
 
   /** @var WooCommerceHelper */
   private $wooHelper;
+
+  /**
+   * Per-request, keyed by WP user id: whether this sync created the subscriber
+   * row or found one already there. See wasSubscriberCreatedBySync().
+   *
+   * @var array<int, bool>
+   */
+  private $syncCreatedSubscriber = [];
 
   /** @var SubscribersRepository */
   private $subscribersRepository;
@@ -63,6 +72,9 @@ class WP {
   /** @var \MailPoetVendor\Doctrine\DBAL\Connection */
   private $databaseConnection;
 
+  /** @var SegmentsCountRecalculator */
+  private $segmentsCountRecalculator;
+
   public function __construct(
     WPFunctions $wp,
     WelcomeScheduler $welcomeScheduler,
@@ -73,7 +85,8 @@ class WP {
     Validator $validator,
     SegmentsRepository $segmentsRepository,
     EntityManager $entityManager,
-    DBCollationChecker $collationChecker
+    DBCollationChecker $collationChecker,
+    SegmentsCountRecalculator $segmentsCountRecalculator
   ) {
     $this->wp = $wp;
     $this->welcomeScheduler = $welcomeScheduler;
@@ -85,6 +98,7 @@ class WP {
     $this->segmentsRepository = $segmentsRepository;
     $this->entityManager = $entityManager;
     $this->collationChecker = $collationChecker;
+    $this->segmentsCountRecalculator = $segmentsCountRecalculator;
     $this->databaseConnection = $this->entityManager->getConnection();
     $this->subscribersTable = $this->entityManager->getClassMetadata(SubscriberEntity::class)->getTableName();
   }
@@ -93,11 +107,32 @@ class WP {
    * @param int $wpUserId
    * @param array|false $oldWpUserData
    */
+
+  /**
+   * Whether this request's sync created the subscriber row for the given WP
+   * user, rather than finding one that was already there. Defaults to false,
+   * meaning "treat as pre-existing", for a user this sync never saw: a missing
+   * signal must never cause an unearned overwrite of an earlier consent choice.
+   *
+   * Needed because wp_insert_user() calls set_user_role() before it fires
+   * user_register, and set_user_role is itself hooked to synchronizeUser. So by
+   * the time anything runs on user_register — at any priority — the row already
+   * exists, and a later lookup cannot tell a brand new registrant from someone
+   * who was already on the list.
+   */
+  public function wasSubscriberCreatedBySync(int $wpUserId): bool {
+    return $this->syncCreatedSubscriber[$wpUserId] ?? false;
+  }
+
   public function synchronizeUser(int $wpUserId, $oldWpUserData = false): void {
-    $wpUser = \get_userdata($wpUserId);
+    $wpUser = $this->wp->getUserdata($wpUserId);
     if ($wpUser === false) return;
 
     $subscriber = $this->subscribersRepository->findOneBy(['wpUserId' => $wpUserId]);
+    if (!isset($this->syncCreatedSubscriber[$wpUserId])) {
+      $this->syncCreatedSubscriber[$wpUserId] = !$subscriber instanceof SubscriberEntity
+        && $this->subscribersRepository->findOneBy(['email' => $wpUser->user_email]) === null; // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
+    }
 
     $currentFilter = $this->wp->currentFilter();
     // Delete
@@ -164,6 +199,7 @@ class WP {
       $this->subscribersRepository->persist($subscriber);
       $this->subscribersRepository->flush();
     });
+    $this->segmentsCountRecalculator->recalculateForSubscribers([(int)$subscriber->getId()]);
   }
 
   private function hasOtherActiveSegments(SubscriberEntity $subscriber): bool {
@@ -203,10 +239,10 @@ class WP {
     }
 
     // get first name & last name
-    $firstName = html_entity_decode($wpUser->first_name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
-    $lastName = html_entity_decode($wpUser->last_name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
+    $firstName = $this->decodeUserName($wpUser->first_name); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
+    $lastName = $this->decodeUserName($wpUser->last_name); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
     if (empty($wpUser->first_name) && empty($wpUser->last_name)) { // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
-      $firstName = html_entity_decode($wpUser->display_name, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
+      $firstName = $this->decodeUserName($wpUser->display_name); // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
     }
     $signupConfirmationEnabled = SettingsController::getInstance()->get('signup_confirmation.enabled');
     $status = $signupConfirmationEnabled ? SubscriberEntity::STATUS_UNCONFIRMED : SubscriberEntity::STATUS_SUBSCRIBED;
@@ -360,6 +396,21 @@ class WP {
     }
   }
 
+  /**
+   * WordPress stores user names entity-encoded (see the `pre_user_first_name`,
+   * `pre_user_last_name` and `pre_user_display_name` filters). We decode them so a
+   * name such as "Family & friends" is stored the way it was written, then run the
+   * same text sanitizer the other subscriber write paths use, so decoding can never
+   * turn encoded markup back into markup.
+   *
+   * @param mixed $name
+   */
+  private function decodeUserName($name): string {
+    $decoded = html_entity_decode(is_string($name) ? $name : '', ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+
+    return $this->wp->sanitizeTextField($decoded);
+  }
+
   private function createOrUpdateSubscriber(array $data, ?SubscriberEntity $subscriber = null): SubscriberEntity {
     if (is_null($subscriber)) {
       $subscriber = new SubscriberEntity();
@@ -419,6 +470,14 @@ class WP {
     $this->updateFirstNameIfMissing();
     $this->insertUsersToSegment();
     $this->removeOrphanedSubscribers();
+    // insertUsersToSegment adds WP users to the WP-Users segment via raw SQL,
+    // so refresh segments_count for that segment's members.
+    // recalculateForSegment() only sees subscribers that still have a membership
+    // row. Orphans that are hard-deleted by removeOrphanedSubscribers() are fine
+    // (row gone, count moot). Orphans whose membership is deleted but who survive
+    // (soft-trashed or still on other lists) are recalculated explicitly inside
+    // removeOrphanedSubscribersFromWpSegment() before the membership DELETE.
+    $this->segmentsCountRecalculator->recalculateForSegment((int)$this->segmentsRepository->getWPUsersSegment()->getId());
     $this->subscribersRepository->invalidateTotalSubscribersCache();
     $this->subscribersRepository->refreshAll();
 
