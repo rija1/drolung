@@ -6,12 +6,14 @@ if (!defined('ABSPATH')) exit;
 
 
 use MailPoet\Entities\NewsletterEntity;
+use MailPoet\Newsletter\Sending\TimeZoneCampaignScheduler;
 use MailPoet\Newsletter\Statistics\NewsletterStatistics;
 use MailPoet\Newsletter\Statistics\NewsletterStatisticsRepository;
 use MailPoet\Newsletter\Statistics\WooCommerceRevenue;
 use MailPoet\Router\Endpoints\ExportDownload;
+use MailPoet\Util\FormulaFreeXLSXWriter;
+use MailPoet\Util\SpreadsheetCellFormatter;
 use MailPoet\WP\Functions as WPFunctions;
-use MailPoetVendor\XLSXWriter;
 
 class StatisticsExporter {
   public const FORMAT_CSV = 'csv';
@@ -30,14 +32,19 @@ class StatisticsExporter {
   /** @var NewsletterStatisticsRepository */
   private $statisticsRepository;
 
+  /** @var TimeZoneCampaignScheduler */
+  private $timeZoneCampaignScheduler;
+
   /** @var WPFunctions */
   private $wp;
 
   public function __construct(
     NewsletterStatisticsRepository $statisticsRepository,
+    TimeZoneCampaignScheduler $timeZoneCampaignScheduler,
     WPFunctions $wp
   ) {
     $this->statisticsRepository = $statisticsRepository;
+    $this->timeZoneCampaignScheduler = $timeZoneCampaignScheduler;
     $this->wp = $wp;
   }
 
@@ -101,10 +108,16 @@ class StatisticsExporter {
    */
   public function exportRecipients(NewsletterEntity $newsletter, string $format): array {
     $format = $this->normalizeFormat($format);
-    $headers = $this->getRecipientHeaders();
+    $headers = $this->getRecipientHeaders($newsletter);
 
     /** @var array<array<int|string|float|null>> $rows */
     $rows = (array)$this->wp->applyFilters(self::FILTER_RECIPIENT_ROWS, [], $newsletter);
+    if (count($headers) > count($this->getRecipientHeaders())) {
+      $headerCount = count($headers);
+      foreach ($rows as $index => $row) {
+        $rows[$index] = array_pad($row, $headerCount, '');
+      }
+    }
 
     $this->ensureExportDirectory();
     $file = ExportDownload::createExportFile(self::FILE_PREFIX, $format);
@@ -117,10 +130,15 @@ class StatisticsExporter {
   }
 
   /**
+   * Recipient export headers. For subscriber-timezone campaigns three extra
+   * delivery columns are appended; the premium plugin appends the matching
+   * row cells in `RecipientsExporter::getRows()` using the same resolver, so
+   * the two MUST stay in sync.
+   *
    * @return string[]
    */
-  public function getRecipientHeaders(): array {
-    return [
+  public function getRecipientHeaders(?NewsletterEntity $newsletter = null): array {
+    $headers = [
       __('Subscriber ID', 'mailpoet'),
       __('Email', 'mailpoet'),
       __('First name', 'mailpoet'),
@@ -135,6 +153,16 @@ class StatisticsExporter {
       __('Bounced', 'mailpoet'),
       __('Unsubscribed', 'mailpoet'),
     ];
+    if ($newsletter && $this->isTimeZoneCampaign($newsletter)) {
+      $headers[] = __('Delivery timezone', 'mailpoet');
+      $headers[] = __('Timezone fallback used', 'mailpoet');
+      $headers[] = __('Local send time', 'mailpoet');
+    }
+    return $headers;
+  }
+
+  private function isTimeZoneCampaign(NewsletterEntity $newsletter): bool {
+    return $this->timeZoneCampaignScheduler->resolveTimeZoneCampaignQueue($newsletter) !== null;
   }
 
   /**
@@ -222,7 +250,7 @@ class StatisticsExporter {
    */
   private function writeCsvLine($handle, array $row): void {
     // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputcsv -- Export handles are created under Env::$tempPath, which is MailPoet's WordPress temp directory.
-    fputcsv($handle, array_map('strval', $row), ',', '"', '');
+    fputcsv($handle, array_map('strval', SpreadsheetCellFormatter::formatRow($row)), ',', '"', '');
   }
 
   /**
@@ -230,7 +258,7 @@ class StatisticsExporter {
    * @param array<array<int|string|float|null>> $rows
    */
   private function writeXlsx(string $filePath, array $headers, array $rows): void {
-    $writer = new XLSXWriter();
+    $writer = new FormulaFreeXLSXWriter();
     $sheetName = __('Statistics', 'mailpoet');
     $writer->writeSheetHeader($sheetName, array_fill_keys($headers, 'string'));
     foreach ($rows as $row) {

@@ -74,6 +74,9 @@ class SubscriberSubscribeController {
   /** @var BehavioralSignals */
   private $behavioralSignals;
 
+  /** @var TrackingConsentCapture */
+  private $trackingConsentCapture;
+
   public function __construct(
     CaptchaSession $captchaSession,
     SubscriberActions $subscriberActions,
@@ -90,7 +93,8 @@ class SubscriberSubscribeController {
     CaptchaValidator $builtInCaptchaValidator,
     RecaptchaValidator $recaptchaValidator,
     TurnstileValidator $turnstileValidator,
-    BehavioralSignals $behavioralSignals
+    BehavioralSignals $behavioralSignals,
+    TrackingConsentCapture $trackingConsentCapture
   ) {
     $this->formsRepository = $formsRepository;
     $this->captchaSession = $captchaSession;
@@ -108,6 +112,7 @@ class SubscriberSubscribeController {
     $this->recaptchaValidator = $recaptchaValidator;
     $this->turnstileValidator = $turnstileValidator;
     $this->behavioralSignals = $behavioralSignals;
+    $this->trackingConsentCapture = $trackingConsentCapture;
   }
 
   public function subscribe(array $data): array {
@@ -150,6 +155,18 @@ class SubscriberSubscribeController {
     $data = array_intersect_key($data, array_flip($formFieldIds));
     if ($submittedTimeZone !== null) {
       $data[SubscriberEntity::TIME_ZONE_FIELD_NAME] = $submittedTimeZone;
+    }
+    // The consent checkbox posts a bare 1/0. Translate it and stamp the proof
+    // server-side, then drop the raw field and any client-supplied proof so a
+    // crafted post cannot set a consent state or forge the record of it.
+    $trackingConsentData = $this->getTrackingConsentData($data, $form);
+    unset(
+      $data[TrackingConsentCapture::FIELD_ID],
+      $data['tracking_consent_method'],
+      $data['tracking_consent_copy']
+    );
+    foreach ($trackingConsentData as $consentKey => $consentValue) {
+      $data[$consentKey] = $consentValue;
     }
 
     // make sure we don't allow too many subscriptions with the same ip address
@@ -203,16 +220,76 @@ class SubscriberSubscribeController {
       return $meta;
     }
 
+    $this->wp->doAction('mailpoet_subscription_after_subscribe', $subscriber, $data, $segmentIds, $form);
+
     if (!empty($formSettings['on_success'])) {
       if ($formSettings['on_success'] === 'page') {
-        // redirect to a page on a success, pass the page url in the meta
-        $meta['redirect_url'] = $this->wp->getPermalink($formSettings['success_page']);
+        $redirectUrl = $this->getSuccessPageUrl((int)($formSettings['success_page'] ?? 0));
+        if ($redirectUrl !== null) {
+          $meta['redirect_url'] = $redirectUrl;
+        }
       } else if ($formSettings['on_success'] === 'url') {
         $meta['redirect_url'] = $formSettings['success_url'];
       }
     }
 
     return $meta;
+  }
+
+  private function getSuccessPageUrl(int $pageId): ?string {
+    if ($pageId <= 0) {
+      return null;
+    }
+    $page = $this->wp->getPost($pageId);
+    // phpcs:ignore Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps
+    if (!$page instanceof \WP_Post || !in_array($page->post_status, ['publish', 'private'], true)) {
+      return null;
+    }
+    $url = $this->wp->getPermalink($page);
+    return is_string($url) && $url !== '' ? $url : null;
+  }
+
+  /**
+   * Turns the form's tracking-consent checkbox into a consent record.
+   *
+   * The posted value is a bare 1/0, so it is translated here and the proof of
+   * how and against what wording consent was given is stamped server-side —
+   * the same shape Manage.php uses for the manage-subscription page. The raw
+   * field never reaches the subscriber data, so a crafted post cannot set a
+   * consent state directly.
+   *
+   * @param array<string, mixed> $data
+   * @return array<string, string>
+   */
+  private function getTrackingConsentData(array $data, FormEntity $form): array {
+    if (!array_key_exists(TrackingConsentCapture::FIELD_ID, $data)) {
+      return [];
+    }
+
+    $email = $data['email'] ?? null;
+    $method = SubscriberEntity::TRACKING_CONSENT_METHOD_FORM;
+
+    return $this->trackingConsentCapture->getConsentDataForEmail(
+      (bool)$data[TrackingConsentCapture::FIELD_ID],
+      $method,
+      $this->trackingConsentCapture->getCopy($method, $this->getFormConsentCopy($form)),
+      is_string($email) ? $email : null
+    );
+  }
+
+  /**
+   * The wording the form actually shows next to its consent checkbox, so the
+   * stored proof matches what the subscriber read.
+   */
+  private function getFormConsentCopy(FormEntity $form): ?string {
+    foreach ($form->getBlocksByTypes([FormEntity::CHECKBOX_BLOCK_TYPE]) as $block) {
+      if (($block['id'] ?? null) !== TrackingConsentCapture::FIELD_ID) {
+        continue;
+      }
+      $value = $block['params']['values'][0]['value'] ?? null;
+      return is_string($value) ? $value : null;
+    }
+    return null;
   }
 
   /**
@@ -365,7 +442,7 @@ class SubscriberSubscribeController {
     $formId = (isset($data['form_id']) ? (int)$data['form_id'] : false);
     $form = $this->formsRepository->findOneById($formId);
 
-    if (!$form) {
+    if (!$form || $form->getDeletedAt() || $form->getStatus() !== FormEntity::STATUS_ENABLED) {
       throw new NotFoundException(__('Please specify a valid form ID.', 'mailpoet'));
     }
 

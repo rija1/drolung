@@ -7,7 +7,9 @@
         <div class="journey-heading-container">
             <h3><?php esc_html_e('Session Timeline', 'independent-analytics'); ?></h3>
             <div class="journey-user-info">
-                <div class="view-all-sessions <?php if($timeline->origin()->session_count() == 1) echo 'no-other-sessions'; ?>">
+                <div class="view-all-sessions <?php if($timeline->origin()->session_count() == 1) {
+                    echo 'no-other-sessions';
+                } ?>">
                     <span class="dashicons dashicons-admin-users"></span>
                     <?php if($timeline->origin()->session_count() > 1): ?>
                         <a href="<?php echo esc_url($timeline->visitor_url()); ?>" target="_blank"><?php echo esc_html($timeline->session_count_message()); ?> &rarr;</a>
@@ -53,7 +55,7 @@
                     <?php endif; ?>
                     <span class="timeline-event-label"><?php echo esc_html($event->label()); ?></span>
                     <div class="timeline-event-contents">
-                        <?php echo wp_kses_post($event->html()); ?>
+                        <?php echo \IAWP\Utils\Security::user_journey_event_contents($event->html()); ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -72,7 +74,7 @@
                     <div class="journey-timeline-event <?php echo esc_attr($event->type()); ?>">
                         <span class="timeline-event-label"><?php echo esc_html($event->label()); ?></span>
                         <div class="timeline-event-contents">
-                            <?php echo wp_kses_post($event->html()); ?>
+                            <?php echo \IAWP\Utils\Security::user_journey_event_contents($event->html()); ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -12,6 +12,7 @@ use MailPoet\Config\Env;
 use MailPoet\EmailEditor\Integrations\MailPoet\Coupons\CouponBlockFailureTranslator;
 use MailPoet\EmailEditor\Integrations\MailPoet\Coupons\CouponBlockGenerationFailureCollector;
 use MailPoet\EmailEditor\Integrations\MailPoet\Coupons\EmailContextBuilder;
+use MailPoet\EmailEditor\Integrations\MailPoet\ProductCollection\OrderProductCollectionProcessor;
 use MailPoet\Entities\NewsletterEntity;
 use MailPoet\Entities\SendingQueueEntity;
 use MailPoet\Logging\LoggerFactory;
@@ -27,6 +28,16 @@ use MailPoet\WP\Functions as WPFunctions;
 class Renderer {
   const NEWSLETTER_TEMPLATE = 'Template.html';
   const FILTER_POST_PROCESS = 'mailpoet_rendering_post_process';
+
+  private const GLOBAL_STYLES_SELECTORS = [
+    'text' => 'td.mailpoet_paragraph, td.mailpoet_blockquote, li.mailpoet_paragraph, td.mailpoet_footer',
+    'body' => 'body, .mailpoet-wrapper',
+    'link' => '.mailpoet-wrapper a',
+    'wrapper' => '.mailpoet_content-wrapper',
+    'h1' => 'h1',
+    'h2' => 'h2',
+    'h3' => 'h3',
+  ];
 
   /** @var BodyRenderer */
   private $bodyRenderer;
@@ -60,6 +71,8 @@ class Renderer {
 
   private CouponBlockFailureTranslator $couponBlockFailureTranslator;
 
+  private OrderProductCollectionProcessor $orderProductCollectionProcessor;
+
   public function __construct(
     BodyRenderer $bodyRenderer,
     Preprocessor $preprocessor,
@@ -71,7 +84,8 @@ class Renderer {
     CapabilitiesManager $capabilitiesManager,
     CouponBlockGenerationFailureCollector $couponBlockFailureCollector,
     EmailContextBuilder $emailContextBuilder,
-    CouponBlockFailureTranslator $couponBlockFailureTranslator
+    CouponBlockFailureTranslator $couponBlockFailureTranslator,
+    OrderProductCollectionProcessor $orderProductCollectionProcessor
   ) {
     $this->bodyRenderer = $bodyRenderer;
     $this->guntenbergRenderer = Email_Editor_Container::container()->get(GuntenbergRenderer::class);
@@ -85,6 +99,7 @@ class Renderer {
     $this->couponBlockFailureCollector = $couponBlockFailureCollector;
     $this->emailContextBuilder = $emailContextBuilder;
     $this->couponBlockFailureTranslator = $couponBlockFailureTranslator;
+    $this->orderProductCollectionProcessor = $orderProductCollectionProcessor;
   }
 
   public function render(NewsletterEntity $newsletter, ?SendingQueueEntity $sendingQueue = null, $type = false) {
@@ -108,9 +123,20 @@ class Renderer {
       $filterCallback = function (array $context) use ($renderContext): array {
         return array_merge($context, $renderContext);
       };
-      $this->wp->addFilter('woocommerce_email_editor_rendering_email_context', $filterCallback);
+      $orderProductsFilter = null;
+      $abandonedCartPersistentCartFilter = null;
 
       try {
+        $this->wp->addFilter('woocommerce_email_editor_rendering_email_context', $filterCallback);
+        $abandonedCartPersistentCartFilter = $this->orderProductCollectionProcessor
+          ->createAbandonedCartPersistentCartFilter($renderContext, $sendingQueue);
+        if ($abandonedCartPersistentCartFilter) {
+          $this->wp->addFilter('get_user_metadata', $abandonedCartPersistentCartFilter, 10, 4);
+        }
+        $orderProductsFilter = $this->orderProductCollectionProcessor->createBlocksFilter($renderContext);
+        if ($orderProductsFilter) {
+          $this->wp->addFilter('woocommerce_email_blocks_renderer_parsed_blocks', $orderProductsFilter);
+        }
         $renderedNewsletter = $this->guntenbergRenderer->render($wpPost, $subject, $newsletter->getPreheader(), $language, $metaRobots);
         if ($this->couponBlockFailureCollector->hasFailures()) {
           throw NewsletterProcessingException::create()
@@ -125,6 +151,12 @@ class Renderer {
         }
       } finally {
         $this->wp->removeFilter('woocommerce_email_editor_rendering_email_context', $filterCallback);
+        if ($orderProductsFilter) {
+          $this->wp->removeFilter('woocommerce_email_blocks_renderer_parsed_blocks', $orderProductsFilter);
+        }
+        if ($abandonedCartPersistentCartFilter) {
+          $this->wp->removeFilter('get_user_metadata', $abandonedCartPersistentCartFilter);
+        }
         $this->couponBlockFailureCollector->clear();
       }
     } else {
@@ -202,27 +234,11 @@ class Renderer {
    */
   private function renderStyles(array $styles) {
     $css = '';
-    foreach ($styles as $selector => $style) {
-      switch ($selector) {
-        case 'text':
-          $selector = 'td.mailpoet_paragraph, td.mailpoet_blockquote, li.mailpoet_paragraph';
-          break;
-        case 'body':
-          $selector = 'body, .mailpoet-wrapper';
-          break;
-        case 'link':
-          $selector = '.mailpoet-wrapper a';
-          break;
-        case 'wrapper':
-          $selector = '.mailpoet_content-wrapper';
-          break;
-      }
-
-      if (!is_array($style)) {
+    foreach ($styles as $key => $style) {
+      if (!isset(self::GLOBAL_STYLES_SELECTORS[$key]) || !is_array($style)) {
         continue;
       }
-
-      $css .= StylesHelper::setStyle($style, $selector);
+      $css .= StylesHelper::setStyle($style, self::GLOBAL_STYLES_SELECTORS[$key]);
     }
     return $css;
   }

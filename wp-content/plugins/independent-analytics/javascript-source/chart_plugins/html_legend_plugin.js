@@ -8,6 +8,7 @@ module.exports = {
         }
     },
     afterUpdate(chart, args, options) {
+        const shouldAnimate = options.shouldAnimate ?? true;
         const legendContainer = this.getLegendContainer(options)
         let legendList = legendContainer.querySelector('ul');
 
@@ -38,7 +39,9 @@ module.exports = {
                 } else {
                     chart.setDatasetVisibility(legendData.datasetIndex, !chart.isDatasetVisible(legendData.datasetIndex));
                 }
-                chart.update();
+
+                chart.update(shouldAnimate ? null : 'none');
+
                 if (typeof options.callback === 'function') {
                     const visibleDatasets = chart.data.datasets.filter((dataset, index) => {
                         return chart.isDatasetVisible(index);
@@ -55,15 +58,8 @@ module.exports = {
                 li.classList.add('hidden')
             }
 
-            // Color box
-            const boxSpan = document.createElement('span');
+            li.textContent = legendData.text
 
-            // Text
-            const textContainer = document.createElement('p');
-            textContainer.textContent = legendData.text
-
-            li.appendChild(boxSpan);
-            li.appendChild(textContainer);
             legendList.appendChild(li);
         });
     }

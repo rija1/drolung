@@ -3,9 +3,9 @@ Contributors: bensibley, andrewmead
 Tags: analytics, wordpress analytics, google analytics, statistics, visitor counter
 Donate link: https://independentwp.com
 Requires at least: 5.9
-Tested up to: 7.0
-Requires PHP: 7.4
-Stable tag: 2.14.10
+Tested up to: 7.1
+Requires PHP: 8.0.30
+Stable tag: 2.15.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -246,6 +246,40 @@ No, there are no limits on tracking. You can use Independent Analytics to track 
 13. Check your post view counts in the Posts menu
 
 == Changelog ==
+
+= 2.15.5 - August 20th, 2026
+
+- **Fix:** WooCommerce orders paid using "Pay with PayPal" outside of the Checkout page are correctly recorded
+- **Fix:** Added workaround for WooCommerce bug causing the Shop page to be unidentified
+
+= 2.15.4 - August 10th, 2026
+
+- **Enhancement:** Minor edits to the sidebar menu
+
+= 2.15.3 - August 6th, 2026
+
+- **Fix:** Hardened the system for automatically deleting old data
+
+= 2.15.2 - August 4th, 2026
+
+- **Enhancement:** Real-time report supports switching between a 5-minute and 30-minute chart
+
+= 2.15.1 - July 29th, 2026
+
+- **Security:** hardened security with stricter data sanitization
+
+= 2.15.0 - July 22nd, 2026
+
+- **Feature:** Added Real-time Analytics Version 2.0! This new version of the report includes live filtering, city data, UTM parameters, conversions, and the ability to pause the report.
+- **Feature:** Added new form tracking integrations with Breakdance, Core Forms, and Superb Addons forms
+- **Enhancement:** Increased the minimum required PHP version to 8.0.30
+- **Enhancement:** Added a filter hook so the analytics script can be excluded on specific pages
+- **Enhancement:** Added an action hook so the analytics script can be output on pages that don't call wp_footer()
+- **Enhancement:** Added a named referrer for the Google Android app.
+- **Fix:** Geographic charts in the PDF exports have colors again instead of being all black.
+- **Fix:** Stopped calling the database queries for the admin toolbar when it is disabled.
+- **Fix:** Resolved a rare bug caused by a race condition when recording a new referrer to the database.
+- **Fix:** Automatic data deletion is retried up to 3 times in case of a failure.
 
 = 2.14.10 - May 19th, 2026 =
 
